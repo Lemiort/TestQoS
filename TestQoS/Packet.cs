@@ -11,5 +11,9 @@ namespace TestQoS
     /// </summary>
     abstract class Packet
     {
+        /// <summary>
+        /// Размер пакета в битах
+        /// </summary>
+        public int Size { get; protected set; }
     }
 }

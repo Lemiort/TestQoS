@@ -54,6 +54,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QoS.cs" />
+    <Compile Include="QuantizedTime.cs" />
+    <Compile Include="SimplePacket.cs" />
     <Compile Include="SimpleTBQoS.cs" />
     <Compile Include="SimpleTokenBuket.cs" />
     <Compile Include="SimpleTrafficGenerator.cs" />

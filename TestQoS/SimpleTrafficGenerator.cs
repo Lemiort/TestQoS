@@ -6,11 +6,97 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Генератор трафика. Генерирует пакеты с размером, принадлежащим
+    /// заданному промежутку [minPacketSize; maxPacketSize]. Период генерации принадлежит промежутку [minPacketSize; maxPacketSize]
+    /// </summary>
     class SimpleTrafficGenerator : TrafficGenerator
     {
-        public SimpleTrafficGenerator()
-        {
+        Random rand;
+        /// <summary>
+        /// Минимальный размер пакета
+        /// </summary>
+        private int minPacketSize;
 
+        /// <summary>
+        /// Максимальный размер пакета
+        /// </summary>
+        private int maxPacketSize;
+
+        /// <summary>
+        /// минимальный промежуток времени между двумя пакетами (в квантах времени)
+        /// </summary>
+        private int minTimePeriod;
+
+        /// <summary>
+        /// максимальный промежуток времени между двумя пакетами (в квантах времени)
+        /// </summary>
+        private int maxTimePeriod;
+
+        /// <summary>
+        /// показывает сколько квантов осталось до следующей генерации пакета
+        /// </summary>
+        private int period;
+
+        /// <summary>
+        /// реализует переход от времени в миллисекундах, к времени в квантах, и на оборот
+        /// </summary>
+        private QuantizedTime time;
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
+        /// <param name="minPacketSize">Минимальный размер пакета</param>
+        /// <param name="maxPacketSize">Максимальный размер пакета</param>
+        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами (в миллисекундах)</param>
+        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами (в миллисекундах)</param>
+        public SimpleTrafficGenerator(QuantizedTime time, int minPacketSize, int maxPacketSize, double minTimePeriod, double maxTimePeriod)
+        {
+            rand = new Random((int)DateTime.Now.Ticks);
+            // TODO: сделать "проверки на дурака" и тд
+            this.time = time;
+            this.minPacketSize = minPacketSize;
+            this.maxPacketSize = maxPacketSize;
+            this.minTimePeriod = this.time.FromAnalogToDigital(minTimePeriod);
+            this.maxTimePeriod = this.time.FromAnalogToDigital(maxTimePeriod);
+
+            period = GeneratePeriod();
+        }
+
+        public override Packet MakePacket()
+        {
+            // проверяем кончилось ли время текущего периода
+            if(--period <= 0)
+            {
+                // отправляен пакет 
+                period = GeneratePeriod();
+                return new SimplePacket(GeneratePacketSize());               
+            }
+            else
+            {
+                // пакет не отправлен (думаю null логичнее пакета с размером 0,
+                // но это стоит учитывать в дальнейшем)
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Генерация периода
+        /// </summary>
+        /// <returns></returns>
+        private int GeneratePeriod()
+        {
+            return rand.Next(minTimePeriod, maxTimePeriod);
+        }
+
+        /// <summary>
+        /// Генерация размера пакета
+        /// </summary>
+        /// <returns></returns>
+        private int GeneratePacketSize()
+        {
+            return rand.Next(minPacketSize, maxPacketSize);
         }
     }
 }
