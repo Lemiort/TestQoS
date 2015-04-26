@@ -15,12 +15,16 @@ namespace TestQoS
         /// </summary>
         private double observationPeriod;
 
-        public abstract TokenBuket TokenBuket();
-        public abstract TrafficGenerator TrafficGenerator();
+        // Фабричные методы
+        public abstract TokenBuket MakeTokenBuket();
+        public abstract TrafficGenerator MakeTrafficGenerator();
+        public abstract ModelTime MakeModelTime();
+        public abstract Packet MakePacket();
 
 
-
-        // запускать алгоритм из QoS или TokenBuket? 
+        /// <summary>
+        /// запуск алгоритма
+        /// </summary>
         public abstract void Run();
     }
 }

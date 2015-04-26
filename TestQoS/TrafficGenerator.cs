@@ -8,5 +8,6 @@ namespace TestQoS
 {
     abstract class TrafficGenerator
     {
+        public abstract Packet MakePacket();
     }
 }

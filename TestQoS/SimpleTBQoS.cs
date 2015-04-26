@@ -11,13 +11,48 @@ namespace TestQoS
     /// </summary>
     class SimpleTBQoS : QoS
     {
-        public override TokenBuket TokenBuket()
+        /// <summary>
+        /// Реализация фабричного метода MakeTokenBuket 
+        /// </summary>
+        /// <returns></returns>
+        public override TokenBuket MakeTokenBuket()
         {
             return new SimpleTokenBuket();
         }
-        public override TrafficGenerator TrafficGenerator()
+
+        /// <summary>
+        /// Реализация фабричного метода MakeTrafficGenerator
+        /// </summary>
+        /// <returns></returns>
+        public override TrafficGenerator MakeTrafficGenerator()
         {
             return new SimpleTrafficGenerator();
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public override ModelTime MakeModelTime()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public override Packet MakePacket()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public override void Run()
+        {
+            throw new NotImplementedException();
         }
     }
 }
