@@ -22,11 +22,12 @@ namespace TestQoS
 
         /// <summary>
         /// Реализация фабричного метода MakeTrafficGenerator
+        /// TODO
         /// </summary>
         /// <returns></returns>
         public override TrafficGenerator MakeTrafficGenerator()
         {
-            return new SimpleTrafficGenerator();
+            throw new NotImplementedException();
         }
 
         /// <summary>
