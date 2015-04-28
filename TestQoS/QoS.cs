@@ -16,9 +16,9 @@ namespace TestQoS
         private double observationPeriod;
 
         // Фабричные методы
-        public abstract TokenBuket MakeTokenBuket();
-        public abstract TrafficGenerator MakeTrafficGenerator();
-        public abstract ModelTime MakeModelTime();
+        //public abstract TokenBuket MakeTokenBuket();
+        //public abstract TrafficGenerator MakeTrafficGenerator();
+        //public abstract ModelTime MakeModelTime();
         public abstract Packet MakePacket();
 
 

@@ -11,33 +11,9 @@ namespace TestQoS
     /// </summary>
     class SimpleTBQoS : QoS
     {
-        /// <summary>
-        /// Реализация фабричного метода MakeTokenBuket 
-        /// </summary>
-        /// <returns></returns>
-        public override TokenBuket MakeTokenBuket()
-        {
-            return new SimpleTokenBuket();
-        }
+        SimpleTrafficGenerator generator;
+        SimpleTokenBuket bucket;
 
-        /// <summary>
-        /// Реализация фабричного метода MakeTrafficGenerator
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public override TrafficGenerator MakeTrafficGenerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public override ModelTime MakeModelTime()
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// TODO
@@ -53,7 +29,24 @@ namespace TestQoS
         /// </summary>
         public override void Run()
         {
-            throw new NotImplementedException();
+            QuantizedTime qtime = new QuantizedTime(10);
+            generator = new SimpleTrafficGenerator(qtime, 24, 256, 10, 100);
+            bucket = new SimpleTokenBuket(32);
+
+            SimplePacket packet;
+            while(true)
+            {
+                packet = (SimplePacket)generator.MakePacket();
+                if (packet != null)
+                {
+                    bucket.PushPacket(packet, qtime);
+                    if (bucket.PopPacket() != null)
+                        Console.WriteLine(packet.Size);
+                    else
+                        Console.WriteLine("--");
+                }
+            }
+            //throw new NotImplementedException();
         }
     }
 }

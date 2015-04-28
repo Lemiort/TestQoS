@@ -12,8 +12,12 @@ namespace TestQoS
         /// <summary>
         /// промежуток наблюдения (в миллисекундах)
         /// </summary>
-        private double timeSlice;
+        public double timeSlice;
 
+        /// <summary>
+        /// конструктор времени квантовани
+        /// </summary>
+        /// <param name="timeSlice">промежуток намблюдения dt в милисекундах</param>
         public QuantizedTime(double timeSlice)
         {
             this.timeSlice = timeSlice;
