@@ -8,9 +8,11 @@ namespace TestQoS
 {
     class SimpleTokenBuket : TokenBuket
     {
+
         public SimpleTokenBuket()
         {
 
         }
+
     }
 }

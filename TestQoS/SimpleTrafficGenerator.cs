@@ -71,7 +71,12 @@ namespace TestQoS
             {
                 // отправляен пакет 
                 period = GeneratePeriod();
-                return new SimplePacket(GeneratePacketSize());               
+
+                SimplePacket ret = new SimplePacket(GeneratePacketSize());
+
+                onPacketGenerated(ret);
+
+                return ret;           
             }
             else
             {
@@ -98,5 +103,16 @@ namespace TestQoS
         {
             return rand.Next(minPacketSize, maxPacketSize);
         }
+
+        /// <summary>
+        /// делегат для события генерации пакета
+        /// </summary>
+        /// <param name="packet"></param>
+        public delegate void Observer(Packet packet);
+
+        /// <summary>
+        /// событие генерации пакета
+        /// </summary>
+        public event Observer onPacketGenerated;
     }
 }
