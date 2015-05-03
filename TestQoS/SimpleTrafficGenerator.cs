@@ -44,7 +44,7 @@ namespace TestQoS
         private QuantizedTime time;
 
         /// <summary>
-        /// TODO
+        /// возвращает пакет не раньше чем через minTimeperiod и не позже чем через maxTimePeriod
         /// </summary>
         /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
         /// <param name="minPacketSize">Минимальный размер пакета</param>
