@@ -27,7 +27,9 @@ namespace TestQoS
         /// <returns></returns>
         public override TrafficGenerator MakeTrafficGenerator()
         {
-            throw new NotImplementedException();
+            ///TODO: негодный конструктор, время нихера ни в милисекундах
+            return new SimpleTrafficGenerator(new QuantizedTime(0.1), 64, 256, 200000, 1000000);
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -54,6 +56,24 @@ namespace TestQoS
         public override void Run()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// обработчик пакета, что прошёл через ведро
+        /// </summary>
+        /// <param name="packet">пакет</param>
+        public void OnPacketPass(Packet packet)
+        {
+            Console.WriteLine("Packet passed! {0}", packet.Size);
+        }
+
+        /// <summary>
+        /// обработчик отброшенного пакета
+        /// </summary>
+        /// <param name="packet">пакет</param>
+        public void OnPacketNotPass(Packet packet)
+        {
+            Console.WriteLine("Lost packet {0}", packet.Size);
         }
     }
 }

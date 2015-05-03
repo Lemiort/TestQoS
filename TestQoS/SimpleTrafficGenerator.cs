@@ -49,8 +49,8 @@ namespace TestQoS
         /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
         /// <param name="minPacketSize">Минимальный размер пакета</param>
         /// <param name="maxPacketSize">Максимальный размер пакета</param>
-        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами (в миллисекундах)</param>
-        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами (в миллисекундах)</param>
+        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами (в миллисекундах - да вот хрен)</param>
+        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами (в миллисекундах - да вот хрен)</param>
         public SimpleTrafficGenerator(QuantizedTime time, int minPacketSize, int maxPacketSize, double minTimePeriod, double maxTimePeriod)
         {
             rand = new Random((int)DateTime.Now.Ticks);
@@ -108,7 +108,7 @@ namespace TestQoS
         /// делегат для события генерации пакета
         /// </summary>
         /// <param name="packet"></param>
-        public delegate void Observer(Packet packet);
+        public delegate Packet Observer(Packet packet);
 
         /// <summary>
         /// событие генерации пакета
