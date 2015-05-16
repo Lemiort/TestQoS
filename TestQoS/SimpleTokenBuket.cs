@@ -9,9 +9,19 @@ namespace TestQoS
     class SimpleTokenBuket : TokenBuket
     {
         /// <summary>
-        /// число токенов в милисекунду
+        /// время квантовани
         /// </summary>
-        public float TokensPerMs
+        QuantizedTime qtime;
+
+        /// <summary>
+        /// очередь обработки пакетов
+        /// </summary>
+        Queue<Packet> packets;
+
+        /// <summary>
+        /// число токенов в квант
+        /// </summary>
+        public float TokensPerDt
         {
             get;
             set;
@@ -38,21 +48,21 @@ namespace TestQoS
         /// </summary>
         /// <param name="packet">пакет на вход</param>
         /// <returns>если пакет проходит, возвращает пакета, иначе null</returns>
-        public Packet ProcessPacket(Packet packet)
+        public void ProcessPacket(Packet packet)
         {
 
             //проверка на ненулевой пакет
             if (packet != null)
             {
-                //считаем изменение времени
-                //TODO: сделать поправку на то, что Tick != милисекундам!!!
+                packets.Enqueue(packet);
+                /*//считаем изменение времени
                 long dt = DateTime.Now.Ticks - prevPacketTime;
 
                 //время в милисекундах
                 TimeSpan time = new TimeSpan(dt);
 
                 //добавляем токены
-                tokensCount += (long)(time.Milliseconds * TokensPerMs);
+                tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));
 
                 //проверяем пакет
                 if (packet.Size < tokensCount)
@@ -68,11 +78,7 @@ namespace TestQoS
                     //не пропускаем пакет
                     onPacketNotPass(packet);
                     return null;
-                }
-            }
-            else
-            {
-                return null;
+                }*/
             }
         }
 
@@ -80,10 +86,47 @@ namespace TestQoS
         /// конструктор
         /// TODO: написать конструктор получше
         /// </summary>
-        public SimpleTokenBuket()
+        public SimpleTokenBuket(QuantizedTime _time)
         {
+            qtime = _time;
             prevPacketTime = DateTime.Now.Ticks;
             tokensCount = 0;
+            packets = new Queue<Packet>();
+        }
+
+        public void Update()
+        {
+            while (packets.Count != 0)
+            {
+                Packet packet = packets.Dequeue();
+                //проверка на ненулевой пакет
+                if (packet != null)
+                {
+                    /*//считаем изменение времени
+                    long dt = DateTime.Now.Ticks - prevPacketTime;
+
+                    //время в милисекундах
+                    TimeSpan time = new TimeSpan(dt);
+
+                    //добавляем токены
+                    tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));*/
+                    tokensCount += (long)TokensPerDt;
+
+                    //проверяем пакет
+                    if (packet.Size < tokensCount)
+                    {
+                        tokensCount -= packet.Size;
+
+                        //пропускаем пакет
+                        onPacketPass(packet);
+                    }
+                    else
+                    {
+                        //не пропускаем пакет
+                        onPacketNotPass(packet);
+                    }
+                }
+            }
         }
 
         public event PacketProcessHandler onPacketPass;

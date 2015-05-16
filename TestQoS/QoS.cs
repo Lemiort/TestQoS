@@ -20,6 +20,7 @@ namespace TestQoS
         public abstract TrafficGenerator MakeTrafficGenerator();
         public abstract ModelTime MakeModelTime();
         public abstract Packet MakePacket();
+        public abstract Multiplexer MakeMultiplexer();
 
 
         /// <summary>

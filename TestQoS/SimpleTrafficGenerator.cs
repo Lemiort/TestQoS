@@ -16,27 +16,27 @@ namespace TestQoS
         /// <summary>
         /// Минимальный размер пакета
         /// </summary>
-        private int minPacketSize;
+        private uint minPacketSize;
 
         /// <summary>
         /// Максимальный размер пакета
         /// </summary>
-        private int maxPacketSize;
+        private uint maxPacketSize;
 
         /// <summary>
         /// минимальный промежуток времени между двумя пакетами (в квантах времени)
         /// </summary>
-        private int minTimePeriod;
+        private uint minTimePeriod;
 
         /// <summary>
         /// максимальный промежуток времени между двумя пакетами (в квантах времени)
         /// </summary>
-        private int maxTimePeriod;
+        private uint maxTimePeriod;
 
         /// <summary>
         /// показывает сколько квантов осталось до следующей генерации пакета
         /// </summary>
-        private int period;
+        private uint period;
 
         /// <summary>
         /// реализует переход от времени в миллисекундах, к времени в квантах, и на оборот
@@ -49,9 +49,9 @@ namespace TestQoS
         /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
         /// <param name="minPacketSize">Минимальный размер пакета</param>
         /// <param name="maxPacketSize">Максимальный размер пакета</param>
-        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами (в миллисекундах - да вот хрен)</param>
-        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами (в миллисекундах - да вот хрен)</param>
-        public SimpleTrafficGenerator(QuantizedTime time, int minPacketSize, int maxPacketSize, double minTimePeriod, double maxTimePeriod)
+        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами в милисекундах</param>
+        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами в милисекундах</param>
+        public SimpleTrafficGenerator(QuantizedTime time, uint minPacketSize, uint maxPacketSize, double minTimePeriod, double maxTimePeriod)
         {
             rand = new Random((int)DateTime.Now.Ticks);
             // TODO: сделать "проверки на дурака" и тд
@@ -90,25 +90,25 @@ namespace TestQoS
         /// Генерация периода
         /// </summary>
         /// <returns></returns>
-        private int GeneratePeriod()
+        private uint GeneratePeriod()
         {
-            return rand.Next(minTimePeriod, maxTimePeriod);
+            return (uint)rand.Next((int)minTimePeriod, (int)maxTimePeriod);
         }
 
         /// <summary>
         /// Генерация размера пакета
         /// </summary>
         /// <returns></returns>
-        private int GeneratePacketSize()
+        private uint GeneratePacketSize()
         {
-            return rand.Next(minPacketSize, maxPacketSize);
+            return (uint)rand.Next((int)minPacketSize, (int)maxPacketSize);
         }
 
         /// <summary>
         /// делегат для события генерации пакета
         /// </summary>
         /// <param name="packet"></param>
-        public delegate Packet Observer(Packet packet);
+        public delegate void Observer(Packet packet);
 
         /// <summary>
         /// событие генерации пакета
