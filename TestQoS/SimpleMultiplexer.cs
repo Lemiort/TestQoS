@@ -8,10 +8,6 @@ namespace TestQoS
 {
     class SimpleMultiplexer: Multiplexer
     {
-        /// <summary>
-        /// число байтов в очереди
-        /// </summary>
-        //private UInt64 summaryPacketsSize;
 
         /// <summary>
         /// предыдущее время обработки всех пакетов, в тактах
@@ -50,9 +46,11 @@ namespace TestQoS
         /// <param name="packet">пакет на вход</param>
         /// <returns>если пакет проходит, возвращает пакета, иначе null</returns>
         public void ProcessPacket(Packet packet)
-        {           
-            if(packet != null)
+        {
+            if (packet != null)
+            {
                 packets.Enqueue(packet);
+            }
         }
 
         public SimpleMultiplexer(QuantizedTime time)
@@ -99,8 +97,8 @@ namespace TestQoS
                     }
                 }
                 prevUpdateTime = DateTime.Now.Ticks;
-                if(passedBytes > 0)
-                    Console.WriteLine("{0} bytes passed", passedBytes);
+                /*if(passedBytes > 0)
+                    Console.WriteLine("{0} bytes passed", passedBytes);*/
             }
         }
     }

@@ -27,6 +27,12 @@ namespace TestQoS
             set;
         }
 
+        public float MaxTokensCount
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// время обработки предыдущего пакета
         /// </summary>
@@ -91,6 +97,7 @@ namespace TestQoS
             qtime = _time;
             prevPacketTime = DateTime.Now.Ticks;
             tokensCount = 0;
+            MaxTokensCount = 300;
             packets = new Queue<Packet>();
         }
 
@@ -110,7 +117,8 @@ namespace TestQoS
 
                     //добавляем токены
                     tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));*/
-                    tokensCount += (long)TokensPerDt;
+                    if(tokensCount <= MaxTokensCount)
+                        tokensCount += (long)TokensPerDt;
 
                     //проверяем пакет
                     if (packet.Size < tokensCount)

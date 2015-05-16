@@ -52,8 +52,8 @@ namespace TestQoS
 
         private Queue<HistoryQuant> quantsPassedBucket;
         private Queue<HistoryQuant> quantsNotPassedBucket;
-        private Queue<HistoryQuant> quantsPassedMultiplexor;
-        private Queue<HistoryQuant> quantsNotPassedMultiplexor;
+        private Queue<HistoryQuant> quantsPassedMultiplexer;
+        private Queue<HistoryQuant> quantsNotPassedMultiplexer;
 
         private HistoryQuant packetsPassedBucket;
         private HistoryQuant packetsNotPassedBucket;
@@ -64,8 +64,8 @@ namespace TestQoS
         {
             quantsPassedBucket = new Queue<HistoryQuant>();
             quantsNotPassedBucket = new Queue<HistoryQuant>();
-            quantsPassedMultiplexor = new Queue<HistoryQuant>();
-            quantsNotPassedMultiplexor = new Queue<HistoryQuant>();
+            quantsPassedMultiplexer = new Queue<HistoryQuant>();
+            quantsNotPassedMultiplexer = new Queue<HistoryQuant>();
 
             packetsPassedBucket = new HistoryQuant();
             packetsNotPassedBucket = new HistoryQuant();
@@ -112,6 +112,23 @@ namespace TestQoS
         }
 
         /// <summary>
+        /// выводит инфу о первом кванте в консоль
+        /// </summary>
+        public void PrintFirstQuantInfo()
+        {
+            if (quantsPassedBucket.Count > 0)
+            {
+                if (quantsPassedBucket.Peek().summarySize > 0)
+                {
+                    Console.WriteLine("\n\n{0} bytes passed throght buckets", quantsPassedBucket.Peek().summarySize);
+                    Console.WriteLine("{0} bytes not passed throght buckets", quantsNotPassedBucket.Peek().summarySize);
+                    Console.WriteLine("{0} bytes passed throght multiplexor", quantsPassedMultiplexer.Peek().summarySize);
+                    Console.WriteLine("{0} bytes not passed throght multiplexor", quantsNotPassedMultiplexer.Peek().summarySize);
+                }
+            }
+        }
+
+        /// <summary>
         /// переходит к записи в следующий квант
         /// вызывать каждый квант времени
         /// </summary>
@@ -120,16 +137,16 @@ namespace TestQoS
             //записываем инфу о текущих квантах
             quantsPassedBucket.Enqueue(packetsPassedBucket);
             quantsNotPassedBucket.Enqueue(packetsNotPassedBucket);
-            quantsPassedMultiplexor.Enqueue(packetsPassedMultiplexer);
-            quantsNotPassedMultiplexor.Enqueue(packetsNotPassedMultiplexer);
+            quantsPassedMultiplexer.Enqueue(packetsPassedMultiplexer);
+            quantsNotPassedMultiplexer.Enqueue(packetsNotPassedMultiplexer);
 
             //убираем лишнюю инфу, если она есть
             while(quantsPassedBucket.Count > quantHistorySize)
             {
                 quantsPassedBucket.Dequeue();
                 quantsNotPassedBucket.Dequeue();
-                quantsPassedMultiplexor.Dequeue();
-                quantsNotPassedMultiplexor.Dequeue();
+                quantsPassedMultiplexer.Dequeue();
+                quantsNotPassedMultiplexer.Dequeue();
             }
 
             packetsPassedBucket = new HistoryQuant();

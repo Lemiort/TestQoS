@@ -90,7 +90,13 @@ namespace TestQoS
             //время квантования
             qtime = this.MakeModelTime();
 
-            TrafficGenerator generator = this.MakeTrafficGenerator();
+            //TrafficGenerator generator = this.MakeTrafficGenerator();
+            List<TrafficGenerator> generators = new List<TrafficGenerator>();
+            for (int i = 0; i < 10; i++ )
+            {
+                generators.Add(this.MakeTrafficGenerator());
+            }
+
             TokenBuket bucket = this.MakeTokenBuket();
             Multiplexer multiplexer = this.MakeMultiplexer();
             Analyzer analyzer = this.MakeAnalyzer();
@@ -111,12 +117,14 @@ namespace TestQoS
             /*******Соединение всех объектов между собой************/
             /*******************************************************/
             //заставляем обрабатывать каждый сгенерированный пакет
-            (generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
+            //(generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
+            foreach( TrafficGenerator generator in generators)
+            {
+                (generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
+            }
 
-            //костыль, костыль и ещё раз костыль
             //обработчик прошедшего и непрошедшего пакета в ведре
             (bucket as SimpleTokenBuket).onPacketPass += (multiplexer as SimpleMultiplexer).ProcessPacket;
-            //(bucket as SimpleTokenBuket).onPacketNotPass += this.OnPacketNotPass;
 
             //записуем всё в анализатор
             (bucket as SimpleTokenBuket).onPacketPass += (analyzer as SimpleAnalyzer).OnBucketPassPacket;
@@ -145,11 +153,20 @@ namespace TestQoS
                 //собсно сам цикл
                 if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
                 {
-                    generator.MakePacket();
+                    //generator.MakePacket();
+                    foreach (TrafficGenerator generator in generators)
+                    {
+                        (generator as SimpleTrafficGenerator).MakePacket();
+                    }
+
                     (bucket as SimpleTokenBuket).Update();
                     (multiplexer as SimpleMultiplexer).Update();
 
+                    (analyzer as SimpleAnalyzer).Update();
+                    (analyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+
                     prevTime = DateTime.Now.Ticks;
+
                 }
             }
             /*******************************************************/
