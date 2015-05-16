@@ -14,7 +14,9 @@ namespace TestQoS
         /// <summary>
         /// общее время кватования
         /// </summary>
-        ModelTime qtime;
+        public ModelTime qtime;
+
+        public Analyzer analyzer;
 
 
         /// <summary>
@@ -67,6 +69,12 @@ namespace TestQoS
             //throw new NotImplementedException();
         }
 
+        public override Analyzer MakeAnalyzer()
+        {
+            return new SimpleAnalyzer();
+            //throw new NotImplementedException();
+        }
+
         /// <summary>
         /// TODO
         /// Основной цикл
@@ -76,29 +84,55 @@ namespace TestQoS
             //throw new NotImplementedException();
             //создаём экземпляры объектов
 
+            /*******************************************************/
+            /************Создание всех объектов*********************/
+            /*******************************************************/
             //время квантования
             qtime = this.MakeModelTime();
 
             TrafficGenerator generator = this.MakeTrafficGenerator();
             TokenBuket bucket = this.MakeTokenBuket();
             Multiplexer multiplexer = this.MakeMultiplexer();
+            Analyzer analyzer = this.MakeAnalyzer();
+            /*******************************************************/
+            /*******************************************************/
 
+
+            /******************************************************/
+            /**********Настройка параметров************************/
+            /******************************************************/
             //TODO: сделать эту настройку где-то внутри
             (bucket as SimpleTokenBuket).TokensPerDt = 100.0F;
+            /*******************************************************/
+            /*******************************************************/
 
+
+            /*******************************************************/
+            /*******Соединение всех объектов между собой************/
+            /*******************************************************/
             //заставляем обрабатывать каждый сгенерированный пакет
             (generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
 
             //костыль, костыль и ещё раз костыль
-            //обработчик прошедшего и непрошедшего пакета
+            //обработчик прошедшего и непрошедшего пакета в ведре
             (bucket as SimpleTokenBuket).onPacketPass += (multiplexer as SimpleMultiplexer).ProcessPacket;
-            (bucket as SimpleTokenBuket).onPacketNotPass += this.OnPacketNotPass;
+            //(bucket as SimpleTokenBuket).onPacketNotPass += this.OnPacketNotPass;
 
-            //обработка прошедшего пакета
-            (multiplexer as SimpleMultiplexer).onPacketPass += OnPacketPass;
+            //записуем всё в анализатор
+            (bucket as SimpleTokenBuket).onPacketPass += (analyzer as SimpleAnalyzer).OnBucketPassPacket;
+            (bucket as SimpleTokenBuket).onPacketNotPass += (analyzer as SimpleAnalyzer).OnBucketNotPassPacket;
+
+            //обработка мултиплексора
+            (multiplexer as SimpleMultiplexer).onPacketPass += (analyzer as SimpleAnalyzer).OnMultiplexerPassPacket;
+            (multiplexer as SimpleMultiplexer).onPacketNotPass += (analyzer as SimpleAnalyzer).OnMultiplexerNotPassPacket;
+
+            /*******************************************************/
+            /*******************************************************/
 
 
-
+            /*******************************************************/
+            /*********************Основной цикл*********************/
+            /*******************************************************/
             //считаем изменение времени
             long prevTime = DateTime.Now.Ticks;
             while (true)
@@ -118,6 +152,8 @@ namespace TestQoS
                     prevTime = DateTime.Now.Ticks;
                 }
             }
+            /*******************************************************/
+            /*******************************************************/
         }
 
         /// <summary>

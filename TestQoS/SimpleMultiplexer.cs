@@ -11,7 +11,7 @@ namespace TestQoS
         /// <summary>
         /// число байтов в очереди
         /// </summary>
-        private UInt64 summaryPacketsSize;
+        //private UInt64 summaryPacketsSize;
 
         /// <summary>
         /// предыдущее время обработки всех пакетов, в тактах
@@ -94,7 +94,7 @@ namespace TestQoS
                         else
                         {
                             passedBytes -= packet.Size;
-                            //onPacketNotPass(packet);
+                            onPacketNotPass(packet);
                         }
                     }
                 }
