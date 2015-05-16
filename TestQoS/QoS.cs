@@ -13,13 +13,15 @@ namespace TestQoS
         /// за который не может пройти более одного пакета.
         /// Измеряется в миллисекундах.
         /// </summary>
-        private double observationPeriod;
+        //private double observationPeriod;
 
         // Фабричные методы
         public abstract TokenBuket MakeTokenBuket();
         public abstract TrafficGenerator MakeTrafficGenerator();
         public abstract ModelTime MakeModelTime();
         public abstract Packet MakePacket();
+        public abstract Multiplexer MakeMultiplexer();
+        public abstract Analyzer MakeAnalyzer();
 
 
         /// <summary>

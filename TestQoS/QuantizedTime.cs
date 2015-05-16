@@ -12,8 +12,16 @@ namespace TestQoS
         /// <summary>
         /// промежуток наблюдения (в миллисекундах)
         /// </summary>
-        private double timeSlice;
+        public double timeSlice
+        {
+            get;
+            private set;
+        }
 
+        /// <summary>
+        /// создаёт время квантования
+        /// </summary>
+        /// <param name="timeSlice">время в милисекундах</param>
         public QuantizedTime(double timeSlice)
         {
             this.timeSlice = timeSlice;
@@ -25,9 +33,9 @@ namespace TestQoS
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public int FromAnalogToDigital(double time)
+        public uint FromAnalogToDigital(double time)
         {
-            return (int)(time / timeSlice) + 1;
+            return (uint)(time / timeSlice) + 1;
         }
 
         /// <summary>
@@ -36,7 +44,7 @@ namespace TestQoS
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public double FromDigitalToAnalog(int time)
+        public double FromDigitalToAnalog(uint time)
         {
             return time * timeSlice;
         }

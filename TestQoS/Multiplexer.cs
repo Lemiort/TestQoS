@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// облочка для пакета
+    /// мультиплексор, по сути - финальное ведро
     /// </summary>
-    abstract class Packet
+    abstract class Multiplexer
     {
         /// <summary>
-        /// Размер пакета в битах
+        /// ширина канала
         /// </summary>
-        public uint Size { get; protected set; }
+        public UInt64 bytesPerDt { get; set; }
+
     }
 }

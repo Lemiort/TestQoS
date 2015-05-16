@@ -11,7 +11,7 @@ namespace TestQoS
     /// </summary>
     class SimplePacket : Packet
     {
-        public SimplePacket(int size)
+        public SimplePacket(uint size)
         {
             this.Size = size;
         }
