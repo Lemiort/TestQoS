@@ -52,10 +52,30 @@ namespace TestQoS
 
         /// <summary>
         /// TODO
+        /// Основной цикл
         /// </summary>
         public override void Run()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            //создаём экземпляры объектов
+            TrafficGenerator generator = this.MakeTrafficGenerator();
+            TokenBuket bucket = this.MakeTokenBuket();
+
+            //TODO: сделать эту настройку где-то внутри
+            (bucket as SimpleTokenBuket).TokensPerMs = 0.1F;
+
+            //заставляем обрабатывать каждый сгенерированный пакет
+            (generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
+
+            //костыль, костыль и ещё раз костыль
+            //обработчик прошедшего и непрошедшего пакета
+            (bucket as SimpleTokenBuket).onPacketPass += this.OnPacketPass;
+            (bucket as SimpleTokenBuket).onPacketNotPass += this.OnPacketNotPass;
+
+            while (true)
+            {
+                generator.MakePacket();
+            }
         }
 
         /// <summary>
