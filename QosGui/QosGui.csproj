@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>95079c5b-f554-43f1-a9c2-caf85f9ccf6d</ProjectGuid>
+    <ProjectGuid>{22860BAB-2549-4525-B7BB-814BB67F41AE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QosGui</RootNamespace>
@@ -73,6 +73,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestQoS\TestQoS.csproj">
+      <Project>{526c602a-5777-4d1e-af01-85db8e70549b}</Project>
+      <Name>TestQoS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
