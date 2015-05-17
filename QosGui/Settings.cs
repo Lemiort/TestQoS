@@ -57,6 +57,12 @@ namespace QosGui
         {
             // максимальный период
             int periodMax = 10000;
+            // максимальный размер
+            int sizeMax = 10000;
+            // шаг периода
+            int periodStep = 10;
+            // шаг размера
+            int sizeStep = 100;
 
             // подготовка к инициализации
             this.generatorsSettings.TabPages.Clear();
@@ -101,29 +107,33 @@ namespace QosGui
                 // Минимальный размер пакета
                 NumericUpDown minPacketSize = new NumericUpDown();
                 minPacketSize.Location = new System.Drawing.Point(232, 16);
-                minPacketSize.Maximum = new decimal(periodMax);
-                minPacketSize.Size = new System.Drawing.Size(44, 20);
+                minPacketSize.Maximum = new decimal(sizeMax);
+                minPacketSize.Increment = new decimal(sizeStep);
+                minPacketSize.Size = new System.Drawing.Size(70, 20);
                 minPacketSizes.Add(minPacketSize);
 
                 // Максимальный размер пакета
                 NumericUpDown maxPacketSize = new NumericUpDown();
                 maxPacketSize.Location = new System.Drawing.Point(232, 46);
-                minPacketSize.Maximum = new decimal(periodMax);
-                maxPacketSize.Size = new System.Drawing.Size(44, 20);
+                maxPacketSize.Maximum = new decimal(sizeMax);
+                maxPacketSize.Increment = new decimal(sizeStep);
+                maxPacketSize.Size = new System.Drawing.Size(70, 20);
                 maxPacketSizes.Add(maxPacketSize);
 
                 // Минимальный промежуток времени между двумя пакетами в милисекундах
                 NumericUpDown minTimePeriod = new NumericUpDown();
                 minTimePeriod.Location = new System.Drawing.Point(232, 92);
-                minPacketSize.Maximum = new decimal(periodMax);
-                minTimePeriod.Size = new System.Drawing.Size(44, 20);
+                minTimePeriod.Maximum = new decimal(periodMax);
+                minTimePeriod.Increment = new decimal(periodStep);
+                minTimePeriod.Size = new System.Drawing.Size(70, 20);
                 minTimePeriods.Add(minTimePeriod);
 
                 // Минимальный промежуток времени между двумя пакетами в милисекундах
                 NumericUpDown maxTimePeriod = new NumericUpDown();
                 maxTimePeriod.Location = new System.Drawing.Point(232, 124);
                 maxTimePeriod.Maximum = new decimal(periodMax);
-                maxTimePeriod.Size = new System.Drawing.Size(44, 20);
+                maxTimePeriod.Increment = new decimal(periodStep);
+                maxTimePeriod.Size = new System.Drawing.Size(70, 20);
                 maxTimePeriods.Add(maxTimePeriod);
 
 
