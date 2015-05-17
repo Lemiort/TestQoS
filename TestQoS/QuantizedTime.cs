@@ -35,7 +35,17 @@ namespace TestQoS
         /// <returns></returns>
         public uint FromAnalogToDigital(double time)
         {
-            return (uint)(time / timeSlice) + 1;
+            // если вдруг поделится без остатка то будет косяк (10/2 = 6)
+            // мб это так и надо, а может и нет
+            // return (uint)(time / timeSlice) + 1;
+
+            // добавлю ка на всякий это
+            double eps = 1e-8;
+            double realDiv = time / timeSlice;
+            uint intDiv = (uint)(time / timeSlice);
+            if (Math.Abs(realDiv - intDiv) > eps) ++intDiv;
+
+            return intDiv;
         }
 
         /// <summary>
