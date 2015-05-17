@@ -52,6 +52,7 @@ namespace QosGui
 
         /// <summary>
         /// Инициализация объекта generatorSettings
+        /// // TODO: поиграться с константами
         /// </summary>
         private void InitGeneratorSettings()
         {

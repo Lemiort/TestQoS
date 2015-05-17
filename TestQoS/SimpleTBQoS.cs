@@ -16,6 +16,47 @@ namespace TestQoS
         /// </summary>
         public ModelTime qtime;
 
+        //
+        // куча переменных, нужных только для того,
+        // чтобы заставить работать фабрики так,
+        // как этого хочу Я 
+        // (возможно, их следует перенести в абстрактный класс)
+        //
+
+        /// <summary>
+        /// период наблюдения
+        /// </summary>
+        private double observationPeriod;
+
+        /// <summary>
+        /// количество потоков/вёдер
+        /// </summary>
+        private uint numOfBuckets;
+
+        /// <summary>
+        /// из этого массива MakeTrafficGenerator 
+        /// берёт minPacketSize
+        /// </summary>
+        List<uint> minPacketSizes;
+
+        /// <summary>
+        /// из этого массива MakeTrafficGenerator 
+        /// берёт maxPacketSize
+        /// </summary>
+        List<uint> maxPacketSizes;
+
+        /// <summary>
+        /// из этого массива MakeTrafficGenerator 
+        /// берёт minTimePeriod
+        /// </summary>
+        List<double> minTimePeriods;
+
+        /// <summary>
+        /// из этого массива MakeTrafficGenerator 
+        /// берёт maxTimePeriod
+        /// </summary>
+        List<double> maxTimePeriods;
+
         public Analyzer analyzer;
 
 
@@ -35,8 +76,66 @@ namespace TestQoS
         /// <returns></returns>
         public override TrafficGenerator MakeTrafficGenerator()
         {
-            ///TODO
-            return new SimpleTrafficGenerator( qtime as QuantizedTime, 64, 256, 200, 1500);
+            // minPacketSize
+            if(minPacketSizes == null)
+            {
+                if(minPacketSizes.Count == 0)
+                {
+                    // TODO: Вызвать ошибку
+                }
+            }
+            // достаём первый элемент списка
+            uint minPacketSize = this.minPacketSizes[0];
+            // удаляем этот элемент из списка
+            this.minPacketSizes.Remove(minPacketSize);
+
+            // maxPacketSize
+            if (maxPacketSizes == null)
+            {
+                if (maxPacketSizes.Count == 0)
+                {
+                    // TODO: Вызвать ошибку
+                }
+            }
+            // достаём первый элемент списка
+            uint maxPacketSize = this.maxPacketSizes[0];
+            // удаляем этот элемент из списка
+            this.maxPacketSizes.Remove(maxPacketSize);
+
+            // minTimePeriod
+            if (minTimePeriods == null)
+            {
+                if (minTimePeriods.Count == 0)
+                {
+                    // TODO: Вызвать ошибку
+                }
+            }
+            // достаём первый элемент списка
+            double minTimePeriod = this.minTimePeriods[0];
+            // удаляем этот элемент из списка
+            this.minTimePeriods.Remove(minTimePeriod);
+
+
+            // maxTimePeriod
+            if (maxTimePeriods == null)
+            {
+                if (maxTimePeriods.Count == 0)
+                {
+                    // TODO: Вызвать ошибку
+                }
+            }
+            // достаём первый элемент списка
+            double maxTimePeriod = this.maxTimePeriods[0];
+            // удаляем этот элемент из списка
+            this.maxTimePeriods.Remove(maxTimePeriod);
+            /// ^^^повторения кода, похорошему бы рефакторить^^^
+
+            return new SimpleTrafficGenerator(qtime as QuantizedTime, 
+                minPacketSize, maxPacketSize, minTimePeriod, maxTimePeriod);
+
+
+
+            //return new SimpleTrafficGenerator( qtime as QuantizedTime, 64, 256, 200, 1500);
             //throw new NotImplementedException();
         }
 
@@ -46,7 +145,7 @@ namespace TestQoS
         /// <returns>время квантования в 10 мс</returns>
         public override ModelTime MakeModelTime()
         {
-            return new QuantizedTime(10.0);
+            return new QuantizedTime(observationPeriod);
             //throw new NotImplementedException();
         }
 
@@ -74,6 +173,48 @@ namespace TestQoS
             return new SimpleAnalyzer();
             //throw new NotImplementedException();
         }
+
+
+
+
+        public void Initialization(double observationPeriod, uint numOfBuckets,
+            List<uint> minPacketSizes, List<uint> maxPacketSizes,
+            List<double> minTimePeriods, List<double> maxTimePeriods)
+        {
+            this.observationPeriod = observationPeriod;
+            this.numOfBuckets = numOfBuckets;
+            this.minPacketSizes = minPacketSizes;
+            this.maxPacketSizes = maxPacketSizes;
+            this.minTimePeriods = minTimePeriods;
+            this.maxTimePeriods = maxTimePeriods;
+
+            //
+            // Создание всех объектов
+            //
+
+            // время квантования
+            qtime = this.MakeModelTime();
+
+            // генераторы трафика
+            List<TrafficGenerator> generators = new List<TrafficGenerator>();
+            for (int i = 0; i < numOfBuckets; i++)
+            {
+                generators.Add(this.MakeTrafficGenerator());
+            }
+
+            // одно ведро???? ну... ок
+            TokenBuket bucket = this.MakeTokenBuket();
+            Multiplexer multiplexer = this.MakeMultiplexer();
+            Analyzer analyzer = this.MakeAnalyzer();
+
+            // эм... ... ... ведро одно... а генераторов много...
+            // для каждого нужна своя скорость пополнения токенов...
+            // свой размер ведра ... а тут всё... всё... всё общее...
+            // эээм... .... .. FatalError..fzdklfgbmgk
+        }
+
+
+
 
         /// <summary>
         /// TODO
@@ -172,6 +313,10 @@ namespace TestQoS
             /*******************************************************/
             /*******************************************************/
         }
+
+
+        
+
 
         /// <summary>
         /// обработчик пакета, что прошёл через ведро
