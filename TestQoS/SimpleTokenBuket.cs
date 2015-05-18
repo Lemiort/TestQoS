@@ -11,7 +11,7 @@ namespace TestQoS
         /// <summary>
         /// время квантовани
         /// </summary>
-        QuantizedTime qtime;
+        protected QuantizedTime qtime;
 
         /// <summary>
         /// очередь обработки пакетов
@@ -28,6 +28,15 @@ namespace TestQoS
         }
 
         public float MaxTokensCount
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// размер ведра (в битах)
+        /// </summary>
+        public long BuketSize
         {
             get;
             set;
