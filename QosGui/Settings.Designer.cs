@@ -131,7 +131,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(484, 361);
+            this.ClientSize = new System.Drawing.Size(484, 384);
             this.ControlBox = false;
             this.Controls.Add(this.observationPeriod);
             this.Controls.Add(this.label3);
@@ -157,9 +157,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button apply;
         private System.Windows.Forms.Button cancel;
-        public System.Windows.Forms.NumericUpDown bucketNum;
-        public System.Windows.Forms.NumericUpDown observationPeriod;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TabControl generatorsSettings;
+        private System.Windows.Forms.NumericUpDown bucketNum;
+        private System.Windows.Forms.NumericUpDown observationPeriod;
     }
 }

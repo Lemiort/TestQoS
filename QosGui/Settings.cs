@@ -10,6 +10,18 @@ using System.Windows.Forms;
 
 namespace QosGui
 {
+    /// <summary>
+    /// Окно настроек системы
+    /// Включает в себя настройки количества потоков/вёдер, интервала наблюдения.
+    /// Также в отдельных вкладках нахотятся настройки для каждого потока/ведра
+    /// (не доработано, пока есть только настройки генератора)
+    /// 
+    /// TODO:   Настройки мультиплексора (полоса пропускания, длинна очереди)
+    ///         настройки метода оптимизации 
+    ///         (если метода оптимизации нет, то настройка вёдер вручную)
+    ///         так же нужно надобавлять всяких проверок на дурака, исключений,
+    ///         обработчиков исключений, и прочей мишуры
+    /// </summary>
     public partial class Settings : Form
     {
         /// <summary>
@@ -156,6 +168,8 @@ namespace QosGui
 
                 // добавляем страницу
                 this.generatorsSettings.Controls.Add(tabPage);
+
+
             }
         }
 
@@ -175,9 +189,85 @@ namespace QosGui
         {
             this.IsSettingsApplyed = true;
             this.Close();
+        }        
+
+        /// <summary>
+        /// период наблюдения системы
+        /// </summary>
+        /// <returns></returns>
+        public double ObservationPeriod()
+        {
+            // в теории должно работать
+            return (double)observationPeriod.Value;
         }
 
+        /// <summary>
+        /// кол-во потоков/вёдер
+        /// </summary>
+        /// <returns></returns>
+        public uint NumOfBuckets()
+        {
+            return (uint)bucketNum.Value;
+        }
 
-        // TODO: публичные методы, чтоды вытягивать инфу из списков minPacketSizes и тд
+        /// <summary>
+        /// Минимальный размер пакета
+        /// </summary>
+        /// <returns></returns>
+        public List<uint> MinPacketSizes()
+        {
+            List<uint> result = new List<uint>();
+            foreach(var minPacketSize in minPacketSizes)
+            {
+                result.Add((uint)minPacketSize.Value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Максимальный размер пакета
+        /// </summary>
+        /// <returns></returns>
+        public List<uint> MaxPacketSizes()
+        {
+            List<uint> result = new List<uint>();
+            foreach (var maxPacketSize in maxPacketSizes)
+            {
+                result.Add((uint)maxPacketSize.Value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Минимальный промежуток времени между двумя пакетами в милисекундах
+        /// </summary>
+        /// <returns></returns>
+        public List<double> MinTimePeriods()
+        {
+            List<double> result = new List<double>();
+            foreach (var minTimePeriod in minTimePeriods)
+            {
+                result.Add((double)minTimePeriod.Value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Максимальный промежуток времени между двумя пакетами в милисекундах
+        /// </summary>
+        /// <returns></returns>
+        public List<double> MaxTimePeriods()
+        {
+            List<double> result = new List<double>();
+            foreach (var maxTimePeriod in maxTimePeriods)
+            {
+                result.Add((double)maxTimePeriod.Value);
+            }
+            return result;
+        }
+
+        // TODO: публичные методы, возращающие параметры мультиплексора, 
+        // вёдер (для случая, когда они статические), типа системы
+
     }
 }
