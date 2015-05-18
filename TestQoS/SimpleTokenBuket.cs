@@ -117,7 +117,7 @@ namespace TestQoS
 
                     //добавляем токены
                     tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));*/
-                    if(tokensCount <= MaxTokensCount)
+                    if(tokensCount+ (long)TokensPerDt <= MaxTokensCount)
                         tokensCount += (long)TokensPerDt;
 
                     //проверяем пакет
