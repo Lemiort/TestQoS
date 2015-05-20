@@ -35,8 +35,11 @@
             this.observationPeriod = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.generatorsSettings = new System.Windows.Forms.TabControl();
+            this.multiplexerSpeed = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.multiplexerSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -131,6 +134,32 @@
             this.generatorsSettings.Size = new System.Drawing.Size(460, 206);
             this.generatorsSettings.TabIndex = 2;
             // 
+            // multiplexerSpeed
+            // 
+            this.multiplexerSpeed.Location = new System.Drawing.Point(422, 12);
+            this.multiplexerSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.multiplexerSpeed.Name = "multiplexerSpeed";
+            this.multiplexerSpeed.Size = new System.Drawing.Size(44, 20);
+            this.multiplexerSpeed.TabIndex = 7;
+            this.multiplexerSpeed.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(195, 14);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(214, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Ширна канала мультиплексора, байт/мс";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -138,6 +167,8 @@
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(484, 384);
             this.ControlBox = false;
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.multiplexerSpeed);
             this.Controls.Add(this.observationPeriod);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cancel);
@@ -152,6 +183,7 @@
             this.Load += new System.EventHandler(this.Settings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.multiplexerSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -166,5 +198,7 @@
         private System.Windows.Forms.TabControl generatorsSettings;
         private System.Windows.Forms.NumericUpDown bucketNum;
         private System.Windows.Forms.NumericUpDown observationPeriod;
+        private System.Windows.Forms.NumericUpDown multiplexerSpeed;
+        private System.Windows.Forms.Label label2;
     }
 }

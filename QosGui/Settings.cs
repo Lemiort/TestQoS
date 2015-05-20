@@ -49,6 +49,10 @@ namespace QosGui
         /// </summary>
         private List<NumericUpDown> maxTimePeriods = new List<NumericUpDown>();
 
+        public ulong GetMultiplexorBytesPerDt()
+        { 
+                return Decimal.ToUInt64(multiplexerSpeed.Value * observationPeriod.Value);
+        }
 
         public Settings()
         {

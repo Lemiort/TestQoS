@@ -67,6 +67,7 @@ namespace QosGui
                                 setForm.MaxPacketSizes(),
                                 setForm.MaxTimePeriods(),
                                 setForm.MaxTimePeriods());
+                qos.SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
                 if (! backgroundWorker1.IsBusy)
                     backgroundWorker1.RunWorkerAsync();
                 else

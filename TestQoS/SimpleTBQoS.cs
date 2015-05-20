@@ -9,19 +9,13 @@ namespace TestQoS
     /// <summary>
     /// реализация фабрики QoS, создаёт вёдра и генераторы траффика
     /// </summary>
-    class SimpleTBQoS : QoS
+    public class SimpleTBQoS : QoS
     {
+
         /// <summary>
         /// общее время кватования
         /// </summary>
         public ModelTime qtime;
-
-        //
-        // куча переменных, нужных только для того,
-        // чтобы заставить работать фабрики так,
-        // как этого хочу Я 
-        // (возможно, их следует перенести в абстрактный класс)
-        //
 
         /// <summary>
         /// период наблюдения
@@ -58,6 +52,27 @@ namespace TestQoS
         List<double> maxTimePeriods;
 
         public Analyzer analyzer;
+
+        /// <summary>
+        /// генераторы траффика
+        /// </summary>
+        List<TrafficGenerator> generators;
+
+        /// <summary>
+        /// вёдра, по 1 на каждый генератор
+        /// </summary>
+        List<TokenBuket> buckets;
+
+        /// <summary>
+        /// мультиплексор
+        /// </summary>
+        Multiplexer multiplexer;
+
+
+        /// <summary>
+        /// предыдущее время наблюдения
+        /// </summary>
+        long prevTime;
 
 
         /// <summary>
@@ -179,8 +194,16 @@ namespace TestQoS
 
 
 
-
-        public void Initialization(double observationPeriod, uint numOfBuckets,
+        /// <summary>
+        /// инициализация 
+        /// </summary>
+        /// <param name="observationPeriod">время наблюдения в мс</param>
+        /// <param name="numOfBuckets">число вёдер</param>
+        /// <param name="minPacketSizes">минимальный размер пакета</param>
+        /// <param name="maxPacketSizes">максимальный размер пакета</param>
+        /// <param name="minTimePeriods">минимальное время между пакетами в мс</param>
+        /// <param name="maxTimePeriods">максимальное время между пакетами в мс</param>
+        public void Initializate(double observationPeriod, uint numOfBuckets,
             List<uint> minPacketSizes, List<uint> maxPacketSizes,
             List<double> minTimePeriods, List<double> maxTimePeriods)
         {
@@ -199,12 +222,16 @@ namespace TestQoS
             qtime = this.MakeModelTime();
 
             //анализатор - вообще самая главная шишка, для него весь курсач
-            Analyzer analyzer = this.MakeAnalyzer();
+            analyzer = this.MakeAnalyzer();
 
             // генераторы трафика
-            List<TrafficGenerator> generators = new List<TrafficGenerator>();
+            generators = new List<TrafficGenerator>();
             //и вёдра к ним
-            List<TokenBuket> buckets = new List<TokenBuket>();
+            buckets = new List<TokenBuket>();
+
+            multiplexer = this.MakeMultiplexer();
+
+
             for (int i = 0; i < numOfBuckets; i++)
             {
                 generators.Add(this.MakeTrafficGenerator());
@@ -219,8 +246,12 @@ namespace TestQoS
                     (analyzer as SimpleAnalyzer).OnBucketPassPacket;
                 (buckets.Last() as SimpleTokenBuket).onPacketNotPass +=
                     (analyzer as SimpleAnalyzer).OnBucketNotPassPacket;
+
+                //соединяем с мультиплексором
+                (buckets.Last() as SimpleTokenBuket).onPacketPass +=
+                    (multiplexer as SimpleMultiplexer).ProcessPacket;
             }
-            Multiplexer multiplexer = this.MakeMultiplexer();
+           
 
             //соединяем мультиплексор с анализатором, иначе событие не обработается и будет экспешн
             (multiplexer as SimpleMultiplexer).onPacketPass +=
@@ -228,10 +259,15 @@ namespace TestQoS
             (multiplexer as SimpleMultiplexer).onPacketNotPass +=
                (analyzer as SimpleAnalyzer).OnMultiplexerNotPassPacket;
 
+            //начальное время
+            prevTime = DateTime.Now.Ticks;
         }
 
 
-
+        public void SetMultiplexerSpeed(ulong bytesPerDt)
+        {
+            multiplexer.bytesPerDt = bytesPerDt;
+        }
 
         /// <summary>
         /// TODO
@@ -239,68 +275,26 @@ namespace TestQoS
         /// </summary>
         public override void Run()
         {
-            //throw new NotImplementedException();
-            //создаём экземпляры объектов
-
             /*******************************************************/
             /************Создание всех объектов*********************/
             /*******************************************************/
             //время квантования
-            qtime = this.MakeModelTime();
-
-            //TrafficGenerator generator = this.MakeTrafficGenerator();
-            List<TrafficGenerator> generators = new List<TrafficGenerator>();
-            for (int i = 0; i < 10; i++ )
+            if(generators == null)
             {
-                generators.Add(this.MakeTrafficGenerator());
+                throw new NullReferenceException();
             }
-
-            TokenBuket bucket = this.MakeTokenBuket();
-            Multiplexer multiplexer = this.MakeMultiplexer();
-            Analyzer analyzer = this.MakeAnalyzer();
             /*******************************************************/
             /*******************************************************/
-
-
-            /******************************************************/
-            /**********Настройка параметров************************/
-            /******************************************************/
-            //TODO: сделать эту настройку где-то внутри
-            (bucket as SimpleTokenBuket).TokensPerDt = 100.0F;
-            /*******************************************************/
-            /*******************************************************/
-
-
-            /*******************************************************/
-            /*******Соединение всех объектов между собой************/
-            /*******************************************************/
-            //заставляем обрабатывать каждый сгенерированный пакет
-            //(generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
-            foreach( TrafficGenerator generator in generators)
-            {
-                (generator as SimpleTrafficGenerator).onPacketGenerated += (bucket as SimpleTokenBuket).ProcessPacket;
-            }
-
-            //обработчик прошедшего и непрошедшего пакета в ведре
-            (bucket as SimpleTokenBuket).onPacketPass += (multiplexer as SimpleMultiplexer).ProcessPacket;
-
-            //записуем всё в анализатор
-            (bucket as SimpleTokenBuket).onPacketPass += (analyzer as SimpleAnalyzer).OnBucketPassPacket;
-            (bucket as SimpleTokenBuket).onPacketNotPass += (analyzer as SimpleAnalyzer).OnBucketNotPassPacket;
-
-            //обработка мултиплексора
-            (multiplexer as SimpleMultiplexer).onPacketPass += (analyzer as SimpleAnalyzer).OnMultiplexerPassPacket;
-            (multiplexer as SimpleMultiplexer).onPacketNotPass += (analyzer as SimpleAnalyzer).OnMultiplexerNotPassPacket;
-
-            /*******************************************************/
-            /*******************************************************/
+           
 
 
             /*******************************************************/
             /*********************Основной цикл*********************/
             /*******************************************************/
             //считаем изменение времени
-            long prevTime = DateTime.Now.Ticks;
+            /*long*/ prevTime = DateTime.Now.Ticks;
+
+            //пока не пришла команда завершаться
             while (true)
             {
                 //считаем изменение времени
@@ -316,8 +310,11 @@ namespace TestQoS
                     {
                         (generator as SimpleTrafficGenerator).MakePacket();
                     }
+                    foreach (TokenBuket bucket in buckets)
+                    {
+                        (bucket as SimpleTokenBuket).Update();
+                    }
 
-                    (bucket as SimpleTokenBuket).Update();
                     (multiplexer as SimpleMultiplexer).Update();
 
                     (analyzer as SimpleAnalyzer).Update();
@@ -331,6 +328,63 @@ namespace TestQoS
             /*******************************************************/
         }
 
+
+        /// <summary>
+        /// Основной цикл
+        /// </summary>
+        public void MakeTick()
+        {
+            /*******************************************************/
+            /************Создание всех объектов*********************/
+            /*******************************************************/
+            //время квантования
+            if (generators == null)
+            {
+                throw new NullReferenceException();
+            }
+            /*******************************************************/
+            /*******************************************************/
+
+
+
+            /*******************************************************/
+            /*********************Основной цикл*********************/
+            /*******************************************************/
+            //считаем изменение времени
+            /*long prevTime = DateTime.Now.Ticks;*/
+
+            //бывший основной цикл
+            {
+                //считаем изменение времени
+                long dt = DateTime.Now.Ticks - prevTime;
+
+                //время в милисекундах
+                TimeSpan time = new TimeSpan(dt);
+                //собсно сам цикл
+                if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
+                {
+                    //generator.MakePacket();
+                    foreach (TrafficGenerator generator in generators)
+                    {
+                        (generator as SimpleTrafficGenerator).MakePacket();
+                    }
+                    foreach (TokenBuket bucket in buckets)
+                    {
+                        (bucket as SimpleTokenBuket).Update();
+                    }
+
+                    (multiplexer as SimpleMultiplexer).Update();
+
+                    (analyzer as SimpleAnalyzer).Update();
+                    (analyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+
+                    prevTime = DateTime.Now.Ticks;
+
+                }
+            }
+            /*******************************************************/
+            /*******************************************************/
+        }
 
         
 
@@ -352,5 +406,6 @@ namespace TestQoS
         {
             Console.WriteLine("Lost packet {0}", packet.Size);
         }
+
     }
 }
