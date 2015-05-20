@@ -27,6 +27,10 @@ namespace TestQoS
             set;
         }
 
+        /// <summary>
+        /// максимальное число токенов
+        /// "ёмкость" ведра
+        /// </summary>
         public float MaxTokensCount
         {
             get;
@@ -97,7 +101,8 @@ namespace TestQoS
             qtime = _time;
             prevPacketTime = DateTime.Now.Ticks;
             tokensCount = 0;
-            MaxTokensCount = 300;
+            MaxTokensCount = 400;
+            TokensPerDt = 20;
             packets = new Queue<Packet>();
         }
 

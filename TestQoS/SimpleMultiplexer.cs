@@ -57,7 +57,7 @@ namespace TestQoS
         {
             qtime = time;
             packets = new Queue<Packet>();
-            bytesPerDt = 200;
+            bytesPerDt = 50;
 
             prevUpdateTime = DateTime.Now.Ticks;
         }

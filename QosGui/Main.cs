@@ -23,11 +23,18 @@ namespace QosGui
         /// </summary>
         TestQoS.SimpleTBQoS qos;
 
+        Random rand;
+
         public Main()
         {
             InitializeComponent();
             progressBar1.Visible = false;
             stopButton.Visible = false;
+
+            backgroundWorker1.WorkerReportsProgress = true;
+            backgroundWorker1.WorkerSupportsCancellation = true;
+
+            rand = new Random();
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -50,6 +57,7 @@ namespace QosGui
                 // где-то тут применяются настройки
                 progressBar1.Visible = true;
                 stopButton.Visible = true;
+                label1.Visible = true;
 
                 //инициализируем
                 qos = new TestQoS.SimpleTBQoS();
@@ -59,16 +67,25 @@ namespace QosGui
                                 setForm.MaxPacketSizes(),
                                 setForm.MaxTimePeriods(),
                                 setForm.MaxTimePeriods());
-
-                backgroundWorker1.RunWorkerAsync();
+                if (! backgroundWorker1.IsBusy)
+                    backgroundWorker1.RunWorkerAsync();
+                else
+                {
+                    MessageBox.Show("Background worker is busy!");
+                }
             }
 
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            BackgroundWorker worker = sender as BackgroundWorker;
             //выполняем один такт
-            qos.MakeTick();
+            while(worker.CancellationPending == false)
+            {
+                qos.MakeTick();
+               // worker.ReportProgress(rand.Next(1, 90));
+            }
         }
 
         private void stopButton_Click(object sender, EventArgs e)
@@ -80,6 +97,23 @@ namespace QosGui
 
             progressBar1.Visible = false;
         }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            label1.Text = "Среднее число отброшенных пакетов в квант=  " +
+             (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
+            label1.Text += "\nСреднее число пропущенных пакетов в квант=  " +
+              (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Среднее число отброшенных пакетов в квант=  " +
+              (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
+            label1.Text += "\nСреднее число пропущенных пакетов в квант=  " +
+              (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+        }
+
 
     }
 }
