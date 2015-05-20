@@ -9,7 +9,7 @@ namespace TestQoS
     /// <summary>
     /// 
     /// </summary>
-    abstract class ModelTime
+    public abstract class ModelTime
     {
 
     }

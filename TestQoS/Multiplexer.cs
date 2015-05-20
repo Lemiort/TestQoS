@@ -9,7 +9,7 @@ namespace TestQoS
     /// <summary>
     /// мультиплексор, по сути - финальное ведро
     /// </summary>
-    abstract class Multiplexer
+    public abstract class Multiplexer
     {
         /// <summary>
         /// ширина канала

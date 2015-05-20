@@ -10,7 +10,7 @@ namespace TestQoS
     /// Генератор трафика. Генерирует пакеты с размером, принадлежащим
     /// заданному промежутку [minPacketSize; maxPacketSize]. Период генерации принадлежит промежутку [minPacketSize; maxPacketSize]
     /// </summary>
-    class SimpleTrafficGenerator : TrafficGenerator
+    public class SimpleTrafficGenerator : TrafficGenerator
     {
         Random rand;
         /// <summary>

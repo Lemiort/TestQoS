@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class QuantizedTime : ModelTime
+    public class QuantizedTime : ModelTime
     {
         // TODO: возможно эту переменную стоит переименовать (или/и сдалать только для чтения)
         /// <summary>

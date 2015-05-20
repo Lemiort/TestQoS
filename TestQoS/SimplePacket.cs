@@ -9,7 +9,7 @@ namespace TestQoS
     /// <summary>
     /// TODO: Надо как то это по-нормальному назвать
     /// </summary>
-    class SimplePacket : Packet
+    public class SimplePacket : Packet
     {
         public SimplePacket(uint size)
         {

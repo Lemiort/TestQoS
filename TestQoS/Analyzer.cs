@@ -9,7 +9,7 @@ namespace TestQoS
     /// <summary>
     /// анализатор, собирающий инфу обо всех утечках пакетов
     /// </summary>
-    abstract class Analyzer
+    public abstract class Analyzer
     {
         public abstract void OnBucketPassPacket(Packet packet);
         public abstract void OnBucketNotPassPacket(Packet packet);

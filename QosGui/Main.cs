@@ -7,12 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TestQoS;
 
 namespace QosGui
 {
     public partial class Main : Form
     {
+        /// <summary>
+        /// диалог настроек
+        /// </summary>
         Settings setForm;
+
+        /// <summary>
+        /// сама модель
+        /// </summary>
+        TestQoS.SimpleTBQoS qos;
+
         public Main()
         {
             InitializeComponent();
@@ -34,6 +44,14 @@ namespace QosGui
             if(setForm.IsSettingsApplyed)
             {
                 // где-то тут применяются настройки
+                qos = new TestQoS.SimpleTBQoS();
+                qos.Initializate(setForm.ObservationPeriod(),
+                                setForm.NumOfBuckets(),
+                                setForm.MinPacketSizes(),
+                                setForm.MaxPacketSizes(),
+                                setForm.MaxTimePeriods(),
+                                setForm.MaxTimePeriods());
+                qos.Run();
             }
 
         }

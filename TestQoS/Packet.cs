@@ -9,7 +9,7 @@ namespace TestQoS
     /// <summary>
     /// облочка для пакета
     /// </summary>
-    abstract class Packet
+    public abstract class Packet
     {
         /// <summary>
         /// Размер пакета в битах

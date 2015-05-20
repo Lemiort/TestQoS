@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class SimpleAnalyzer: Analyzer
+    public class SimpleAnalyzer: Analyzer
     {
         /// <summary>
         /// информацию о скольки последних квантах хранить

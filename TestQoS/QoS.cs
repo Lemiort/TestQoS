@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    abstract class QoS
+    public abstract class QoS
     {
         /// <summary>
         /// Период наблюдения. Квант времени, 

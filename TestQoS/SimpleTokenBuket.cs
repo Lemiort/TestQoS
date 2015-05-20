@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class SimpleTokenBuket : TokenBuket
+    public class SimpleTokenBuket : TokenBuket
     {
         /// <summary>
         /// время квантовани

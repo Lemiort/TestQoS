@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class SimpleMultiplexer: Multiplexer
+    public class SimpleMultiplexer: Multiplexer
     {
 
         /// <summary>
