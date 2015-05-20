@@ -12,6 +12,7 @@ namespace QosGui
 {
     public partial class Main : Form
     {
+        Settings setForm;
         public Main()
         {
             InitializeComponent();
@@ -25,7 +26,8 @@ namespace QosGui
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // открываем меню настроек
-            Settings setForm = new Settings();
+            if(setForm == null)
+                setForm = new Settings();
 
             setForm.ShowDialog();
             
