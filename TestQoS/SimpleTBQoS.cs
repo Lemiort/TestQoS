@@ -95,6 +95,7 @@ namespace TestQoS
                 if (maxPacketSizes.Count == 0)
                 {
                     // TODO: Вызвать ошибку
+                    throw new NotImplementedException();
                 }
             }
             // достаём первый элемент списка
@@ -108,6 +109,7 @@ namespace TestQoS
                 if (minTimePeriods.Count == 0)
                 {
                     // TODO: Вызвать ошибку
+                    throw new NotImplementedException();
                 }
             }
             // достаём первый элемент списка
@@ -122,6 +124,7 @@ namespace TestQoS
                 if (maxTimePeriods.Count == 0)
                 {
                     // TODO: Вызвать ошибку
+                    throw new NotImplementedException();
                 }
             }
             // достаём первый элемент списка
@@ -195,22 +198,36 @@ namespace TestQoS
             // время квантования
             qtime = this.MakeModelTime();
 
+            //анализатор - вообще самая главная шишка, для него весь курсач
+            Analyzer analyzer = this.MakeAnalyzer();
+
             // генераторы трафика
             List<TrafficGenerator> generators = new List<TrafficGenerator>();
+            //и вёдра к ним
+            List<TokenBuket> buckets = new List<TokenBuket>();
             for (int i = 0; i < numOfBuckets; i++)
             {
                 generators.Add(this.MakeTrafficGenerator());
+                buckets.Add(this.MakeTokenBuket());
+
+                //соединяем ведро с генератором
+                (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
+                    (buckets.Last() as SimpleTokenBuket).ProcessPacket;
+
+                //соединяем ведро с анализатором, иначе бешехельме, всё пропало, лови эксепшн
+                (buckets.Last() as SimpleTokenBuket).onPacketPass +=
+                    (analyzer as SimpleAnalyzer).OnBucketPassPacket;
+                (buckets.Last() as SimpleTokenBuket).onPacketNotPass +=
+                    (analyzer as SimpleAnalyzer).OnBucketNotPassPacket;
             }
-
-            // одно ведро???? ну... ок
-            TokenBuket bucket = this.MakeTokenBuket();
             Multiplexer multiplexer = this.MakeMultiplexer();
-            Analyzer analyzer = this.MakeAnalyzer();
 
-            // эм... ... ... ведро одно... а генераторов много...
-            // для каждого нужна своя скорость пополнения токенов...
-            // свой размер ведра ... а тут всё... всё... всё общее...
-            // эээм... .... .. FatalError..fzdklfgbmgk
+            //соединяем мультиплексор с анализатором, иначе событие не обработается и будет экспешн
+            (multiplexer as SimpleMultiplexer).onPacketPass +=
+                (analyzer as SimpleAnalyzer).OnMultiplexerPassPacket;
+            (multiplexer as SimpleMultiplexer).onPacketNotPass +=
+               (analyzer as SimpleAnalyzer).OnMultiplexerNotPassPacket;
+
         }
 
 

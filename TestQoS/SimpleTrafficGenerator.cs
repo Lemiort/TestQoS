@@ -64,6 +64,26 @@ namespace TestQoS
             period = GeneratePeriod();
         }
 
+        /// <summary>
+        /// обновляет настройки генератора
+        /// </summary>
+        /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
+        /// <param name="minPacketSize">Минимальный размер пакета</param>
+        /// <param name="maxPacketSize">Максимальный размер пакета</param>
+        /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами в милисекундах</param>
+        /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами в милисекундах</param>
+        public void UpdateSettings(QuantizedTime time, uint minPacketSize, uint maxPacketSize, double minTimePeriod, double maxTimePeriod)
+        {
+            // TODO: сделать "проверки на дурака" и тд
+            this.time = time;
+            this.minPacketSize = minPacketSize;
+            this.maxPacketSize = maxPacketSize;
+            this.minTimePeriod = this.time.FromAnalogToDigital(minTimePeriod);
+            this.maxTimePeriod = this.time.FromAnalogToDigital(maxTimePeriod);
+
+            period = GeneratePeriod();
+        }
+
         public override Packet MakePacket()
         {
             // проверяем кончилось ли время текущего периода
