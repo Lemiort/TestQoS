@@ -28,5 +28,6 @@ namespace TestQoS
         /// запуск алгоритма
         /// </summary>
         public abstract void Run();
+
     }
 }

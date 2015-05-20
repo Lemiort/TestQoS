@@ -104,6 +104,11 @@
             this.observationPeriod.Name = "observationPeriod";
             this.observationPeriod.Size = new System.Drawing.Size(44, 20);
             this.observationPeriod.TabIndex = 6;
+            this.observationPeriod.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
             // 
             // label3
             // 

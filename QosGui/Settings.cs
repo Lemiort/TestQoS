@@ -123,7 +123,9 @@ namespace QosGui
                 minPacketSize.Maximum = new decimal(sizeMax);
                 minPacketSize.Increment = new decimal(sizeStep);
                 minPacketSize.Size = new System.Drawing.Size(70, 20);
+                minPacketSize.Value = 8;
                 minPacketSizes.Add(minPacketSize);
+                
 
                 // Максимальный размер пакета
                 NumericUpDown maxPacketSize = new NumericUpDown();
@@ -131,7 +133,9 @@ namespace QosGui
                 maxPacketSize.Maximum = new decimal(sizeMax);
                 maxPacketSize.Increment = new decimal(sizeStep);
                 maxPacketSize.Size = new System.Drawing.Size(70, 20);
+                maxPacketSize.Value = 128;
                 maxPacketSizes.Add(maxPacketSize);
+                
 
                 // Минимальный промежуток времени между двумя пакетами в милисекундах
                 NumericUpDown minTimePeriod = new NumericUpDown();
@@ -139,6 +143,7 @@ namespace QosGui
                 minTimePeriod.Maximum = new decimal(periodMax);
                 minTimePeriod.Increment = new decimal(periodStep);
                 minTimePeriod.Size = new System.Drawing.Size(70, 20);
+                minTimePeriod.Value = 20;
                 minTimePeriods.Add(minTimePeriod);
 
                 // Минимальный промежуток времени между двумя пакетами в милисекундах
@@ -147,6 +152,7 @@ namespace QosGui
                 maxTimePeriod.Maximum = new decimal(periodMax);
                 maxTimePeriod.Increment = new decimal(periodStep);
                 maxTimePeriod.Size = new System.Drawing.Size(70, 20);
+                maxTimePeriod.Value = 100;
                 maxTimePeriods.Add(maxTimePeriod);
 
 

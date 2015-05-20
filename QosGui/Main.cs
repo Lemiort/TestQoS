@@ -26,6 +26,8 @@ namespace QosGui
         public Main()
         {
             InitializeComponent();
+            progressBar1.Visible = false;
+            stopButton.Visible = false;
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -43,7 +45,13 @@ namespace QosGui
             
             if(setForm.IsSettingsApplyed)
             {
+                if(backgroundWorker1.IsBusy)
+                    backgroundWorker1.CancelAsync();
                 // где-то тут применяются настройки
+                progressBar1.Visible = true;
+                stopButton.Visible = true;
+
+                //инициализируем
                 qos = new TestQoS.SimpleTBQoS();
                 qos.Initializate(setForm.ObservationPeriod(),
                                 setForm.NumOfBuckets(),
@@ -51,9 +59,27 @@ namespace QosGui
                                 setForm.MaxPacketSizes(),
                                 setForm.MaxTimePeriods(),
                                 setForm.MaxTimePeriods());
-                qos.Run();
+
+                backgroundWorker1.RunWorkerAsync();
             }
 
         }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //выполняем один такт
+            qos.MakeTick();
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+
+            stopButton.Visible = false;
+            if (backgroundWorker1.IsBusy)
+                backgroundWorker1.CancelAsync();
+
+            progressBar1.Visible = false;
+        }
+
     }
 }
