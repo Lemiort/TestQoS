@@ -161,6 +161,32 @@ namespace QosGui
               (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
               (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+
+            if (backgroundWorker1.IsBusy)
+                backgroundWorker1.CancelAsync();
+
+            int i=0;
+            foreach(TestQoS.HistoryQuant quant in (qos.analyzer as SimpleAnalyzer).quantsNotPassedBucket)
+            {
+                bucketMiss.AddPoint((uint)quant.summarySize, (double)i++);
+            }
+            i = 0;
+            foreach (TestQoS.HistoryQuant quant in (qos.analyzer as SimpleAnalyzer).quantsPassedBucket)
+            {
+                bucketGoal.AddPoint((uint)quant.summarySize, (double)i++);
+            }
+            i = 0;
+            foreach (TestQoS.HistoryQuant quant in (qos.analyzer as SimpleAnalyzer).quantsNotPassedMultiplexer)
+            {
+                multiplexerMiss.AddPoint((uint)quant.summarySize, (double)i++);
+            }
+            i = 0;
+            foreach (TestQoS.HistoryQuant quant in (qos.analyzer as SimpleAnalyzer).quantsPassedMultiplexer)
+            {
+                multiplexerGoal.AddPoint((uint)quant.summarySize, (double)i++);
+            }
+            if (!backgroundWorker1.IsBusy)
+                backgroundWorker1.RunWorkerAsync();
         }
 
 

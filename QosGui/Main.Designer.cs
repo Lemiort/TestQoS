@@ -39,12 +39,9 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.stopButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-//<<<<<<< HEAD
             this.button1 = new System.Windows.Forms.Button();
             this.graphsTabel = new System.Windows.Forms.TableLayoutPanel();
-//=======
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-//>>>>>>> origin/woring_test
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -121,10 +118,12 @@
             this.label1.Text = "label1";
             this.label1.Visible = false;
             // 
-            // timer1
+            // button1
             // 
-            this.timer1.Interval = 500;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.button1.Location = new System.Drawing.Point(689, 27);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 6;
             // 
             // graphsTabel
             // 
@@ -142,16 +141,18 @@
             this.graphsTabel.Size = new System.Drawing.Size(760, 467);
             this.graphsTabel.TabIndex = 5;
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 500;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
-//<<<<<<< HEAD
             this.Controls.Add(this.graphsTabel);
             this.Controls.Add(this.button1);
-//=======
-//>>>>>>> origin/woring_test
             this.Controls.Add(this.label1);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.progressBar1);
