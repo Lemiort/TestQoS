@@ -37,15 +37,22 @@
             // 
             // plotter
             // 
-            this.plotter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.plotter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea1.AxisX.IsLabelAutoFit = false;
+            chartArea1.AxisX.IsMarginVisible = false;
+            chartArea1.AxisX.MaximumAutoSize = 100F;
+            chartArea1.BackColor = System.Drawing.Color.Transparent;
+            chartArea1.BackImageAlignment = System.Windows.Forms.DataVisualization.Charting.ChartImageAlignmentStyle.Left;
             chartArea1.Name = "ChartArea1";
             this.plotter.ChartAreas.Add(chartArea1);
             this.plotter.Location = new System.Drawing.Point(0, 3);
             this.plotter.Name = "plotter";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series1.Color = System.Drawing.Color.Green;
+            series1.LabelBorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
             series1.Name = "Traffic";
             series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.UInt32;
             series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
