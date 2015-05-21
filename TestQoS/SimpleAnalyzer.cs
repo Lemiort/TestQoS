@@ -6,6 +6,44 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    public class HistoryQuant
+    {
+        public Queue<Packet> packets;
+        public ulong summarySize
+        {
+            get;
+            private set;
+        }
+
+        public HistoryQuant()
+        {
+            summarySize = 0;
+            packets = new Queue<Packet>();
+        }
+
+        public void Enqueue(Packet packet)
+        {
+            summarySize += packet.Size;
+            packets.Enqueue(packet);
+        }
+
+        public Packet Dequeue()
+        {
+            summarySize -= packets.Peek().Size;
+            return packets.Dequeue();
+        }
+
+        public Packet Peek()
+        {
+            return packets.Peek();
+        }
+
+        public int Count()
+        {
+            return packets.Count();
+        }
+    }
+
     public class SimpleAnalyzer: Analyzer
     {
         /// <summary>
@@ -27,48 +65,12 @@ namespace TestQoS
         /// </summary>
         private ulong summaryNotPassedPacketsSize;
 
-        class HistoryQuant
-        {
-            public Queue<Packet> packets;
-            public ulong summarySize
-            {
-                get;
-                private set;
-            }
+        
 
-            public HistoryQuant()
-            {
-                summarySize = 0;
-                packets = new Queue<Packet>();
-            }
-
-            public void Enqueue(Packet packet)
-            {
-                summarySize += packet.Size;
-                packets.Enqueue(packet);
-            }
-
-            public Packet Dequeue()
-            {
-                summarySize -= packets.Peek().Size;
-                return packets.Dequeue();
-            }
-
-            public Packet Peek()
-            {
-                return packets.Peek();
-            }
-
-            public int Count()
-            {
-                return packets.Count();
-            }
-        }
-
-        private Queue<HistoryQuant> quantsPassedBucket;
-        private Queue<HistoryQuant> quantsNotPassedBucket;
-        private Queue<HistoryQuant> quantsPassedMultiplexer;
-        private Queue<HistoryQuant> quantsNotPassedMultiplexer;
+        public Queue<HistoryQuant> quantsPassedBucket;
+        public Queue<HistoryQuant> quantsNotPassedBucket;
+        public Queue<HistoryQuant> quantsPassedMultiplexer;
+        public Queue<HistoryQuant> quantsNotPassedMultiplexer;
 
         private HistoryQuant packetsPassedBucket;
         private HistoryQuant packetsNotPassedBucket;
