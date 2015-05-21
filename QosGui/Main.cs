@@ -94,7 +94,6 @@ namespace QosGui
                 progressBar1.Visible = true;
                 stopButton.Visible = true;
                 label1.Visible = true;
-                timer1.Stop();
 
                 //инициализируем
                 qos = new TestQoS.SimpleTBQoS();
@@ -105,11 +104,8 @@ namespace QosGui
                                 setForm.MaxTimePeriods(),
                                 setForm.MaxTimePeriods());
                 qos.SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
-                if (!backgroundWorker1.IsBusy)
-                {
+                if (! backgroundWorker1.IsBusy)
                     backgroundWorker1.RunWorkerAsync();
-                    timer1.Start();
-                }
                 else
                 {
                     MessageBox.Show("Background worker is busy!");
@@ -135,31 +131,23 @@ namespace QosGui
             stopButton.Visible = false;
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
-            timer1.Stop();
+
             progressBar1.Visible = false;
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            label1.Text = "Среднее число отброшенных байтов в квант=  " +
+            label1.Text = "Среднее число отброшенных пакетов в квант=  " +
              (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
-            label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
+            label1.Text += "\nСреднее число пропущенных пакетов в квант=  " +
               (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            label1.Text = "Среднее число отброшенных байтов в квант=  " +
+            label1.Text = "Среднее число отброшенных пакетов в квант=  " +
               (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
-            label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              (qos.analyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
-            label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
+            label1.Text += "\nСреднее число пропущенных пакетов в квант=  " +
               (qos.analyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
