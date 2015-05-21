@@ -39,12 +39,12 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.stopButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-<<<<<<< HEAD
+//<<<<<<< HEAD
             this.button1 = new System.Windows.Forms.Button();
             this.graphsTabel = new System.Windows.Forms.TableLayoutPanel();
-=======
+//=======
             this.timer1 = new System.Windows.Forms.Timer(this.components);
->>>>>>> origin/woring_test
+//>>>>>>> origin/woring_test
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -147,11 +147,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
-<<<<<<< HEAD
+//<<<<<<< HEAD
             this.Controls.Add(this.graphsTabel);
             this.Controls.Add(this.button1);
-=======
->>>>>>> origin/woring_test
+//=======
+//>>>>>>> origin/woring_test
             this.Controls.Add(this.label1);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.progressBar1);
@@ -179,12 +179,12 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Label label1;
-<<<<<<< HEAD
+//<<<<<<< HEAD
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TableLayoutPanel graphsTabel;
-=======
+//=======
         private System.Windows.Forms.Timer timer1;
->>>>>>> origin/woring_test
+//>>>>>>> origin/woring_test
     }
 }
 
