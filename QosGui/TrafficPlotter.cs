@@ -51,6 +51,14 @@ namespace QosGui
         public void AddPoint(uint traffic, double time)
         {
             plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);            
-        }        
+        }     
+   
+        /// <summary>
+        /// стереть график
+        /// </summary>
+        public void Clear()
+        {
+            plotter.Series.FindByName("Traffic").Points.Clear();
+        }
     }
 }
