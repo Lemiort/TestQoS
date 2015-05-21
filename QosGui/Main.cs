@@ -165,6 +165,11 @@ namespace QosGui
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
 
+            bucketMiss.Clear();
+            bucketGoal.Clear();
+            multiplexerGoal.Clear();
+            multiplexerMiss.Clear();
+
             int i=0;
             foreach(TestQoS.HistoryQuant quant in (qos.analyzer as SimpleAnalyzer).quantsNotPassedBucket)
             {
