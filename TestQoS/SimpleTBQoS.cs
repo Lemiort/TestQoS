@@ -96,7 +96,8 @@ namespace TestQoS
             {
                 if(minPacketSizes.Count == 0)
                 {
-                    // TODO: Вызвать ошибку
+                    // TODO: Вызвать красивую ошибку
+                    throw new NotImplementedException();
                 }
             }
             // достаём первый элемент списка
@@ -109,7 +110,7 @@ namespace TestQoS
             {
                 if (maxPacketSizes.Count == 0)
                 {
-                    // TODO: Вызвать ошибку
+                    // TODO: Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
@@ -123,7 +124,7 @@ namespace TestQoS
             {
                 if (minTimePeriods.Count == 0)
                 {
-                    // TODO: Вызвать ошибку
+                    // TODO: Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
@@ -138,7 +139,7 @@ namespace TestQoS
             {
                 if (maxTimePeriods.Count == 0)
                 {
-                    // TODO: Вызвать ошибку
+                    // TODO: Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
