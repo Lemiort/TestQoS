@@ -23,6 +23,32 @@ namespace QosGui
         /// </summary>
         TestQoS.SimpleTBQoS qos;
 
+        //
+        // графики
+        //
+
+        /// <summary>
+        /// Потери на вёдрах
+        /// </summary>
+        TrafficPlotter bucketMiss;
+
+        /// <summary>
+        /// Прошедний через ведро
+        /// </summary>
+        TrafficPlotter bucketGoal;
+
+        /// <summary>
+        /// потери на мультиплексоре
+        /// </summary>
+        TrafficPlotter multiplexerMiss;
+
+        /// <summary>
+        /// прошедший через мультиплексор
+        /// </summary>
+        TrafficPlotter multiplexerGoal;
+
+
+
         Random rand;
 
         public Main()
@@ -39,7 +65,17 @@ namespace QosGui
 
         private void Main_Load(object sender, EventArgs e)
         {
-            //TODO: настройки по умолчанию
+            //TODO: назвать это всё вменяемо
+            bucketMiss = new TrafficPlotter("Потери на вёдрах");
+            bucketGoal = new TrafficPlotter("Прошедши через вёдра трафик");
+            multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
+            multiplexerGoal = new TrafficPlotter("Прошедши через мультиплексор трафик");
+
+            // добавляем в панели
+            graphsTabel.Controls.Add(bucketMiss);           
+            graphsTabel.Controls.Add(multiplexerMiss);
+            graphsTabel.Controls.Add(bucketGoal);
+            graphsTabel.Controls.Add(multiplexerGoal);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

@@ -29,11 +29,17 @@ namespace QosGui
             this.Dock = DockStyle.Fill;
 
             // Подпись графика
-            plotter.Titles.FindByName("GraphTitle").Text = "Какая-то ебень";
+            plotter.Titles.FindByName("GraphTitle").Text = "Какой-то бред";
 
             // подпись осей
             plotter.ChartAreas.FindByName("ChartArea1").AxisX.Title = "Время (сек)";
             plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = "Размер трафика (бит)";
+        }
+
+        public TrafficPlotter(String tittle) : this()
+        {
+            // Подпись графика
+            plotter.Titles.FindByName("GraphTitle").Text = tittle;
         }
 
         /// <summary>
@@ -44,7 +50,7 @@ namespace QosGui
         /// <param name="time">время в секундах (или миллисекундах хз как удобнее)</param>
         public void AddPoint(uint traffic, double time)
         {
-            plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);
-        }
+            plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);            
+        }        
     }
 }
