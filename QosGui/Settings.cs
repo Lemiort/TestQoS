@@ -57,10 +57,6 @@ namespace QosGui
         public Settings()
         {
             InitializeComponent();
-        }
-
-        private void Settings_Load(object sender, EventArgs e)
-        {
             // инициализация окна настроек
             InitGeneratorSettings();
             this.IsSettingsApplyed = false;

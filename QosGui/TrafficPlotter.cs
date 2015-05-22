@@ -36,6 +36,10 @@ namespace QosGui
             plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = "Размер трафика (бит)";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tittle">заголовок графика</param>
         public TrafficPlotter(String tittle) : this()
         {
             // Подпись графика
