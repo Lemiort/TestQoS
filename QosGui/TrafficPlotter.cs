@@ -64,5 +64,13 @@ namespace QosGui
         {
             plotter.Series.FindByName("Traffic").Points.Clear();
         }
+
+        /// <summary>
+        /// удаление первой точки графика
+        /// </summary>
+        public void RemoveFirst()
+        {
+            plotter.Series.FindByName("Traffic").Points.RemoveAt(0);
+        }
     }
 }
