@@ -12,9 +12,14 @@ namespace TestQoS
     public abstract class Multiplexer
     {
         /// <summary>
-        /// ширина канала
+        /// ширина канала в байтах на квант
         /// </summary>
-        public UInt64 bytesPerDt { get; set; }
+        public UInt64 BytesPerDt { get; set; }
+
+        /// <summary>
+        /// длина очереди в байтах
+        /// </summary>
+        public UInt64 QueueSize { get; set; }
 
     }
 }

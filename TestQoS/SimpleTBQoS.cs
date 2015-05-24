@@ -267,7 +267,7 @@ namespace TestQoS
 
         public void SetMultiplexerSpeed(ulong bytesPerDt)
         {
-            multiplexer.bytesPerDt = bytesPerDt;
+            multiplexer.BytesPerDt = bytesPerDt;
         }
 
         /// <summary>

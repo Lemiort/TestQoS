@@ -57,7 +57,7 @@ namespace TestQoS
         {
             qtime = time;
             packets = new Queue<Packet>();
-            bytesPerDt = 50;
+            BytesPerDt = 50;
 
             prevUpdateTime = DateTime.Now.Ticks;
         }
@@ -85,7 +85,7 @@ namespace TestQoS
                     if (packet != null)
                     {
                         passedBytes += packet.Size;
-                        if (passedBytes <= bytesPerDt)
+                        if (passedBytes <= BytesPerDt)
                         {
                             onPacketPass(packet);
                         }
