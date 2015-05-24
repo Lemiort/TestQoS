@@ -204,7 +204,7 @@ namespace TestQoS
         /// среднее число прошедших пакетов за квант
         /// </summary>
         /// <returns></returns>
-        public float GetMultiplexorAveragePassedPacketsSize()
+        public float GetAveragePassedPacketsSize()
         {
             return (float)summaryPassedPacketsSize / (float)quantsPassed.Count();
         }
@@ -213,7 +213,7 @@ namespace TestQoS
         /// среднее число отброшенных пакетов за квант
         /// </summary>
         /// <returns></returns>
-        public float GetMultiplexorAverageNotPassedPacketsSize()
+        public float GetAverageNotPassedPacketsSize()
         {
             return (float)summaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
         }

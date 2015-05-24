@@ -64,33 +64,33 @@ namespace TestQoS
         /// <summary>
         /// генераторы траффика
         /// </summary>
-        List<TrafficGenerator> generators;
+        protected List<TrafficGenerator> generators;
 
         /// <summary>
         /// анализаторы траффика
         /// </summary>
-        List<Analyzer> generatorAnalyzers;
+        protected List<Analyzer> generatorAnalyzers;
 
         /// <summary>
         /// вёдра, по 1 на каждый генератор
         /// </summary>
-        List<TokenBuket> buckets;
+        protected List<TokenBuket> buckets;
 
         /// <summary>
         /// анализаторы по 1 шт. на ведро
         /// </summary>
-        List<Analyzer> bucketAnalyzers;
+        protected List<Analyzer> bucketAnalyzers;
 
         /// <summary>
         /// мультиплексор
         /// </summary>
-        Multiplexer multiplexer;
+        protected Multiplexer multiplexer;
 
 
         /// <summary>
         /// предыдущее время наблюдения
         /// </summary>
-        long prevTime;
+        protected long prevTime;
 
 
         /// <summary>

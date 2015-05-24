@@ -142,25 +142,25 @@ namespace QosGui
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-             (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAverageNotPassedPacketsSize().ToString();
+             (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAveragePassedPacketsSize().ToString();
+              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAverageNotPassedPacketsSize().ToString();
+              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAveragePassedPacketsSize().ToString();
+              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAverageNotPassedPacketsSize().ToString();
+              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetMultiplexorAveragePassedPacketsSize().ToString();
+              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
 
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
