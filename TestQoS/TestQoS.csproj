@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzer.cs" />
+    <Compile Include="AverageStrategyQos.cs" />
     <Compile Include="ModelTime.cs" />
     <Compile Include="Multiplexer.cs" />
     <Compile Include="Packet.cs" />
