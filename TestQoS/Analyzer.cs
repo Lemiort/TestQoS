@@ -11,9 +11,9 @@ namespace TestQoS
     /// </summary>
     public abstract class Analyzer
     {
-        public abstract void OnBucketPassPacket(Packet packet);
-        public abstract void OnBucketNotPassPacket(Packet packet);
-        public abstract void OnMultiplexerPassPacket(Packet packet);
-        public abstract void OnMultiplexerNotPassPacket(Packet packet);
+        //public abstract void OnBucketPassPacket(Packet packet);
+        //public abstract void OnBucketNotPassPacket(Packet packet);
+        public abstract void OnPassPacket(Packet packet);
+        public abstract void OnNotPassPacket(Packet packet);
     }
 }

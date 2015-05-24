@@ -51,7 +51,15 @@ namespace TestQoS
         /// </summary>
         List<double> maxTimePeriods;
 
-        public Analyzer analyzer;
+        /// <summary>
+        /// анализатор мультиплексора
+        /// </summary>
+        public Analyzer multiplexorAnalyzer;
+        
+        /// <summary>
+        /// анализатор всех ведёр
+        /// </summary>
+        public Analyzer bucketsAnalyzer;
 
         /// <summary>
         /// генераторы траффика
@@ -59,9 +67,19 @@ namespace TestQoS
         List<TrafficGenerator> generators;
 
         /// <summary>
+        /// анализаторы траффика
+        /// </summary>
+        List<Analyzer> generatorAnalyzers;
+
+        /// <summary>
         /// вёдра, по 1 на каждый генератор
         /// </summary>
         List<TokenBuket> buckets;
+
+        /// <summary>
+        /// анализаторы по 1 шт. на ведро
+        /// </summary>
+        List<Analyzer> bucketAnalyzers;
 
         /// <summary>
         /// мультиплексор
@@ -223,12 +241,17 @@ namespace TestQoS
             qtime = this.MakeModelTime();
 
             //анализатор - вообще самая главная шишка, для него весь курсач
-            analyzer = this.MakeAnalyzer();
+            multiplexorAnalyzer = this.MakeAnalyzer();
+            bucketsAnalyzer = this.MakeAnalyzer();
 
             // генераторы трафика
             generators = new List<TrafficGenerator>();
+            //анализаторы генераторов
+            generatorAnalyzers = new List<Analyzer>();
             //и вёдра к ним
             buckets = new List<TokenBuket>();
+            //и анализаторы к вёдрам
+            bucketAnalyzers = new List<Analyzer>();
 
             multiplexer = this.MakeMultiplexer();
 
@@ -236,17 +259,22 @@ namespace TestQoS
             for (int i = 0; i < numOfBuckets; i++)
             {
                 generators.Add(this.MakeTrafficGenerator());
+                generatorAnalyzers.Add(this.MakeAnalyzer());
                 buckets.Add(this.MakeTokenBuket());
+                bucketAnalyzers.Add(this.MakeAnalyzer());
 
                 //соединяем ведро с генератором
                 (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
                     (buckets.Last() as SimpleTokenBuket).ProcessPacket;
+                //и генератор с анализатором
+                (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
+                    (generatorAnalyzers.Last() as SimpleAnalyzer).OnPassPacket;
 
                 //соединяем ведро с анализатором, иначе бешехельме, всё пропало, лови эксепшн
                 (buckets.Last() as SimpleTokenBuket).onPacketPass +=
-                    (analyzer as SimpleAnalyzer).OnBucketPassPacket;
+                    (bucketsAnalyzer as SimpleAnalyzer).OnPassPacket;
                 (buckets.Last() as SimpleTokenBuket).onPacketNotPass +=
-                    (analyzer as SimpleAnalyzer).OnBucketNotPassPacket;
+                    (bucketsAnalyzer as SimpleAnalyzer).OnNotPassPacket;
 
                 //соединяем с мультиплексором
                 (buckets.Last() as SimpleTokenBuket).onPacketPass +=
@@ -256,9 +284,9 @@ namespace TestQoS
 
             //соединяем мультиплексор с анализатором, иначе событие не обработается и будет экспешн
             (multiplexer as SimpleMultiplexer).onPacketPass +=
-                (analyzer as SimpleAnalyzer).OnMultiplexerPassPacket;
+                (multiplexorAnalyzer as SimpleAnalyzer).OnPassPacket;
             (multiplexer as SimpleMultiplexer).onPacketNotPass +=
-               (analyzer as SimpleAnalyzer).OnMultiplexerNotPassPacket;
+               (multiplexorAnalyzer as SimpleAnalyzer).OnNotPassPacket;
 
             //начальное время
             prevTime = DateTime.Now.Ticks;
@@ -318,8 +346,8 @@ namespace TestQoS
 
                     (multiplexer as SimpleMultiplexer).Update();
 
-                    (analyzer as SimpleAnalyzer).Update();
-                    (analyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+                    (multiplexorAnalyzer as SimpleAnalyzer).Update();
+                    //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
 
                     prevTime = DateTime.Now.Ticks;
 
@@ -369,15 +397,25 @@ namespace TestQoS
                     {
                         (generator as SimpleTrafficGenerator).MakePacket();
                     }
+                    foreach (Analyzer analyzer in generatorAnalyzers)
+                    {
+                        (analyzer as SimpleAnalyzer).Update();
+                    }
+
                     foreach (TokenBuket bucket in buckets)
                     {
                         (bucket as SimpleTokenBuket).Update();
                     }
+                    foreach (Analyzer analyzer in bucketAnalyzers)
+                    {
+                        (analyzer as SimpleAnalyzer).Update();
+                    }
 
                     (multiplexer as SimpleMultiplexer).Update();
 
-                    (analyzer as SimpleAnalyzer).Update();
-                    (analyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+                    (multiplexorAnalyzer as SimpleAnalyzer).Update();
+                    //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+                    (bucketsAnalyzer as SimpleAnalyzer).Update();
 
                     prevTime = DateTime.Now.Ticks;
 

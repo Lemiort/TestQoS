@@ -67,27 +67,43 @@ namespace TestQoS
 
         
 
-        public Queue<HistoryQuant> quantsPassedBucket;
-        public Queue<HistoryQuant> quantsNotPassedBucket;
-        public Queue<HistoryQuant> quantsPassedMultiplexer;
-        public Queue<HistoryQuant> quantsNotPassedMultiplexer;
+        //public Queue<HistoryQuant> quantsPassedBucket;
+        //public Queue<HistoryQuant> quantsNotPassedBucket;
 
-        private HistoryQuant packetsPassedBucket;
-        private HistoryQuant packetsNotPassedBucket;
-        private HistoryQuant packetsPassedMultiplexer;
-        private HistoryQuant packetsNotPassedMultiplexer;
+        /// <summary>
+        /// инфа о последних N квантах
+        /// </summary>
+        public Queue<HistoryQuant> quantsPassed;
+
+        /// <summary>
+        /// инфа о псоледних N квантах
+        /// </summary>
+        public Queue<HistoryQuant> quantsNotPassed;
+
+        //private HistoryQuant packetsPassedBucket;
+        //private HistoryQuant packetsNotPassedBucket;
+
+        /// <summary>
+        /// инфа о пакетах за последний квант
+        /// </summary>
+        private HistoryQuant packetsPassed;
+
+        /// <summary>
+        /// инфа о пакетах за последний квант
+        /// </summary>
+        private HistoryQuant packetsNotPassed;
 
         public SimpleAnalyzer()
         {
-            quantsPassedBucket = new Queue<HistoryQuant>();
-            quantsNotPassedBucket = new Queue<HistoryQuant>();
-            quantsPassedMultiplexer = new Queue<HistoryQuant>();
-            quantsNotPassedMultiplexer = new Queue<HistoryQuant>();
+            //quantsPassedBucket = new Queue<HistoryQuant>();
+            //quantsNotPassedBucket = new Queue<HistoryQuant>();
+            quantsPassed = new Queue<HistoryQuant>();
+            quantsNotPassed = new Queue<HistoryQuant>();
 
-            packetsPassedBucket = new HistoryQuant();
-            packetsNotPassedBucket = new HistoryQuant();
-            packetsPassedMultiplexer = new HistoryQuant();
-            packetsNotPassedMultiplexer = new HistoryQuant();
+            //packetsPassedBucket = new HistoryQuant();
+            //packetsNotPassedBucket = new HistoryQuant();
+            packetsPassed = new HistoryQuant();
+            packetsNotPassed = new HistoryQuant();
 
             summaryNotPassedPacketsSize = 0;
             summaryPassedPacketsSize = 0;
@@ -95,43 +111,43 @@ namespace TestQoS
             QuantHistorySize = 100;
         }
 
-        /// <summary>
+        /*/// <summary>
         /// сохраняет информацию о пакете, что прошёл через ведро
         /// </summary>
         /// <param name="packet">пакет</param>
         public override void OnBucketPassPacket(Packet packet)
         {
             packetsPassedBucket.Enqueue(packet);
-        }
+        }*/
 
-        /// <summary>
+        /*/// <summary>
         /// сохраняет информацию о пакете, что не прошёл через ведро
         /// </summary>
         /// <param name="packet">пакет</param>
         public override void OnBucketNotPassPacket(Packet packet)
         {
             packetsNotPassedBucket.Enqueue(packet);
-        }
+        }*/
 
         /// <summary>
         /// сохраняет информацию о пакете, что прошёл через мультиплексор
         /// </summary>
         /// <param name="packet">пакет</param>
-        public override void OnMultiplexerPassPacket(Packet packet)
+        public override void OnPassPacket(Packet packet)
         {
-            packetsPassedMultiplexer.Enqueue(packet);
+            packetsPassed.Enqueue(packet);
         }
 
         /// <summary>
         /// сохраняет информацию о пакете, что не прошёл через мультиплексор
         /// </summary>
         /// <param name="packet">пакет</param>
-        public override void OnMultiplexerNotPassPacket(Packet packet)
+        public override void OnNotPassPacket(Packet packet)
         {
-            packetsNotPassedMultiplexer.Enqueue(packet);
+            packetsNotPassed.Enqueue(packet);
         }
 
-        /// <summary>
+        /*/// <summary>
         /// выводит инфу о первом кванте в консоль
         /// </summary>
         public void PrintFirstQuantInfo()
@@ -142,11 +158,11 @@ namespace TestQoS
                 {
                     Console.WriteLine("\n\n{0} bytes passed throght buckets", quantsPassedBucket.Peek().summarySize);
                     Console.WriteLine("{0} bytes not passed throght buckets", quantsNotPassedBucket.Peek().summarySize);
-                    Console.WriteLine("{0} bytes passed throght multiplexor", quantsPassedMultiplexer.Peek().summarySize);
-                    Console.WriteLine("{0} bytes not passed throght multiplexor", quantsNotPassedMultiplexer.Peek().summarySize);
+                    Console.WriteLine("{0} bytes passed throght multiplexor", quantsPassed.Peek().summarySize);
+                    Console.WriteLine("{0} bytes not passed throght multiplexor", quantsNotPassed.Peek().summarySize);
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// переходит к записи в следующий квант
@@ -155,51 +171,51 @@ namespace TestQoS
         public void Update()
         {
             //записываем инфу о текущих квантах
-            quantsPassedBucket.Enqueue(packetsPassedBucket);
-            quantsNotPassedBucket.Enqueue(packetsNotPassedBucket);
-            quantsPassedMultiplexer.Enqueue(packetsPassedMultiplexer);
-            quantsNotPassedMultiplexer.Enqueue(packetsNotPassedMultiplexer);
+            //quantsPassedBucket.Enqueue(packetsPassedBucket);
+            //quantsNotPassedBucket.Enqueue(packetsNotPassedBucket);
+            quantsPassed.Enqueue(packetsPassed);
+            quantsNotPassed.Enqueue(packetsNotPassed);
 
             //записываем общее число прошедших и отброшенных байтов
-            summaryPassedPacketsSize += packetsPassedMultiplexer.summarySize;
-            summaryNotPassedPacketsSize += packetsNotPassedMultiplexer.summarySize;
+            summaryPassedPacketsSize += packetsPassed.summarySize;
+            summaryNotPassedPacketsSize += packetsNotPassed.summarySize;
 
             //убираем лишнюю инфу, если она есть
-            while(quantsPassedBucket.Count > QuantHistorySize)
+            while(quantsPassed.Count > QuantHistorySize)
             {
-                quantsPassedBucket.Dequeue();
-                quantsNotPassedBucket.Dequeue();
+                //quantsPassedBucket.Dequeue();
+                //quantsNotPassedBucket.Dequeue();
 
                 //убираем информацию о канувших в лету байтах
-                summaryPassedPacketsSize -= quantsPassedMultiplexer.Peek().summarySize;
-                summaryNotPassedPacketsSize -= quantsNotPassedMultiplexer.Peek().summarySize;
+                summaryPassedPacketsSize -= quantsPassed.Peek().summarySize;
+                summaryNotPassedPacketsSize -= quantsNotPassed.Peek().summarySize;
 
-                quantsPassedMultiplexer.Dequeue();
-                quantsNotPassedMultiplexer.Dequeue();
+                quantsPassed.Dequeue();
+                quantsNotPassed.Dequeue();
             }
 
-            packetsPassedBucket = new HistoryQuant();
-            packetsNotPassedBucket = new HistoryQuant();
-            packetsPassedMultiplexer = new HistoryQuant();
-            packetsNotPassedMultiplexer = new HistoryQuant();
+            //packetsPassedBucket = new HistoryQuant();
+            //packetsNotPassedBucket = new HistoryQuant();
+            packetsPassed = new HistoryQuant();
+            packetsNotPassed = new HistoryQuant();
         }
 
         /// <summary>
         /// среднее число прошедших пакетов за квант
         /// </summary>
         /// <returns></returns>
-        public float GetAveragePassedPacketsSize()
+        public float GetMultiplexorAveragePassedPacketsSize()
         {
-            return (float)summaryPassedPacketsSize / (float)quantsPassedMultiplexer.Count();
+            return (float)summaryPassedPacketsSize / (float)quantsPassed.Count();
         }
 
         /// <summary>
         /// среднее число отброшенных пакетов за квант
         /// </summary>
         /// <returns></returns>
-        public float GetAverageNotPassedPacketsSize()
+        public float GetMultiplexorAverageNotPassedPacketsSize()
         {
-            return (float)summaryNotPassedPacketsSize / (float)quantsNotPassedMultiplexer.Count();
+            return (float)summaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
         }
     }
 }
