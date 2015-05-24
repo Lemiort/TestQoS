@@ -19,7 +19,7 @@ namespace TestQoS
         /// <summary>
         /// длина очереди в байтах
         /// </summary>
-        public UInt64 QueueSize { get; set; }
+        public UInt64 MaxQueueSize { get; set; }
 
     }
 }

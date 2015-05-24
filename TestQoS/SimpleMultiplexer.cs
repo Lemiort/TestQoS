@@ -20,6 +20,11 @@ namespace TestQoS
         QuantizedTime qtime;
 
         /// <summary>
+        /// размер байтов в очереди
+        /// </summary>
+        UInt64 queueSize;
+
+        /// <summary>
         /// обработчик события обработки пакета
         /// </summary>
         /// <param name="packet">пакет или null</param>
@@ -49,7 +54,11 @@ namespace TestQoS
         {
             if (packet != null)
             {
-                packets.Enqueue(packet);
+                if (queueSize + packet.Size <= MaxQueueSize)
+                {
+                    packets.Enqueue(packet);
+                    queueSize += packet.Size;
+                }
             }
         }
 
@@ -58,6 +67,8 @@ namespace TestQoS
             qtime = time;
             packets = new Queue<Packet>();
             BytesPerDt = 50;
+            MaxQueueSize = 50;
+            queueSize = 0;
 
             prevUpdateTime = DateTime.Now.Ticks;
         }
@@ -82,6 +93,10 @@ namespace TestQoS
                 while (packets.Count > 0)
                 {
                     Packet packet = packets.Dequeue();
+
+                    //вычитаем из очереди размер обработанных байтов
+                    queueSize -= packet.Size;
+
                     if (packet != null)
                     {
                         passedBytes += packet.Size;
@@ -94,6 +109,7 @@ namespace TestQoS
                             passedBytes -= packet.Size;
                             onPacketNotPass(packet);
                         }
+
                     }
                 }
                 prevUpdateTime = DateTime.Now.Ticks;
