@@ -90,6 +90,11 @@ namespace QosGui
             graphsTabel.Controls.Add(averageThroughput);
         }
 
+        /// <summary>
+        /// применение настроек
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // открываем меню настроек
@@ -199,7 +204,9 @@ namespace QosGui
                 multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
 
                 //средняя пропускная способность
-                float averageThroghputValue = (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
+                //float averageThroghputValue = (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
+                //averageThroughput.AddPoint(averageThroghputValue, (float)j);
+                float averageThroghputValue = (qos.multiplexorAvarageBytes.ElementAt(j));
                 averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)

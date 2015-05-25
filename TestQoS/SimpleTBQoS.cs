@@ -92,6 +92,26 @@ namespace TestQoS
         /// </summary>
         protected long prevTime;
 
+        /// <summary>
+        /// история прошедших байтов
+        /// </summary>
+        public Queue<UInt64> multiplexorBytes;
+
+
+        /// <summary>
+        /// история средних значений байтв
+        /// </summary>
+        public Queue<float> multiplexorAvarageBytes;
+
+        /// <summary>
+        /// сумма байтов за историю
+        /// </summary>
+        public UInt64 MultiplexorSummaryBytes
+        {
+            get;
+            set;
+        }
+
         //размер истории
         private int historySize;
 
@@ -242,7 +262,14 @@ namespace TestQoS
             //
             // Создание всех объектов
             //
+
+            //размер истории, чтобы анализаторы правильно создались
             historySize = _histrorySize;
+
+            //история байтов
+            multiplexorBytes = new Queue<ulong>();
+            multiplexorAvarageBytes = new Queue<float>();
+            MultiplexorSummaryBytes = 0;
 
             // время квантования
             qtime = this.MakeModelTime();
@@ -303,6 +330,8 @@ namespace TestQoS
         public void SetMultiplexerSpeed(ulong bytesPerDt)
         {
             multiplexer.BytesPerDt = bytesPerDt;
+            if (multiplexer.BytesPerDt > multiplexer.MaxQueueSize)
+                multiplexer.MaxQueueSize = multiplexer.BytesPerDt;
         }
 
         /// <summary>
@@ -424,6 +453,19 @@ namespace TestQoS
                     //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
                     (bucketsAnalyzer as SimpleAnalyzer).Update();
 
+                    //история байтов мультиплексора
+                    multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
+                    //сумма байтов за историю
+                    MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
+                    multiplexorAvarageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+                    if(multiplexorBytes.Count > historySize)
+                    {
+                        //убираем из истории байт, а так же из суммарного размера
+                        MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
+                        multiplexorAvarageBytes.Dequeue();
+                    }
+
+                    //начальное время наблюдения
                     prevTime = DateTime.Now.Ticks;
 
                 }
