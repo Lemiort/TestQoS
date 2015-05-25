@@ -172,28 +172,25 @@ namespace QosGui
 
             bucketMiss.Clear();
             bucketGoal.Clear();
+            inputTraffic.Clear();
          //   multiplexerGoal.Clear();
             multiplexerMiss.Clear();
 
-            int i=0;
-            foreach(TestQoS.HistoryQuant quant in (qos.bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed)
+            for(int j=0; j<(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
             {
-                bucketMiss.AddPoint((uint)quant.summarySize, (double)i++);
-            }
-            i = 0;
-            foreach (TestQoS.HistoryQuant quant in (qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed)
-            {
-                bucketGoal.AddPoint((uint)quant.summarySize, (double)i++);
-            }
-            i = 0;
-            foreach (TestQoS.HistoryQuant quant in (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsNotPassed)
-            {
-                multiplexerMiss.AddPoint((uint)quant.summarySize, (double)i++);
-            }
-            i = 0;
-            foreach (TestQoS.HistoryQuant quant in (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed)
-            {
-   //             multiplexerGoal.AddPoint((uint)quant.summarySize, (double)i++);
+                //потери на вёдрах
+                uint bucketMissValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).summarySize;
+                //прошедший траффик
+                uint bucketGoalValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).summarySize;
+                bucketMiss.AddPoint(bucketMissValue,(double)j);
+                bucketGoal.AddPoint(bucketGoalValue, (double)j);
+                inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
+                //потери на мультиплексоре
+                uint multiplexorMissValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).summarySize;
+                multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
+
+                //средняя пропускная способность
+
             }
             if (!backgroundWorker1.IsBusy)
                 backgroundWorker1.RunWorkerAsync();
