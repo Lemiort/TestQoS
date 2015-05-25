@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class AverageStrategyQos: SimpleTBQoS
+    public class AverageStrategyQos: SimpleTBQoS
     {
         public override void MakeTick()
         {

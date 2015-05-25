@@ -64,6 +64,7 @@
     <Compile Include="SimpleTBQoS.cs" />
     <Compile Include="SimpleTokenBuket.cs" />
     <Compile Include="SimpleTrafficGenerator.cs" />
+    <Compile Include="SimulatedAnnealingQoS.cs" />
     <Compile Include="TokenBuket.cs" />
     <Compile Include="TrafficGenerator.cs" />
   </ItemGroup>
