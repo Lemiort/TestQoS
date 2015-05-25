@@ -24,6 +24,13 @@ namespace TestQoS
         /// </summary>
         UInt64 queueSize;
 
+        private UInt64 lastThroughputSize;
+
+        public UInt64 GetLastThroughputSize()
+        {
+            return lastThroughputSize;
+        }
+
         /// <summary>
         /// обработчик события обработки пакета
         /// </summary>
@@ -54,10 +61,10 @@ namespace TestQoS
         {
             if (packet != null)
             {
-                if (queueSize + packet.Size <= MaxQueueSize)
+                //*if (queueSize + packet.Size <= MaxQueueSize)
                 {
                     packets.Enqueue(packet);
-                    queueSize += packet.Size;
+                    //queueSize += packet.Size;
                 }
             }
         }
@@ -67,7 +74,7 @@ namespace TestQoS
             qtime = time;
             packets = new Queue<Packet>();
             BytesPerDt = 50;
-            MaxQueueSize = 50;
+            MaxQueueSize = 60;
             queueSize = 0;
 
             prevUpdateTime = DateTime.Now.Ticks;
@@ -87,30 +94,44 @@ namespace TestQoS
             //если время квантования прошло
             if (time.Milliseconds >= qtime.timeSlice)
             {
-
-                ///пакеты, что прошли обработку
-                UInt64 passedBytes = 0;
+                //обрабатываем все пакеты в очереди
                 while (packets.Count > 0)
                 {
+                    //достаём из очереди
                     Packet packet = packets.Dequeue();
-
-                    //вычитаем из очереди размер обработанных байтов
-                    queueSize -= packet.Size;
 
                     if (packet != null)
                     {
-                        passedBytes += packet.Size;
-                        if (passedBytes <= BytesPerDt)
+                        //добавляем к размеру буффера
+                        queueSize += packet.Size;
+
+                        //если пролазит, обрабатываем
+                        if (queueSize <= MaxQueueSize)
                         {
                             onPacketPass(packet);
                         }
+                            //иначе на мороз
                         else
                         {
-                            passedBytes -= packet.Size;
+                            queueSize -= packet.Size;
                             onPacketNotPass(packet);
                         }
 
                     }
+                }
+
+                //сколько байтов реально ушло
+                if (queueSize >= BytesPerDt)
+                {
+                    //записываем последнее ушедшее число байтов
+                    lastThroughputSize = BytesPerDt;
+                    queueSize -= BytesPerDt;
+                }
+                else
+                {
+                    //записываем последнее ушедшее число байтов
+                    lastThroughputSize  = queueSize;
+                    queueSize = 0;
                 }
                 prevUpdateTime = DateTime.Now.Ticks;
                 /*if(passedBytes > 0)

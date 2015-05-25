@@ -92,6 +92,8 @@ namespace TestQoS
         /// </summary>
         protected long prevTime;
 
+        //размер истории
+        private int historySize;
 
         /// <summary>
         /// Реализация фабричного метода MakeTokenBuket 
@@ -207,7 +209,9 @@ namespace TestQoS
 
         public override Analyzer MakeAnalyzer()
         {
-            return new SimpleAnalyzer();
+           SimpleAnalyzer ret =  new SimpleAnalyzer();
+           ret.QuantHistorySize = historySize;
+           return ret;
             //throw new NotImplementedException();
         }
 
@@ -222,9 +226,11 @@ namespace TestQoS
         /// <param name="maxPacketSizes">максимальный размер пакета</param>
         /// <param name="minTimePeriods">минимальное время между пакетами в мс</param>
         /// <param name="maxTimePeriods">максимальное время между пакетами в мс</param>
+        /// <param name="_histrorySize">информацию о скольки последних байтах храним</param>
         public void Initializate(double observationPeriod, uint numOfBuckets,
             List<uint> minPacketSizes, List<uint> maxPacketSizes,
-            List<double> minTimePeriods, List<double> maxTimePeriods)
+            List<double> minTimePeriods, List<double> maxTimePeriods,
+            int _histrorySize)
         {
             this.observationPeriod = observationPeriod;
             this.numOfBuckets = numOfBuckets;
@@ -236,6 +242,7 @@ namespace TestQoS
             //
             // Создание всех объектов
             //
+            historySize = _histrorySize;
 
             // время квантования
             qtime = this.MakeModelTime();

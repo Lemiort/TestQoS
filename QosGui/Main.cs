@@ -115,7 +115,8 @@ namespace QosGui
                                 setForm.MinPacketSizes(),
                                 setForm.MaxPacketSizes(),
                                 setForm.MaxTimePeriods(),
-                                setForm.MaxTimePeriods());
+                                setForm.MaxTimePeriods(),
+                                500);
                 qos.SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
                 if (!backgroundWorker1.IsBusy)
                 {
@@ -198,7 +199,7 @@ namespace QosGui
                 multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
 
                 //средняя пропускная способность
-                uint averageThroghputValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
+                float averageThroghputValue = (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
                 averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)

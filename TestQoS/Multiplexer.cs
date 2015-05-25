@@ -14,12 +14,12 @@ namespace TestQoS
         /// <summary>
         /// ширина канала в байтах на квант
         /// </summary>
-        public UInt64 BytesPerDt { get; set; }
+        public ulong BytesPerDt { get; set; }
 
         /// <summary>
         /// длина очереди в байтах
         /// </summary>
-        public UInt64 MaxQueueSize { get; set; }
+        public ulong MaxQueueSize { get; set; }
 
     }
 }
