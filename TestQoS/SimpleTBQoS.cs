@@ -361,7 +361,7 @@ namespace TestQoS
         /// <summary>
         /// Основной цикл
         /// </summary>
-        public void MakeTick()
+        public virtual void MakeTick()
         {
             /*******************************************************/
             /************Создание всех объектов*********************/
