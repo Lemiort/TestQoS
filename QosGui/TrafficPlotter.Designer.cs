@@ -77,6 +77,7 @@
 
         #endregion
 
-        private System.Windows.Forms.DataVisualization.Charting.Chart plotter;
+        protected System.Windows.Forms.DataVisualization.Charting.Chart plotter;
+
     }
 }

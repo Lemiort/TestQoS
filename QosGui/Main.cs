@@ -28,6 +28,11 @@ namespace QosGui
         //
 
         /// <summary>
+        /// график входного трафика
+        /// </summary>
+        TrafficPlotter inputTraffic;
+
+        /// <summary>
         /// Потери на вёдрах
         /// </summary>
         TrafficPlotter bucketMiss;
@@ -43,10 +48,9 @@ namespace QosGui
         TrafficPlotter multiplexerMiss;
 
         /// <summary>
-        /// прошедший через мультиплексор
+        /// Средняя пропускная способность
         /// </summary>
-        TrafficPlotter multiplexerGoal;
-
+        TrafficPlotter averageThroughput;
 
 
         Random rand;
@@ -66,16 +70,17 @@ namespace QosGui
         private void Main_Load(object sender, EventArgs e)
         {
             //TODO: назвать это всё вменяемо
+            inputTraffic = new TrafficPlotter("Входящий трафик");
             bucketMiss = new TrafficPlotter("Потери на маркерных корзинах");
             bucketGoal = new TrafficPlotter("Прошедший через маркерные корзины трафик");
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
-            multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
-
+            averageThroughput = new TrafficPlotter("Средняя пропускная способность");
             // добавляем в панели
-            graphsTabel.Controls.Add(bucketMiss);           
-            graphsTabel.Controls.Add(multiplexerMiss);
+            graphsTabel.Controls.Add(inputTraffic);   
+            graphsTabel.Controls.Add(bucketMiss);
             graphsTabel.Controls.Add(bucketGoal);
-            graphsTabel.Controls.Add(multiplexerGoal);
+            graphsTabel.Controls.Add(multiplexerMiss);           
+            graphsTabel.Controls.Add(averageThroughput);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -167,7 +172,7 @@ namespace QosGui
 
             bucketMiss.Clear();
             bucketGoal.Clear();
-            multiplexerGoal.Clear();
+         //   multiplexerGoal.Clear();
             multiplexerMiss.Clear();
 
             int i=0;
@@ -188,7 +193,7 @@ namespace QosGui
             i = 0;
             foreach (TestQoS.HistoryQuant quant in (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed)
             {
-                multiplexerGoal.AddPoint((uint)quant.summarySize, (double)i++);
+   //             multiplexerGoal.AddPoint((uint)quant.summarySize, (double)i++);
             }
             if (!backgroundWorker1.IsBusy)
                 backgroundWorker1.RunWorkerAsync();
