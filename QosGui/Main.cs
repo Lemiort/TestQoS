@@ -182,22 +182,24 @@ namespace QosGui
             inputTraffic.Clear();
          //   multiplexerGoal.Clear();
             multiplexerMiss.Clear();
+            averageThroughput.Clear();
 
             for(int j=0; j<(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
             {
                 //потери на вёдрах
-                uint bucketMissValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).summarySize;
+                uint bucketMissValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
                 //прошедший траффик
-                uint bucketGoalValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).summarySize;
+                uint bucketGoalValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
                 bucketMiss.AddPoint(bucketMissValue,(double)j);
                 bucketGoal.AddPoint(bucketGoalValue, (double)j);
                 inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
                 //потери на мультиплексоре
-                uint multiplexorMissValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).summarySize;
+                uint multiplexorMissValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
                 multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
 
                 //средняя пропускная способность
-
+                uint averageThroghputValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
+                averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)
                 backgroundWorker1.RunWorkerAsync();

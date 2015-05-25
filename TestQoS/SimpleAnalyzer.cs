@@ -9,27 +9,36 @@ namespace TestQoS
     public class HistoryQuant
     {
         public Queue<Packet> packets;
-        public ulong summarySize
+
+        //общий размер пакетов в квант
+        public ulong SummarySize
         {
             get;
             private set;
         }
 
+        //средний размер пакетов за последнее время
+        public float AveragePacketsSize
+        {
+            get;
+             set;
+        }
+
         public HistoryQuant()
         {
-            summarySize = 0;
+            SummarySize = 0;
             packets = new Queue<Packet>();
         }
 
         public void Enqueue(Packet packet)
         {
-            summarySize += packet.Size;
+            SummarySize += packet.Size;
             packets.Enqueue(packet);
         }
 
         public Packet Dequeue()
         {
-            summarySize -= packets.Peek().Size;
+            SummarySize -= packets.Peek().Size;
             return packets.Dequeue();
         }
 
@@ -94,6 +103,7 @@ namespace TestQoS
             quantsPassed = new Queue<HistoryQuant>();
             quantsNotPassed = new Queue<HistoryQuant>();
 
+            //создаём кванты для заполнения
             packetsPassed = new HistoryQuant();
             packetsNotPassed = new HistoryQuant();
 
@@ -127,21 +137,27 @@ namespace TestQoS
         /// </summary>
         public void Update()
         {
+            //записываем среднюю статистику
+            packetsPassed.AveragePacketsSize =
+                (float)(summaryPassedPacketsSize + packetsPassed.SummarySize) / (float)quantsPassed.Count;
+            packetsNotPassed.AveragePacketsSize =
+                (float)(summaryNotPassedPacketsSize + packetsNotPassed.SummarySize) / (float)quantsNotPassed.Count;
+
             //записываем инфу о текущих квантах
             quantsPassed.Enqueue(packetsPassed);
             quantsNotPassed.Enqueue(packetsNotPassed);
 
             //записываем общее число прошедших и отброшенных байтов
-            summaryPassedPacketsSize += packetsPassed.summarySize;
-            summaryNotPassedPacketsSize += packetsNotPassed.summarySize;
+            summaryPassedPacketsSize += packetsPassed.SummarySize;
+            summaryNotPassedPacketsSize += packetsNotPassed.SummarySize;
 
             //убираем лишнюю инфу, если она есть
             while(quantsPassed.Count > QuantHistorySize)
             {
 
                 //убираем информацию о канувших в лету байтах
-                summaryPassedPacketsSize -= quantsPassed.Peek().summarySize;
-                summaryNotPassedPacketsSize -= quantsNotPassed.Peek().summarySize;
+                summaryPassedPacketsSize -= quantsPassed.Peek().SummarySize;
+                summaryNotPassedPacketsSize -= quantsNotPassed.Peek().SummarySize;
 
                 quantsPassed.Dequeue();
                 quantsNotPassed.Dequeue();
