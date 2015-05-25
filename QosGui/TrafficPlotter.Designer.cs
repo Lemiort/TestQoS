@@ -54,8 +54,6 @@
             series1.Color = System.Drawing.Color.Green;
             series1.LabelBorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
             series1.Name = "Traffic";
-            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.UInt32;
-            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
             this.plotter.Series.Add(series1);
             this.plotter.Size = new System.Drawing.Size(638, 337);
             this.plotter.TabIndex = 0;

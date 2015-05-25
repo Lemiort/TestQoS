@@ -55,7 +55,19 @@ namespace QosGui
         public void AddPoint(uint traffic, double time)
         {
             plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);            
-        }     
+        }
+
+        /// <summary>
+        /// Заполнение графика инфой (простой временный (канеееечна) вариант)
+        /// следует заполнять инфой попорядку
+        /// </summary>
+        /// <param name="traffic">трафик (сконее всего сришедшай за сек/мсек)</param>
+        /// <param name="time">время в секундах (или миллисекундах хз как удобнее)</param>
+        public void AddPoint(float traffic, double time)
+        {
+            plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);
+        } 
+
    
         /// <summary>
         /// стереть график
