@@ -65,10 +65,6 @@ namespace TestQoS
         /// </summary>
         private ulong summaryNotPassedPacketsSize;
 
-        
-
-        //public Queue<HistoryQuant> quantsPassedBucket;
-        //public Queue<HistoryQuant> quantsNotPassedBucket;
 
         /// <summary>
         /// инфа о последних N квантах
@@ -95,13 +91,9 @@ namespace TestQoS
 
         public SimpleAnalyzer()
         {
-            //quantsPassedBucket = new Queue<HistoryQuant>();
-            //quantsNotPassedBucket = new Queue<HistoryQuant>();
             quantsPassed = new Queue<HistoryQuant>();
             quantsNotPassed = new Queue<HistoryQuant>();
 
-            //packetsPassedBucket = new HistoryQuant();
-            //packetsNotPassedBucket = new HistoryQuant();
             packetsPassed = new HistoryQuant();
             packetsNotPassed = new HistoryQuant();
 
@@ -110,24 +102,6 @@ namespace TestQoS
 
             QuantHistorySize = 100;
         }
-
-        /*/// <summary>
-        /// сохраняет информацию о пакете, что прошёл через ведро
-        /// </summary>
-        /// <param name="packet">пакет</param>
-        public override void OnBucketPassPacket(Packet packet)
-        {
-            packetsPassedBucket.Enqueue(packet);
-        }*/
-
-        /*/// <summary>
-        /// сохраняет информацию о пакете, что не прошёл через ведро
-        /// </summary>
-        /// <param name="packet">пакет</param>
-        public override void OnBucketNotPassPacket(Packet packet)
-        {
-            packetsNotPassedBucket.Enqueue(packet);
-        }*/
 
         /// <summary>
         /// сохраняет информацию о пакете, что прошёл через мультиплексор
@@ -147,23 +121,6 @@ namespace TestQoS
             packetsNotPassed.Enqueue(packet);
         }
 
-        /*/// <summary>
-        /// выводит инфу о первом кванте в консоль
-        /// </summary>
-        public void PrintFirstQuantInfo()
-        {
-            if (quantsPassedBucket.Count > 0)
-            {
-                if (quantsPassedBucket.Peek().summarySize > 0)
-                {
-                    Console.WriteLine("\n\n{0} bytes passed throght buckets", quantsPassedBucket.Peek().summarySize);
-                    Console.WriteLine("{0} bytes not passed throght buckets", quantsNotPassedBucket.Peek().summarySize);
-                    Console.WriteLine("{0} bytes passed throght multiplexor", quantsPassed.Peek().summarySize);
-                    Console.WriteLine("{0} bytes not passed throght multiplexor", quantsNotPassed.Peek().summarySize);
-                }
-            }
-        }*/
-
         /// <summary>
         /// переходит к записи в следующий квант
         /// вызывать каждый квант времени
@@ -171,8 +128,6 @@ namespace TestQoS
         public void Update()
         {
             //записываем инфу о текущих квантах
-            //quantsPassedBucket.Enqueue(packetsPassedBucket);
-            //quantsNotPassedBucket.Enqueue(packetsNotPassedBucket);
             quantsPassed.Enqueue(packetsPassed);
             quantsNotPassed.Enqueue(packetsNotPassed);
 
@@ -183,8 +138,6 @@ namespace TestQoS
             //убираем лишнюю инфу, если она есть
             while(quantsPassed.Count > QuantHistorySize)
             {
-                //quantsPassedBucket.Dequeue();
-                //quantsNotPassedBucket.Dequeue();
 
                 //убираем информацию о канувших в лету байтах
                 summaryPassedPacketsSize -= quantsPassed.Peek().summarySize;
@@ -194,14 +147,12 @@ namespace TestQoS
                 quantsNotPassed.Dequeue();
             }
 
-            //packetsPassedBucket = new HistoryQuant();
-            //packetsNotPassedBucket = new HistoryQuant();
             packetsPassed = new HistoryQuant();
             packetsNotPassed = new HistoryQuant();
         }
 
         /// <summary>
-        /// среднее число прошедших пакетов за квант
+        /// среднее число прошедших пакетов за окно
         /// </summary>
         /// <returns></returns>
         public float GetAveragePassedPacketsSize()
@@ -210,7 +161,7 @@ namespace TestQoS
         }
 
         /// <summary>
-        /// среднее число отброшенных пакетов за квант
+        /// среднее число отброшенных пакетов за окно
         /// </summary>
         /// <returns></returns>
         public float GetAverageNotPassedPacketsSize()
