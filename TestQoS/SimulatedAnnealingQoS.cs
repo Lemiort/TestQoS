@@ -11,6 +11,8 @@ namespace TestQoS
     /// </summary>
     public class SimulatedAnnealingQoS : SimpleTBQoS
     {
+        private Random rand;
+
         /// <summary>
         /// Начальная температура чем она выше,
         /// тем дольше работает алгоритм и больше вероятность
@@ -22,6 +24,11 @@ namespace TestQoS
         /// текущая тампература
         /// </summary>
         private double temperature;
+
+        /// <summary>
+        /// минимальная температура
+        /// </summary>
+        private double minTemperature;
 
         /// <summary>
         /// Максимальные скорости поступления токенов в корзины
@@ -38,7 +45,73 @@ namespace TestQoS
         /// <returns>Вектор новых скоростей поступления токенов в корзины</returns>
         private List<float> SetNextTBSpeedValue(List<float> tokensPerDts)
         {
-            return null;
+            List<float> result; 
+            // в теории, при низких температурах поиск может зациклица 
+            // по этому добавлено ограничение по количеству итераций, 
+            // чем оно ниже, тем меньше значение зависит от температуры, 
+            // и тем быстрее работает алгоритм
+            int i = 0;
+            int maxNumOfIteration = 100;
+
+            do
+            {
+                result = new List<float>();
+                for(int j = 0; j < tokensPerDts.Count; j++)
+                {
+                    // генерация нового значения скорости поступления токенов i-й
+                    // корзины, отличной от предыдущей, и непревышающей максимального значения
+                    float newTokensPerDt;
+                    do
+                    {
+                        newTokensPerDt = (float)(maxTokensPerDts[j] * rand.NextDouble());
+                    }
+                    while (tokensPerDts[j] == newTokensPerDt);
+                    result.Add(newTokensPerDt);
+                }
+            }
+            while ((!IsPermissible(tokensPerDts, result)) && (++i < maxNumOfIteration));
+
+            return result;
+        }
+
+        /// <summary>
+        /// Проверяет достаточно ли близко новое значение к старому.
+        /// </summary>
+        /// <param name="oldTokensPerDts"></param>
+        /// <param name="newTokensPerDts"></param>
+        /// <returns></returns>
+        private bool IsPermissible(List<float> oldTokensPerDts, List<float> newTokensPerDts)
+        {
+            float oldLen = this.VectorLength(oldTokensPerDts);
+            float newLen = this.VectorLength(newTokensPerDts);
+            float maxLen = this.VectorLength(maxTokensPerDts);
+
+            if(Math.Abs(newLen - oldLen) <= maxLen*(temperature/initalTemperature))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// поиск длинны вектора
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
+        private float VectorLength(List<float> vector)
+        {
+            float sqSum = 0;
+
+            // сумма квадратов 
+            foreach(var vectorItem in vector)
+            {
+                sqSum += vectorItem * vectorItem;
+            }
+
+            return (float)Math.Sqrt(sqSum);
         }
 
         /// <summary>
@@ -84,5 +157,59 @@ namespace TestQoS
         {
             return 0;
         }
+
+        /// <summary>
+        /// Инициализация ограничения сверху для скорости поступления
+        /// маркеров в маркерные корзины, зависит от параметром мультиплексора
+        /// и приоритетов.
+        /// TODO
+        /// </summary>
+        private void InitMaxTokensPerDts()
+        {
+            maxTokensPerDts = new List<float>();
+        }
+
+        /// <summary>
+        /// Поиск оптимальных скоростей поступления
+        /// маркеров в маркерные корзины методом имитации отжига.
+        /// </summary>
+        /// <param name="firstTokensPerDts">начальный набор состояний</param>
+        /// <returns>оптимальное состояние</returns>
+        private List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
+        {
+            // инициализация параметров алгоритма
+            this.initalTemperature = 1000;
+            this.minTemperature = 1e-6;
+            List<float> oldTokensPerDts = firstTokensPerDts;
+            List<float> newTokensPerDts;
+            rand = new Random((int)DateTime.Now.Ticks);
+            int i = 1;
+            this.temperature = this.initalTemperature;
+
+            while(temperature > minTemperature)
+            {
+                newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts);
+                double probability = this.NewStateProbability(
+                this.ObjectiveFunction(newTokensPerDts),
+                this.ObjectiveFunction(oldTokensPerDts));
+
+                // кидаем кубик
+                double value = rand.NextDouble();
+                // если попали в зону
+                if(value <= probability)
+                {
+                    // совершаем переход
+                    oldTokensPerDts = newTokensPerDts;
+                }
+
+                // понижаем температуру 
+                this.DecreaseTemperature(i++);
+            }
+
+
+            return oldTokensPerDts;
+        }
+
+        
     }
 }
