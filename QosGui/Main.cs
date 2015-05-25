@@ -48,6 +48,11 @@ namespace QosGui
         TrafficPlotter multiplexerMiss;
 
         /// <summary>
+        /// прошедший трафик
+        /// </summary>
+        TrafficPlotter multiplexerGoal;
+
+        /// <summary>
         /// Средняя пропускная способность
         /// </summary>
         TrafficPlotter averageThroughput;
@@ -74,12 +79,14 @@ namespace QosGui
             bucketMiss = new TrafficPlotter("Потери на маркерных корзинах");
             bucketGoal = new TrafficPlotter("Прошедший через маркерные корзины трафик");
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
+            multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
             averageThroughput = new TrafficPlotter("Средняя пропускная способность");
             // добавляем в панели
             graphsTabel.Controls.Add(inputTraffic);   
             graphsTabel.Controls.Add(bucketMiss);
             graphsTabel.Controls.Add(bucketGoal);
-            graphsTabel.Controls.Add(multiplexerMiss);           
+            graphsTabel.Controls.Add(multiplexerMiss);
+            graphsTabel.Controls.Add(multiplexerGoal);    
             graphsTabel.Controls.Add(averageThroughput);
         }
 
