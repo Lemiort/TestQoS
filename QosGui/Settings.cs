@@ -32,22 +32,25 @@ namespace QosGui
         /// <summary>
         /// список хранит минимальные размеры пакетов 
         /// </summary>
-        private List<NumericUpDown> minPacketSizes = new List<NumericUpDown>();
+        private List<NumericUpDown> minPacketSizes;
 
         /// <summary>
         /// список хранит максимальные размеры пакетов
         /// </summary>
-        private List<NumericUpDown> maxPacketSizes = new List<NumericUpDown>();
+        private List<NumericUpDown> maxPacketSizes;
 
         /// <summary>
         /// список хранит минимальные промежутоки времени между двумя пакетами в милисекундах
         /// </summary>
-        private List<NumericUpDown> minTimePeriods = new List<NumericUpDown>();
+        private List<NumericUpDown> minTimePeriods;
 
         /// <summary>
         /// список хранит максимальные промежутоки времени между двумя пакетами в милисекундах
         /// </summary>
-        private List<NumericUpDown> maxTimePeriods = new List<NumericUpDown>();
+        private List<NumericUpDown> maxTimePeriods;
+
+
+        private List<TrackBar> tokenBuketWeights;
 
         public ulong GetMultiplexorBytesPerDt()
         { 
@@ -56,8 +59,13 @@ namespace QosGui
 
         public Settings()
         {
-            InitializeComponent();
             // инициализация окна настроек
+            InitializeComponent();
+            minPacketSizes = new List<NumericUpDown>();
+            maxPacketSizes = new List<NumericUpDown>();
+            minTimePeriods = new List<NumericUpDown>();
+            maxTimePeriods = new List<NumericUpDown>();
+            tokenBuketWeights = new List<TrackBar>();
             InitGeneratorSettings();
             this.IsSettingsApplyed = false;
         }
@@ -83,6 +91,7 @@ namespace QosGui
             maxPacketSizes.Clear();
             minTimePeriods.Clear();
             maxTimePeriods.Clear();
+            tokenBuketWeights.Clear();
 
             // инициализация
             int N = (int)bucketNum.Value;
@@ -116,6 +125,13 @@ namespace QosGui
                 label4.Size = new System.Drawing.Size(181, 13);
                 label4.Text = "Максимальный период генерации (мс)";
 
+
+                Label label5 = new Label();
+                label5.AutoSize = true;
+                label5.Location = new System.Drawing.Point(16, 162);
+                label5.Size = new System.Drawing.Size(181, 13);
+                label5.Text = "Вес потерь на корзине";
+
                 // создаём нумерики
                 // Минимальный размер пакета
                 NumericUpDown minPacketSize = new NumericUpDown();
@@ -146,15 +162,22 @@ namespace QosGui
                 minTimePeriod.Value = 20;
                 minTimePeriods.Add(minTimePeriod);
 
-                // Минимальный промежуток времени между двумя пакетами в милисекундах
+                // Максимальный промежуток времени между двумя пакетами в милисекундах
                 NumericUpDown maxTimePeriod = new NumericUpDown();
-                maxTimePeriod.Location = new System.Drawing.Point(232, 124);
+                maxTimePeriod.Location = new System.Drawing.Point(232, 123);
                 maxTimePeriod.Maximum = new decimal(periodMax);
                 maxTimePeriod.Increment = new decimal(periodStep);
                 maxTimePeriod.Size = new System.Drawing.Size(70, 20);
                 maxTimePeriod.Value = 100;
                 maxTimePeriods.Add(maxTimePeriod);
 
+                // веса корзин
+                TrackBar tokenBuketWeight = new TrackBar();
+                tokenBuketWeight.Location = new System.Drawing.Point(218, 160);
+                tokenBuketWeight.Size = new System.Drawing.Size(104, 45);
+                tokenBuketWeight.BackColor = Color.White;
+                tokenBuketWeight.Value = 10;
+                tokenBuketWeights.Add(tokenBuketWeight);
 
 
                 tabPage.AutoScroll = true;
@@ -162,20 +185,18 @@ namespace QosGui
                 tabPage.Controls.Add(maxPacketSize);
                 tabPage.Controls.Add(minTimePeriod);
                 tabPage.Controls.Add(maxTimePeriod);
+                tabPage.Controls.Add(tokenBuketWeight);
                 tabPage.Controls.Add(label1);
                 tabPage.Controls.Add(label2);
                 tabPage.Controls.Add(label3);
                 tabPage.Controls.Add(label4);
-        //        tabPage.Location = new System.Drawing.Point(4, 22);
+                tabPage.Controls.Add(label5);
                 tabPage.Padding = new System.Windows.Forms.Padding(3);
-       //         tabPage.Size = new System.Drawing.Size(674, 194);
                 tabPage.TabIndex = i;
                 tabPage.UseVisualStyleBackColor = true;
 
                 // добавляем страницу
                 this.generatorsSettings.Controls.Add(tabPage);
-
-
             }
         }
 
@@ -272,8 +293,44 @@ namespace QosGui
             return result;
         }
 
-        // TODO: публичные методы, возращающие параметры мультиплексора, 
-        // вёдер (для случая, когда они статические), типа системы
+        /// <summary>
+        /// Вес потерь на мультиплексоре
+        /// </summary>
+        /// <returns></returns>
+        public int MultiplexerWeight()
+        {
+            return multiplexerWeight.Value;
+        }
+
+        /// <summary>
+        /// Вес очереди мультиплексора
+        /// </summary>
+        /// <returns></returns>
+        public int QueueWeight()
+        {
+            return queueWeight.Value;
+        }
+
+        /// <summary>
+        /// Вес потерь на корзинах
+        /// </summary>
+        /// <returns></returns>
+        public List<int> TokenBuketsWeights()
+        {
+            List<int> result = new List<int>();
+            foreach (var tokenBuketWeight in tokenBuketWeights)
+            {
+                result.Add(tokenBuketWeight.Value);
+            }
+            return result;
+        }
+
+        public int NumOfPackets()
+        {
+            return (int)numOfPackets.Value;
+        }
+
+        // TODO: выбор оптимизации
 
     }
 }

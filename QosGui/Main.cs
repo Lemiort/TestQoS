@@ -66,10 +66,10 @@ namespace QosGui
         private void Main_Load(object sender, EventArgs e)
         {
             //TODO: назвать это всё вменяемо
-            bucketMiss = new TrafficPlotter("Потери на вёдрах");
-            bucketGoal = new TrafficPlotter("Прошедши через вёдра трафик");
+            bucketMiss = new TrafficPlotter("Потери на маркерных корзинах");
+            bucketGoal = new TrafficPlotter("Прошедший через маркерные корзины трафик");
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
-            multiplexerGoal = new TrafficPlotter("Прошедши через мультиплексор трафик");
+            multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
 
             // добавляем в панели
             graphsTabel.Controls.Add(bucketMiss);           
