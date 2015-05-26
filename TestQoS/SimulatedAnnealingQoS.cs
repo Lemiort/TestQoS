@@ -254,6 +254,13 @@ namespace TestQoS
         private void InitMaxTokensPerDts()
         {
             maxTokensPerDts = new List<float>();
+            for (int i = 0; i < buckets.Count; i++ )
+            {
+                maxTokensPerDts.Add(
+                    (buckets.ElementAt(i) as SimpleTokenBucket).MaxTokensCount -
+                    (buckets.ElementAt(i) as SimpleTokenBucket).GetTokensCount());
+            }
+                
         }
 
         /// <summary>

@@ -43,6 +43,11 @@ namespace TestQoS
         /// </summary>
         private long tokensCount;
 
+        public long GetTokensCount()
+        {
+            return tokensCount;
+        }
+
         /// <summary>
         /// обработчик события обработки пакета
         /// </summary>
