@@ -101,7 +101,7 @@ namespace TestQoS
         /// <summary>
         /// история средних значений байтв
         /// </summary>
-        public Queue<float> multiplexorAvarageBytes;
+        public Queue<float> multiplexorAverageBytes;
 
         /// <summary>
         /// сумма байтов за историю
@@ -113,7 +113,7 @@ namespace TestQoS
         }
 
         //размер истории
-        private int historySize;
+        protected int historySize;
 
         /// <summary>
         /// Реализация фабричного метода MakeTokenBuket 
@@ -269,7 +269,7 @@ namespace TestQoS
 
             //история байтов
             multiplexorBytes = new Queue<ulong>();
-            multiplexorAvarageBytes = new Queue<float>();
+            multiplexorAverageBytes = new Queue<float>();
             MultiplexorSummaryBytes = 0;
 
             // время квантования
@@ -462,12 +462,12 @@ namespace TestQoS
                     multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
                     //сумма байтов за историю
                     MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-                    multiplexorAvarageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+                    multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
                     if(multiplexorBytes.Count > historySize)
                     {
                         //убираем из истории байт, а так же из суммарного размера
                         MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-                        multiplexorAvarageBytes.Dequeue();
+                        multiplexorAverageBytes.Dequeue();
                     }
 
                     //начальное время наблюдения

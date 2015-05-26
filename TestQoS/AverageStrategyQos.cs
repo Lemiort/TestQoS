@@ -72,8 +72,19 @@ namespace TestQoS
                         (multiplexer as SimpleMultiplexer).Update();
 
                     (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
                     (bucketsAnalyzer as SimpleAnalyzer).Update();
+
+                    //история байтов мультиплексора
+                    multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
+                    //сумма байтов за историю
+                    MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
+                    multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+                    if (multiplexorBytes.Count > historySize)
+                    {
+                        //убираем из истории байт, а так же из суммарного размера
+                        MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
+                        multiplexorAverageBytes.Dequeue();
+                    }
 
                     prevTime = DateTime.Now.Ticks;
 
