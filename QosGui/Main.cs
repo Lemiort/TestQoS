@@ -129,6 +129,13 @@ namespace QosGui
                     (qos as SimpleTBQoS).SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
                 }
 
+                if (qos is SimulatedAnnealingQoS)
+                {
+                    (qos as SimulatedAnnealingQoS).MultiplexerWeight = setForm.MultiplexerWeight();
+                    (qos as SimulatedAnnealingQoS).QueueWeight = setForm.QueueWeight();
+                    (qos as SimulatedAnnealingQoS).TokenBuketsWeights = setForm.TokenBuketsWeights();
+                }
+
                 if (!backgroundWorker1.IsBusy)
                 {
                     backgroundWorker1.RunWorkerAsync();

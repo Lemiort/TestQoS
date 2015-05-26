@@ -364,7 +364,7 @@ namespace QosGui
             if ((sender as RadioButton).Checked)
             {
                 // инициализация QoS
-                this.QoS = new SimpleTBQoS();
+                this.QoS = new SimulatedAnnealingQoS();
             }
         }
 
