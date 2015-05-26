@@ -85,9 +85,6 @@ namespace TestQoS
         /// </summary>
         public Queue<HistoryQuant> quantsNotPassed;
 
-        //private HistoryQuant packetsPassedBucket;
-        //private HistoryQuant packetsNotPassedBucket;
-
         /// <summary>
         /// инфа о пакетах за последний квант
         /// </summary>

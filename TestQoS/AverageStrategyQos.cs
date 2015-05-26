@@ -61,7 +61,7 @@ namespace TestQoS
                             
                     }
 
-                        (multiplexer as SimpleMultiplexer).Update();
+                    (multiplexer as SimpleMultiplexer).Update();
 
                     (multiplexorAnalyzer as SimpleAnalyzer).Update();
                     (bucketsAnalyzer as SimpleAnalyzer).Update();
