@@ -282,9 +282,9 @@
             this.simulatedAnnealing.Name = "simulatedAnnealing";
             this.simulatedAnnealing.Size = new System.Drawing.Size(115, 17);
             this.simulatedAnnealing.TabIndex = 2;
-            this.simulatedAnnealing.TabStop = true;
             this.simulatedAnnealing.Text = "Имитация отжига";
             this.simulatedAnnealing.UseVisualStyleBackColor = true;
+            this.simulatedAnnealing.CheckedChanged += new System.EventHandler(this.simulatedAnnealing_CheckedChanged);
             // 
             // peakStrategy
             // 
@@ -293,9 +293,9 @@
             this.peakStrategy.Name = "peakStrategy";
             this.peakStrategy.Size = new System.Drawing.Size(177, 17);
             this.peakStrategy.TabIndex = 1;
-            this.peakStrategy.TabStop = true;
             this.peakStrategy.Text = "Стратегия пикового значения";
             this.peakStrategy.UseVisualStyleBackColor = true;
+            this.peakStrategy.CheckedChanged += new System.EventHandler(this.peakStrategy_CheckedChanged);
             // 
             // averageStrategy
             // 
@@ -308,6 +308,7 @@
             this.averageStrategy.TabStop = true;
             this.averageStrategy.Text = "Стратегия среднего значения";
             this.averageStrategy.UseVisualStyleBackColor = true;
+            this.averageStrategy.CheckedChanged += new System.EventHandler(this.averageStrategy_CheckedChanged);
             // 
             // numOfPackets
             // 

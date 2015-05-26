@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TestQoS;
 
 namespace QosGui
 {
@@ -24,6 +25,11 @@ namespace QosGui
     /// </summary>
     public partial class Settings : Form
     {
+        /// <summary>
+        /// Хранит модель QoS, которой мы хотим всё инициализировать
+        /// </summary>
+        public QoS QoS { get; private set; }
+
         /// <summary>
         /// возращает истину, если были применены новые параметры
         /// </summary>
@@ -61,11 +67,12 @@ namespace QosGui
         {
             // инициализация окна настроек
             InitializeComponent();
-            minPacketSizes = new List<NumericUpDown>();
-            maxPacketSizes = new List<NumericUpDown>();
-            minTimePeriods = new List<NumericUpDown>();
-            maxTimePeriods = new List<NumericUpDown>();
-            tokenBuketWeights = new List<TrackBar>();
+            this.QoS = new AverageStrategyQos();
+            this.minPacketSizes = new List<NumericUpDown>();
+            this.maxPacketSizes = new List<NumericUpDown>();
+            this.minTimePeriods = new List<NumericUpDown>();
+            this.maxTimePeriods = new List<NumericUpDown>();
+            this.tokenBuketWeights = new List<TrackBar>();
             InitGeneratorSettings();
             this.IsSettingsApplyed = false;
         }
@@ -328,6 +335,33 @@ namespace QosGui
         public int NumOfPackets()
         {
             return (int)numOfPackets.Value;
+        }
+
+        private void averageStrategy_CheckedChanged(object sender, EventArgs e)
+        {
+            if((sender as RadioButton).Checked)
+            {
+                // инициализация
+                this.QoS = new AverageStrategyQos();
+            }
+        }
+
+        private void peakStrategy_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as RadioButton).Checked)
+            {
+                // инициализация
+                this.QoS = new SimpleTBQoS();
+            }
+        }
+
+        private void simulatedAnnealing_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as RadioButton).Checked)
+            {
+                // инициализация
+                this.QoS = new SimpleTBQoS();
+            }
         }
 
         // TODO: выбор оптимизации

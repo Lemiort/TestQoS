@@ -21,7 +21,7 @@ namespace QosGui
         /// <summary>
         /// сама модель
         /// </summary>
-        TestQoS.SimpleTBQoS qos;
+        TestQoS.QoS qos;
 
         //
         // графики
@@ -109,15 +109,20 @@ namespace QosGui
                 timer1.Stop();
 
                 //инициализируем
-                qos = new TestQoS.SimpleTBQoS();
-                qos.Initializate(setForm.ObservationPeriod(),
-                                setForm.NumOfBuckets(),
-                                setForm.MinPacketSizes(),
-                                setForm.MaxPacketSizes(),
-                                setForm.MaxTimePeriods(),
-                                setForm.MaxTimePeriods(),
-                                500);
-                qos.SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
+   //             qos = new TestQoS.SimpleTBQoS();
+                qos = setForm.QoS;
+                if (qos is SimpleTBQoS)
+                {
+                    (qos as SimpleTBQoS).Initializate(setForm.ObservationPeriod(),
+                                   setForm.NumOfBuckets(),
+                                   setForm.MinPacketSizes(),
+                                   setForm.MaxPacketSizes(),
+                                   setForm.MaxTimePeriods(),
+                                   setForm.MaxTimePeriods(),
+                                   500);
+                    (qos as SimpleTBQoS).SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
+                }
+
                 if (!backgroundWorker1.IsBusy)
                 {
                     backgroundWorker1.RunWorkerAsync();
@@ -130,6 +135,7 @@ namespace QosGui
             }
 
         }
+
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -155,25 +161,25 @@ namespace QosGui
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-             (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
+             ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
+              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
+              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
             label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              (qos.multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
+              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
 
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
@@ -185,21 +191,21 @@ namespace QosGui
             multiplexerMiss.Clear();
             averageThroughput.Clear();
 
-            for(int j=0; j<(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
+            for (int j = 0; j < ((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
             {
                 //потери на вёдрах
-                uint bucketMissValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
+                uint bucketMissValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
                 //прошедший траффик
-                uint bucketGoalValue = (uint)(qos.bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                uint bucketGoalValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
                 bucketMiss.AddPoint(bucketMissValue,(double)j);
                 bucketGoal.AddPoint(bucketGoalValue, (double)j);
                 inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
                 //потери на мультиплексоре
-                uint multiplexorMissValue = (uint)(qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                uint multiplexorMissValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
                 multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
 
                 //средняя пропускная способность
-                float averageThroghputValue = (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
+                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
                 averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)

@@ -101,6 +101,7 @@ namespace TestQoS
         /// <returns></returns>
         public override TokenBuket MakeTokenBuket()
         {
+
             return new SimpleTokenBuket(qtime  as QuantizedTime);
         }
 
@@ -303,6 +304,10 @@ namespace TestQoS
         public void SetMultiplexerSpeed(ulong bytesPerDt)
         {
             multiplexer.BytesPerDt = bytesPerDt;
+            foreach(var buket in buckets)
+            {
+                (buket as SimpleTokenBuket).MaxTokensCount = bytesPerDt;
+            }
         }
 
         /// <summary>
@@ -368,7 +373,7 @@ namespace TestQoS
         /// <summary>
         /// Основной цикл
         /// </summary>
-        public virtual void MakeTick()
+        public override void MakeTick()
         {
             /*******************************************************/
             /************Создание всех объектов*********************/

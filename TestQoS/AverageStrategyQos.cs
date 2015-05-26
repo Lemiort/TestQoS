@@ -63,9 +63,10 @@ namespace TestQoS
                         (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
 
                         //оптимизация!!
-                        (buckets.ElementAt(i) as SimpleTokenBuket).TokensPerDt =
+                        (buckets.ElementAt(i) as SimpleTokenBuket).TokensPerDt = 
                              (generatorAnalyzers.ElementAt(i) as SimpleAnalyzer).
-                             GetAveragePassedPacketsSize();
+                             GetAveragePassedPacketsSize() * (float)1.2;
+                            
                     }
 
                         (multiplexer as SimpleMultiplexer).Update();
