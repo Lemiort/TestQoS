@@ -248,10 +248,11 @@ namespace TestQoS
         /// <param name="minTimePeriods">минимальное время между пакетами в мс</param>
         /// <param name="maxTimePeriods">максимальное время между пакетами в мс</param>
         /// <param name="_histrorySize">информацию о скольки последних байтах храним</param>
+        /// <param name="maxTokensCounts">Размеры вёдер</param>
         public void Initializate(double observationPeriod, uint numOfBuckets,
             List<uint> minPacketSizes, List<uint> maxPacketSizes,
             List<double> minTimePeriods, List<double> maxTimePeriods,
-            int _histrorySize)
+            int _histrorySize, List<float> maxTokensCounts)
         {
             this.observationPeriod = observationPeriod;
             this.numOfBuckets = numOfBuckets;
@@ -296,6 +297,7 @@ namespace TestQoS
                 generators.Add(this.MakeTrafficGenerator());
                 generatorAnalyzers.Add(this.MakeAnalyzer());
                 buckets.Add(this.MakeTokenBuket());
+                (buckets.Last() as SimpleTokenBucket).MaxTokensCount = maxTokensCounts[i];
                 bucketAnalyzers.Add(this.MakeAnalyzer());
 
                 //соединяем ведро с генератором
@@ -332,11 +334,7 @@ namespace TestQoS
         {
             multiplexer.BytesPerDt = bytesPerDt;
             if (multiplexer.BytesPerDt > multiplexer.MaxQueueSize)
-                multiplexer.MaxQueueSize = multiplexer.BytesPerDt;
-            foreach (var buket in buckets)
-            {
-                (buket as SimpleTokenBucket).MaxTokensCount = bytesPerDt;
-            }
+                multiplexer.MaxQueueSize = multiplexer.BytesPerDt;            
         }
 
         /// <summary>

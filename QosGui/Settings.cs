@@ -55,6 +55,11 @@ namespace QosGui
         /// </summary>
         private List<NumericUpDown> maxTimePeriods;
 
+        /// <summary>
+        /// хранит размеры маркерных корзин
+        /// </summary>
+        private List<NumericUpDown> maxTokensCounts;
+
 
         private List<TrackBar> tokenBuketWeights;
 
@@ -72,6 +77,7 @@ namespace QosGui
             this.maxPacketSizes = new List<NumericUpDown>();
             this.minTimePeriods = new List<NumericUpDown>();
             this.maxTimePeriods = new List<NumericUpDown>();
+            this.maxTokensCounts = new List<NumericUpDown>();
             this.tokenBuketWeights = new List<TrackBar>();
             InitGeneratorSettings();
             this.IsSettingsApplyed = false;
@@ -132,12 +138,17 @@ namespace QosGui
                 label4.Size = new System.Drawing.Size(181, 13);
                 label4.Text = "Максимальный период генерации (мс)";
 
-
                 Label label5 = new Label();
                 label5.AutoSize = true;
                 label5.Location = new System.Drawing.Point(16, 162);
                 label5.Size = new System.Drawing.Size(181, 13);
-                label5.Text = "Вес потерь на корзине";
+                label5.Text = "Размер корзины";
+
+                Label label6 = new Label();
+                label6.AutoSize = true;
+                label6.Location = new System.Drawing.Point(16, 200);
+                label6.Size = new System.Drawing.Size(181, 13);
+                label6.Text = "Вес потерь на корзине";
 
                 // создаём нумерики
                 // Минимальный размер пакета
@@ -178,9 +189,18 @@ namespace QosGui
                 maxTimePeriod.Value = 100;
                 maxTimePeriods.Add(maxTimePeriod);
 
+                // Размер корзины
+                NumericUpDown maxTokensCount = new NumericUpDown();
+                maxTokensCount.Location = new System.Drawing.Point(232, 160);
+                maxTokensCount.Maximum = new decimal(periodMax);
+                maxTokensCount.Increment = new decimal(periodStep);
+                maxTokensCount.Size = new System.Drawing.Size(70, 20);
+                maxTokensCount.Value = 128;
+                maxTokensCounts.Add(maxTokensCount);
+
                 // веса корзин
                 TrackBar tokenBuketWeight = new TrackBar();
-                tokenBuketWeight.Location = new System.Drawing.Point(218, 160);
+                tokenBuketWeight.Location = new System.Drawing.Point(218, 200);
                 tokenBuketWeight.Size = new System.Drawing.Size(104, 45);
                 tokenBuketWeight.BackColor = Color.White;
                 tokenBuketWeight.Value = 10;
@@ -192,12 +212,14 @@ namespace QosGui
                 tabPage.Controls.Add(maxPacketSize);
                 tabPage.Controls.Add(minTimePeriod);
                 tabPage.Controls.Add(maxTimePeriod);
+                tabPage.Controls.Add(maxTokensCount);
                 tabPage.Controls.Add(tokenBuketWeight);
                 tabPage.Controls.Add(label1);
                 tabPage.Controls.Add(label2);
                 tabPage.Controls.Add(label3);
                 tabPage.Controls.Add(label4);
                 tabPage.Controls.Add(label5);
+                tabPage.Controls.Add(label6);
                 tabPage.Padding = new System.Windows.Forms.Padding(3);
                 tabPage.TabIndex = i;
                 tabPage.UseVisualStyleBackColor = true;
@@ -268,6 +290,20 @@ namespace QosGui
             foreach (var maxPacketSize in maxPacketSizes)
             {
                 result.Add((uint)maxPacketSize.Value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Размер маркерных корзин
+        /// </summary>
+        /// <returns></returns>
+        public List<float> MaxTokensCounts()
+        {
+            List<float> result = new List<float>();
+            foreach (var maxTokensCount in maxTokensCounts)
+            {
+                result.Add((float)maxTokensCount.Value);
             }
             return result;
         }

@@ -101,7 +101,7 @@
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.apply.Location = new System.Drawing.Point(349, 426);
+            this.apply.Location = new System.Drawing.Point(349, 454);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 3;
@@ -112,7 +112,7 @@
             // cancel
             // 
             this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancel.Location = new System.Drawing.Point(430, 426);
+            this.cancel.Location = new System.Drawing.Point(430, 454);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 4;
@@ -156,7 +156,7 @@
             this.generatorsSettings.Location = new System.Drawing.Point(12, 175);
             this.generatorsSettings.Name = "generatorsSettings";
             this.generatorsSettings.SelectedIndex = 0;
-            this.generatorsSettings.Size = new System.Drawing.Size(493, 244);
+            this.generatorsSettings.Size = new System.Drawing.Size(493, 272);
             this.generatorsSettings.TabIndex = 2;
             // 
             // multiplexerSpeed
@@ -353,6 +353,8 @@
             // 
             // multiplaxorSpeedDt
             // 
+            this.multiplaxorSpeedDt.Enabled = false;
+            this.multiplaxorSpeedDt.InterceptArrowKeys = false;
             this.multiplaxorSpeedDt.Location = new System.Drawing.Point(458, 11);
             this.multiplaxorSpeedDt.Maximum = new decimal(new int[] {
             100000,
@@ -389,7 +391,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(517, 461);
+            this.ClientSize = new System.Drawing.Size(517, 489);
             this.ControlBox = false;
             this.Controls.Add(this.label8);
             this.Controls.Add(this.multiplaxorSpeedDt);
