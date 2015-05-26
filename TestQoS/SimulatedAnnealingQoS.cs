@@ -349,7 +349,14 @@ namespace TestQoS
                     //применяем оптимальные значения
                     for (int i = 0; i < buckets.Count; i++)
                     {
+                       
                         (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts.ElementAt(i);
+                        //TODO убрать этот костыль
+                        if ( (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt >
+                             (buckets.ElementAt(i) as SimpleTokenBucket).MaxTokensCount 
+                            )
+                                    (buckets.ElementAt(i) as SimpleTokenBucket).MaxTokensCount = 
+                                    (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt;
                     }
 
                     //генерим пакеты
