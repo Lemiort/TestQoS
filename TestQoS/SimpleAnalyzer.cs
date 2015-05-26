@@ -184,5 +184,29 @@ namespace TestQoS
         {
             return (float)summaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
         }
+
+
+        /// <summary>
+        /// конструктор копии
+        /// </summary>
+        /// <param name="prev"></param>
+        SimpleAnalyzer(SimpleAnalyzer prev)
+        {
+            this.packetsNotPassed = prev.packetsNotPassed;
+            this.packetsPassed = prev.packetsPassed;
+            this.QuantHistorySize = prev.QuantHistorySize;
+            this.quantsNotPassed = new Queue<HistoryQuant>();
+            foreach( var quant in prev.quantsNotPassed)
+            {
+                this.quantsNotPassed.Enqueue(quant);
+            }
+            this.quantsPassed = new Queue<HistoryQuant>();
+            foreach(var quant in prev.quantsPassed)
+            {
+                this.quantsPassed.Enqueue(quant);
+            }
+            this.summaryNotPassedPacketsSize = prev.summaryNotPassedPacketsSize;
+            this.summaryPassedPacketsSize = prev.summaryPassedPacketsSize;
+        }
     }
 }

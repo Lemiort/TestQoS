@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    public class SimpleTokenBuket : TokenBuket
+    public class SimpleTokenBucket : TokenBuket
     {
         /// <summary>
         /// время квантовани
@@ -37,10 +37,6 @@ namespace TestQoS
             set;
         }
 
-        /// <summary>
-        /// время обработки предыдущего пакета
-        /// </summary>
-        private long prevPacketTime;
 
         /// <summary>
         /// число токенов
@@ -96,10 +92,9 @@ namespace TestQoS
         /// конструктор
         /// TODO: написать конструктор получше
         /// </summary>
-        public SimpleTokenBuket(QuantizedTime _time)
+        public SimpleTokenBucket(QuantizedTime _time)
         {
             qtime = _time;
-            prevPacketTime = DateTime.Now.Ticks;
             tokensCount = 0;
             MaxTokensCount = 400;
             TokensPerDt = 20;
@@ -134,13 +129,15 @@ namespace TestQoS
                     {
                         tokensCount -= packet.Size;
 
-                        //пропускаем пакет
-                        onPacketPass(packet);
+                        if(onPacketPass != null)
+                            //пропускаем пакет
+                            onPacketPass(packet);
                     }
                     else
                     {
-                        //не пропускаем пакет
-                        onPacketNotPass(packet);
+                        if(onPacketNotPass != null)
+                            //не пропускаем пакет
+                            onPacketNotPass(packet);
                     }
                 }
             }
@@ -149,5 +146,21 @@ namespace TestQoS
         public event PacketProcessHandler onPacketPass;
         public event PacketProcessHandler onPacketNotPass;
 
+        /// <summary>
+        /// конструктор копии
+        /// </summary>
+        /// <param name="prev"></param>
+        public SimpleTokenBucket(SimpleTokenBucket prev)
+        {
+            this.MaxTokensCount = prev.MaxTokensCount;
+            this.packets = new Queue<Packet>();
+            foreach( var packet in prev.packets)
+            {
+                this.packets.Enqueue(packet);
+            }
+            this.qtime = prev.qtime;
+            this.tokensCount = prev.tokensCount;
+            this.TokensPerDt = prev.TokensPerDt;
+        }
     }
 }

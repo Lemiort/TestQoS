@@ -155,7 +155,69 @@ namespace TestQoS
         /// <returns></returns>
         private uint ObjectiveFunction(List<float> tokensPerDts)
         {
-            return 0;
+            List<SimpleTrafficGenerator> generatorsCopy = new List<SimpleTrafficGenerator>();
+            
+            //копируем генераторы
+            foreach(var generator in generators)
+            {
+                generatorsCopy.Add(
+                    new SimpleTrafficGenerator(generator as SimpleTrafficGenerator));
+            }
+
+            //копируем вёдра
+            List<SimpleTokenBucket> bucketsCopy = new List<SimpleTokenBucket>();
+            foreach(var bucket in buckets)
+            {
+                bucketsCopy.Add(
+                    new SimpleTokenBucket(bucket as SimpleTokenBucket));
+            }
+
+            //копируем мультиплексор
+            SimpleMultiplexer multiplexerCopy =
+                new SimpleMultiplexer(multiplexer as SimpleMultiplexer);
+
+            //анализаторы для сбора инфы
+            SimpleAnalyzer bucketsAnalyzerCopy = new SimpleAnalyzer();
+            SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
+
+            //устанавливаем в вёдра параметры
+            for (int i = 0; i < tokensPerDts.Count; i++)
+            {
+                //аргументы функции
+                bucketsCopy.ElementAt(i).TokensPerDt = tokensPerDts.ElementAt(i);
+
+                //соединяем с мультиплексором
+                bucketsCopy.ElementAt(i).onPacketPass += multiplexerCopy.ProcessPacket;
+                //считаем потери на вёдрах
+                bucketsCopy.ElementAt(i).onPacketNotPass += bucketsAnalyzerCopy.OnNotPassPacket;
+            }
+            //считаем потери на мультиплексоре
+            multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
+
+            //////////////////////////////////////////
+            ///**************Собственно проход*******/
+            ///
+            //генерация
+            foreach (var generator in generatorsCopy)
+            {
+                generator.MakePacket();
+            }
+
+            //обработка вёдрами
+            foreach (var bucket in bucketsCopy)
+            {
+                bucket.Update();
+            }
+            //обработка мультиплексором
+            multiplexerCopy.Update();
+
+            //анализ ведёр в целом и мультиплесора
+            multiplexorAnalyzerCopy.Update();
+            bucketsAnalyzerCopy.Update();
+
+            return ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) +
+                ((uint)bucketsAnalyzerCopy.GetAverageNotPassedPacketsSize()) +
+                (uint)multiplexerCopy.GetQueueSize();
         }
 
         /// <summary>

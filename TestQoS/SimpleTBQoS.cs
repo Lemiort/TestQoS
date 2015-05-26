@@ -122,7 +122,7 @@ namespace TestQoS
         public override TokenBuket MakeTokenBuket()
         {
 
-            return new SimpleTokenBuket(qtime  as QuantizedTime);
+            return new SimpleTokenBucket(qtime  as QuantizedTime);
         }
 
         /// <summary>
@@ -300,19 +300,19 @@ namespace TestQoS
 
                 //соединяем ведро с генератором
                 (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
-                    (buckets.Last() as SimpleTokenBuket).ProcessPacket;
+                    (buckets.Last() as SimpleTokenBucket).ProcessPacket;
                 //и генератор с анализатором
                 (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
                     (generatorAnalyzers.Last() as SimpleAnalyzer).OnPassPacket;
 
                 //соединяем ведро с анализатором, иначе бешехельме, всё пропало, лови эксепшн
-                (buckets.Last() as SimpleTokenBuket).onPacketPass +=
+                (buckets.Last() as SimpleTokenBucket).onPacketPass +=
                     (bucketsAnalyzer as SimpleAnalyzer).OnPassPacket;
-                (buckets.Last() as SimpleTokenBuket).onPacketNotPass +=
+                (buckets.Last() as SimpleTokenBucket).onPacketNotPass +=
                     (bucketsAnalyzer as SimpleAnalyzer).OnNotPassPacket;
 
                 //соединяем с мультиплексором
-                (buckets.Last() as SimpleTokenBuket).onPacketPass +=
+                (buckets.Last() as SimpleTokenBucket).onPacketPass +=
                     (multiplexer as SimpleMultiplexer).ProcessPacket;
             }
            
@@ -335,7 +335,7 @@ namespace TestQoS
                 multiplexer.MaxQueueSize = multiplexer.BytesPerDt;
             foreach (var buket in buckets)
             {
-                (buket as SimpleTokenBuket).MaxTokensCount = bytesPerDt;
+                (buket as SimpleTokenBucket).MaxTokensCount = bytesPerDt;
             }
         }
 
@@ -382,7 +382,7 @@ namespace TestQoS
                     }
                     foreach (TokenBuket bucket in buckets)
                     {
-                        (bucket as SimpleTokenBuket).Update();
+                        (bucket as SimpleTokenBucket).Update();
                     }
 
                     (multiplexer as SimpleMultiplexer).Update();
@@ -434,29 +434,41 @@ namespace TestQoS
                 if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
                 {
                     //generator.MakePacket();
+
+                    //генерация пакетов
                     foreach (TrafficGenerator generator in generators)
                     {
                         (generator as SimpleTrafficGenerator).MakePacket();
                     }
+
+                    //запись в историю генераторов
                     foreach (Analyzer analyzer in generatorAnalyzers)
                     {
                         (analyzer as SimpleAnalyzer).Update();
                     }
 
+                    //обработка пакетов
                     foreach (TokenBuket bucket in buckets)
                     {
-                        (bucket as SimpleTokenBuket).Update();
+                        (bucket as SimpleTokenBucket).Update();
                     }
+
+                    //запись в историю ведёр
                     foreach (Analyzer analyzer in bucketAnalyzers)
                     {
                         (analyzer as SimpleAnalyzer).Update();
                     }
 
+                    //обработка пакетов из ведёр
                     (multiplexer as SimpleMultiplexer).Update();
 
+                    //запись в историю мультиплексора
                     (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
+                    
+                    //запись в общеведёрную историю
                     (bucketsAnalyzer as SimpleAnalyzer).Update();
+
+
 
                     //история байтов мультиплексора
                     multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());

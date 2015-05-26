@@ -49,21 +49,13 @@ namespace TestQoS
                         (analyzer as SimpleAnalyzer).Update();
                     }
 
-                    foreach (TokenBuket bucket in buckets)
-                    {
-                        (bucket as SimpleTokenBuket).Update();
-                    }
-                    foreach (Analyzer analyzer in bucketAnalyzers)
-                    {
-                        (analyzer as SimpleAnalyzer).Update();
-                    }
                     for (int i = 0; i < buckets.Count; i++ )
                     {
-                        (buckets.ElementAt(i) as SimpleTokenBuket).Update();
+                        (buckets.ElementAt(i) as SimpleTokenBucket).Update();
                         (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
 
                         //оптимизация!!
-                        (buckets.ElementAt(i) as SimpleTokenBuket).TokensPerDt = 
+                        (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt = 
                              (generatorAnalyzers.ElementAt(i) as SimpleAnalyzer).
                              GetAveragePassedPacketsSize() * (float)1.2;
                             

@@ -31,6 +31,11 @@ namespace TestQoS
             return lastThroughputSize;
         }
 
+        public UInt64 GetQueueSize()
+        {
+            return queueSize;
+        }
+
         /// <summary>
         /// обработчик события обработки пакета
         /// </summary>
@@ -108,13 +113,15 @@ namespace TestQoS
                         //если пролазит, обрабатываем
                         if (queueSize <= MaxQueueSize)
                         {
-                            onPacketPass(packet);
+                            if(onPacketPass != null)
+                                onPacketPass(packet);
                         }
                             //иначе на мороз
                         else
                         {
                             queueSize -= packet.Size;
-                            onPacketNotPass(packet);
+                            if(onPacketNotPass != null)
+                                onPacketNotPass(packet);
                         }
 
                     }
@@ -137,6 +144,26 @@ namespace TestQoS
                 /*if(passedBytes > 0)
                     Console.WriteLine("{0} bytes passed", passedBytes);*/
             }
+        }
+
+        /// <summary>
+        /// конструктор копии
+        /// </summary>
+        /// <param name="prev"></param>
+        public SimpleMultiplexer(SimpleMultiplexer prev)
+        {
+            this.BytesPerDt = prev.BytesPerDt;
+            this.lastThroughputSize = prev.lastThroughputSize;
+            this.MaxQueueSize = prev.MaxQueueSize;
+            this.packets = new Queue<Packet>();
+            foreach(var packet in prev.packets)
+            {
+                packets.Enqueue(packet);
+            }
+
+            this.prevUpdateTime = prev.prevUpdateTime;
+            this.qtime = prev.qtime;
+            this.queueSize = prev.queueSize;
         }
     }
 }

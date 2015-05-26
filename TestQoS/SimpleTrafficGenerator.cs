@@ -64,6 +64,22 @@ namespace TestQoS
             period = GeneratePeriod();
         }
 
+
+        /// <summary>
+        /// конструктор копии
+        /// </summary>
+        /// <param name="previous"></param>
+        public SimpleTrafficGenerator(SimpleTrafficGenerator previous)
+        {
+            this.rand = previous.rand;
+            this.time = previous.time;
+            this.minPacketSize = previous.minPacketSize;
+            this.maxPacketSize = previous.maxPacketSize;
+            this.minTimePeriod = previous.minTimePeriod;
+            this.maxTimePeriod = previous.maxTimePeriod;
+            this.period = previous.period;
+        }
+
         /// <summary>
         /// обновляет настройки генератора
         /// </summary>
@@ -84,6 +100,12 @@ namespace TestQoS
             period = GeneratePeriod();
         }
 
+
+        /// <summary>
+        /// генерирует пакет, если прошло нужно число квантов
+        /// вызывается каждый квант
+        /// </summary>
+        /// <returns></returns>
         public override Packet MakePacket()
         {
             // проверяем кончилось ли время текущего периода
@@ -94,7 +116,8 @@ namespace TestQoS
 
                 SimplePacket ret = new SimplePacket(GeneratePacketSize());
 
-                onPacketGenerated(ret);
+                if(onPacketGenerated != null)
+                    onPacketGenerated(ret);
 
                 return ret;           
             }
@@ -134,5 +157,6 @@ namespace TestQoS
         /// событие генерации пакета
         /// </summary>
         public event Observer onPacketGenerated;
+
     }
 }
