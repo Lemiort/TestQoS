@@ -331,15 +331,12 @@ namespace TestQoS
         public void SetMultiplexerSpeed(ulong bytesPerDt)
         {
             multiplexer.BytesPerDt = bytesPerDt;
-<<<<<<< HEAD
-            foreach(var buket in buckets)
+            if (multiplexer.BytesPerDt > multiplexer.MaxQueueSize)
+                multiplexer.MaxQueueSize = multiplexer.BytesPerDt;
+            foreach (var buket in buckets)
             {
                 (buket as SimpleTokenBuket).MaxTokensCount = bytesPerDt;
             }
-=======
-            if (multiplexer.BytesPerDt > multiplexer.MaxQueueSize)
-                multiplexer.MaxQueueSize = multiplexer.BytesPerDt;
->>>>>>> origin/woring_test
         }
 
         /// <summary>
