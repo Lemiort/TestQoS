@@ -113,7 +113,7 @@ namespace TestQoS
         }
 
         //размер истории
-        private int historySize;
+        protected int historySize;
 
         /// <summary>
         /// Реализация фабричного метода MakeTokenBuket 

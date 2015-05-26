@@ -185,9 +185,11 @@ namespace TestQoS
             rand = new Random((int)DateTime.Now.Ticks);
             int i = 1;
             this.temperature = this.initalTemperature;
+            this.InitMaxTokensPerDts();
 
             while(temperature > minTemperature)
             {
+    //            this.InitMaxTokensPerDts();
                 newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts);
                 double probability = this.NewStateProbability(
                 this.ObjectiveFunction(newTokensPerDts),

@@ -192,7 +192,7 @@ namespace QosGui
             bucketMiss.Clear();
             bucketGoal.Clear();
             inputTraffic.Clear();
-         //   multiplexerGoal.Clear();
+            multiplexerGoal.Clear();
             multiplexerMiss.Clear();
             averageThroughput.Clear();
 
@@ -205,18 +205,17 @@ namespace QosGui
                 bucketMiss.AddPoint(bucketMissValue,(double)j);
                 bucketGoal.AddPoint(bucketGoalValue, (double)j);
                 inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
+
                 //потери на мультиплексоре
-                uint multiplexorMissValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                uint multiplexorMissValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
                 multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
 
+                //прошедший через мультиплексор траффик
+                uint multiplexorGoalValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                multiplexerGoal.AddPoint(multiplexorGoalValue, (double)j);
+
                 //средняя пропускная способность
-<<<<<<< HEAD
-                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
-=======
-                //float averageThroghputValue = (qos.multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).AveragePacketsSize;
-                //averageThroughput.AddPoint(averageThroghputValue, (float)j);
-                float averageThroghputValue = (qos.multiplexorAvarageBytes.ElementAt(j));
->>>>>>> origin/woring_test
+                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAvarageBytes.ElementAt(j));
                 averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)
