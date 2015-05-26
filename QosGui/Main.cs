@@ -110,7 +110,6 @@ namespace QosGui
                 // где-то тут применяются настройки
                 progressBar1.Visible = true;
                 stopButton.Visible = true;
-                label1.Visible = true;
                 timer1.Stop();
 
                 //инициализируем
@@ -173,19 +172,8 @@ namespace QosGui
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            label1.Text = "Среднее число отброшенных байтов в квант=  " +
-             ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
-            label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            label1.Text = "Среднее число отброшенных байтов в квант=  " +
-              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAverageNotPassedPacketsSize().ToString();
-            label1.Text += "\nСреднее число пропущенных байтов в квант=  " +
-              ((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).GetAveragePassedPacketsSize().ToString();
-        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
