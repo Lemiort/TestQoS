@@ -51,6 +51,8 @@
             this.averageStrategy = new System.Windows.Forms.RadioButton();
             this.historySize = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
+            this.multiplaxorSpeedDt = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplexerSpeed)).BeginInit();
@@ -60,6 +62,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.QueueLength)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.historySize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.multiplaxorSpeedDt)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -85,7 +88,7 @@
             0,
             0});
             this.bucketNum.Name = "bucketNum";
-            this.bucketNum.Size = new System.Drawing.Size(44, 20);
+            this.bucketNum.Size = new System.Drawing.Size(47, 20);
             this.bucketNum.TabIndex = 1;
             this.bucketNum.Value = new decimal(new int[] {
             1,
@@ -98,7 +101,7 @@
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.apply.Location = new System.Drawing.Point(316, 401);
+            this.apply.Location = new System.Drawing.Point(349, 426);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 3;
@@ -109,7 +112,7 @@
             // cancel
             // 
             this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancel.Location = new System.Drawing.Point(397, 401);
+            this.cancel.Location = new System.Drawing.Point(430, 426);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 4;
@@ -119,7 +122,7 @@
             // 
             // observationPeriod
             // 
-            this.observationPeriod.Location = new System.Drawing.Point(422, 37);
+            this.observationPeriod.Location = new System.Drawing.Point(458, 60);
             this.observationPeriod.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -133,12 +136,13 @@
             0,
             0,
             0});
+            this.observationPeriod.ValueChanged += new System.EventHandler(this.observationPeriod_ValueChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label3.Location = new System.Drawing.Point(265, 39);
+            this.label3.Location = new System.Drawing.Point(301, 62);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(144, 13);
             this.label3.TabIndex = 5;
@@ -149,15 +153,15 @@
             this.generatorsSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.generatorsSettings.Location = new System.Drawing.Point(12, 160);
+            this.generatorsSettings.Location = new System.Drawing.Point(12, 175);
             this.generatorsSettings.Name = "generatorsSettings";
             this.generatorsSettings.SelectedIndex = 0;
-            this.generatorsSettings.Size = new System.Drawing.Size(460, 234);
+            this.generatorsSettings.Size = new System.Drawing.Size(493, 244);
             this.generatorsSettings.TabIndex = 2;
             // 
             // multiplexerSpeed
             // 
-            this.multiplexerSpeed.Location = new System.Drawing.Point(422, 12);
+            this.multiplexerSpeed.Location = new System.Drawing.Point(458, 35);
             this.multiplexerSpeed.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -171,11 +175,12 @@
             0,
             0,
             0});
+            this.multiplexerSpeed.ValueChanged += new System.EventHandler(this.multiplexerSpeed_ValueChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(195, 14);
+            this.label2.Location = new System.Drawing.Point(231, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(214, 13);
             this.label2.TabIndex = 8;
@@ -190,7 +195,7 @@
             0,
             0});
             this.seed.Name = "seed";
-            this.seed.Size = new System.Drawing.Size(58, 20);
+            this.seed.Size = new System.Drawing.Size(47, 20);
             this.seed.TabIndex = 10;
             // 
             // label4
@@ -204,9 +209,9 @@
             // 
             // multiplexerWeight
             // 
-            this.multiplexerWeight.Location = new System.Drawing.Point(368, 92);
+            this.multiplexerWeight.Location = new System.Drawing.Point(360, 109);
             this.multiplexerWeight.Name = "multiplexerWeight";
-            this.multiplexerWeight.Size = new System.Drawing.Size(104, 45);
+            this.multiplexerWeight.Size = new System.Drawing.Size(145, 45);
             this.multiplexerWeight.TabIndex = 11;
             this.multiplexerWeight.Value = 10;
             // 
@@ -214,7 +219,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label5.Location = new System.Drawing.Point(206, 94);
+            this.label5.Location = new System.Drawing.Point(198, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(166, 13);
             this.label5.TabIndex = 12;
@@ -224,7 +229,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label6.Location = new System.Drawing.Point(214, 124);
+            this.label6.Location = new System.Drawing.Point(206, 141);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(157, 13);
             this.label6.TabIndex = 14;
@@ -232,9 +237,9 @@
             // 
             // queueWeight
             // 
-            this.queueWeight.Location = new System.Drawing.Point(367, 124);
+            this.queueWeight.Location = new System.Drawing.Point(359, 141);
             this.queueWeight.Name = "queueWeight";
-            this.queueWeight.Size = new System.Drawing.Size(104, 45);
+            this.queueWeight.Size = new System.Drawing.Size(146, 45);
             this.queueWeight.TabIndex = 13;
             this.queueWeight.Value = 10;
             // 
@@ -242,7 +247,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label7.Location = new System.Drawing.Point(287, 68);
+            this.label7.Location = new System.Drawing.Point(323, 91);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(122, 13);
             this.label7.TabIndex = 15;
@@ -250,7 +255,7 @@
             // 
             // QueueLength
             // 
-            this.QueueLength.Location = new System.Drawing.Point(422, 66);
+            this.QueueLength.Location = new System.Drawing.Point(458, 89);
             this.QueueLength.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -272,7 +277,7 @@
             this.panel1.Controls.Add(this.averageStrategy);
             this.panel1.Location = new System.Drawing.Point(5, 90);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(195, 68);
+            this.panel1.Size = new System.Drawing.Size(195, 79);
             this.panel1.TabIndex = 18;
             // 
             // simulatedAnnealing
@@ -329,7 +334,7 @@
             0,
             0});
             this.historySize.Name = "historySize";
-            this.historySize.Size = new System.Drawing.Size(58, 20);
+            this.historySize.Size = new System.Drawing.Size(47, 20);
             this.historySize.TabIndex = 22;
             this.historySize.Value = new decimal(new int[] {
             1000,
@@ -346,13 +351,48 @@
             this.label9.TabIndex = 21;
             this.label9.Text = "Интервал наблюдения";
             // 
+            // multiplaxorSpeedDt
+            // 
+            this.multiplaxorSpeedDt.Location = new System.Drawing.Point(458, 11);
+            this.multiplaxorSpeedDt.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.multiplaxorSpeedDt.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.multiplaxorSpeedDt.Name = "multiplaxorSpeedDt";
+            this.multiplaxorSpeedDt.ReadOnly = true;
+            this.multiplaxorSpeedDt.Size = new System.Drawing.Size(44, 20);
+            this.multiplaxorSpeedDt.TabIndex = 23;
+            this.multiplaxorSpeedDt.Value = new decimal(new int[] {
+            1600,
+            0,
+            0,
+            0});
+            this.multiplaxorSpeedDt.ValueChanged += new System.EventHandler(this.multiplaxorSpeedDt_ValueChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(198, 13);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(247, 13);
+            this.label8.TabIndex = 24;
+            this.label8.Text = "Ширна канала мультиплексора, байт/интервал";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(484, 436);
+            this.ClientSize = new System.Drawing.Size(517, 461);
             this.ControlBox = false;
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.multiplaxorSpeedDt);
             this.Controls.Add(this.historySize);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel1);
@@ -387,6 +427,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.historySize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.multiplaxorSpeedDt)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -417,5 +458,7 @@
         private System.Windows.Forms.RadioButton averageStrategy;
         private System.Windows.Forms.NumericUpDown historySize;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown multiplaxorSpeedDt;
+        private System.Windows.Forms.Label label8;
     }
 }

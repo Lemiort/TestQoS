@@ -33,7 +33,7 @@ namespace QosGui
 
             // подпись осей
             plotter.ChartAreas.FindByName("ChartArea1").AxisX.Title = "Время (сек)";
-            plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = "Размер трафика (бит)";
+            plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = "Размер трафика (байт)";
         }
 
         /// <summary>
