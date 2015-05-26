@@ -78,20 +78,13 @@ namespace TestQoS
                     multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
                     //сумма байтов за историю
                     MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-<<<<<<< HEAD
-                    multiplexorAvarageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-=======
                     multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
->>>>>>> origin/woring_test
+
                     if (multiplexorBytes.Count > historySize)
                     {
                         //убираем из истории байт, а так же из суммарного размера
                         MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-<<<<<<< HEAD
-                        multiplexorAvarageBytes.Dequeue();
-=======
                         multiplexorAverageBytes.Dequeue();
->>>>>>> origin/woring_test
                     }
 
                     prevTime = DateTime.Now.Ticks;

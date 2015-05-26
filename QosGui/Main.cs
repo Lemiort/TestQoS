@@ -215,7 +215,7 @@ namespace QosGui
                 multiplexerGoal.AddPoint(multiplexorGoalValue, (double)j);
 
                 //средняя пропускная способность
-                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAvarageBytes.ElementAt(j));
+                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAverageBytes.ElementAt(j));
                 averageThroughput.AddPoint(averageThroghputValue, (float)j);
             }
             if (!backgroundWorker1.IsBusy)
