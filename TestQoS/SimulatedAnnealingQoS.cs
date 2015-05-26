@@ -273,7 +273,7 @@ namespace TestQoS
         {
             // инициализация параметров алгоритма
             this.initalTemperature = 1000;
-            this.minTemperature = 1e-6;
+            this.minTemperature = 1;
             List<float> oldTokensPerDts = firstTokensPerDts;
             List<float> newTokensPerDts;
             rand = new Random((int)DateTime.Now.Ticks);
