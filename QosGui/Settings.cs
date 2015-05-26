@@ -112,13 +112,13 @@ namespace QosGui
                 label1.AutoSize = true;
                 label1.Location = new System.Drawing.Point(16, 18);
                 label1.Size = new System.Drawing.Size(159, 13);
-                label1.Text = "Минимальный размер пакета";
+                label1.Text = "Минимальный размер пакета (байт)";
 
                 Label label2 = new Label();
                 label2.AutoSize = true;
                 label2.Location = new System.Drawing.Point(16, 48);
                 label2.Size = new System.Drawing.Size(165, 13);
-                label2.Text = "Максимальный размер пакета";
+                label2.Text = "Максимальный размер пакета (байт)";
 
                 Label label3 = new Label();
                 label3.AutoSize = true;
@@ -366,6 +366,20 @@ namespace QosGui
                 // инициализация QoS
                 this.QoS = new SimulatedAnnealingQoS();
             }
+        }
+
+        private void multiplexerSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
+        }
+
+        private void multiplaxorSpeedDt_ValueChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void observationPeriod_ValueChanged(object sender, EventArgs e)
+        {
+            multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
         }
 
         // TODO: выбор оптимизации
