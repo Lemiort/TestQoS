@@ -304,30 +304,30 @@ namespace QosGui
         /// Вес потерь на мультиплексоре
         /// </summary>
         /// <returns></returns>
-        public int MultiplexerWeight()
+        public uint MultiplexerWeight()
         {
-            return multiplexerWeight.Value;
+            return (uint)multiplexerWeight.Value;
         }
 
         /// <summary>
         /// Вес очереди мультиплексора
         /// </summary>
         /// <returns></returns>
-        public int QueueWeight()
+        public uint QueueWeight()
         {
-            return queueWeight.Value;
+            return (uint)queueWeight.Value;
         }
 
         /// <summary>
         /// Вес потерь на корзинах
         /// </summary>
         /// <returns></returns>
-        public List<int> TokenBuketsWeights()
+        public List<uint> TokenBuketsWeights()
         {
-            List<int> result = new List<int>();
+            List<uint> result = new List<uint>();
             foreach (var tokenBuketWeight in tokenBuketWeights)
             {
-                result.Add(tokenBuketWeight.Value);
+                result.Add((uint)tokenBuketWeight.Value);
             }
             return result;
         }
@@ -345,7 +345,7 @@ namespace QosGui
         {
             if((sender as RadioButton).Checked)
             {
-                // инициализация
+                // инициализация QoS
                 this.QoS = new AverageStrategyQos();
             }
         }
@@ -354,7 +354,7 @@ namespace QosGui
         {
             if ((sender as RadioButton).Checked)
             {
-                // инициализация
+                // инициализация QoS
                 this.QoS = new SimpleTBQoS();
             }
         }
@@ -363,7 +363,7 @@ namespace QosGui
         {
             if ((sender as RadioButton).Checked)
             {
-                // инициализация
+                // инициализация QoS
                 this.QoS = new SimpleTBQoS();
             }
         }

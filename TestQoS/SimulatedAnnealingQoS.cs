@@ -14,6 +14,21 @@ namespace TestQoS
         private Random rand;
 
         /// <summary>
+        /// Вес потерь на корзинах
+        /// </summary>
+        public List<uint> TokenBuketsWeights { get; set; }
+
+        /// <summary>
+        /// Вес очереди мультиплексора
+        /// </summary>
+        public uint QueueWeight { get; set; }
+
+        /// <summary>
+        /// Вес потерь на мультиплексоре
+        /// </summary>
+        public uint MultiplexerWeight { get; set; }
+
+        /// <summary>
         /// Начальная температура чем она выше,
         /// тем дольше работает алгоритм и больше вероятность
         /// правельного решения
@@ -220,11 +235,12 @@ namespace TestQoS
             //анализ ведёр в целом и мультиплесора
             multiplexorAnalyzerCopy.Update();
 
-           uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) /* TODO * k */+
-                (uint)multiplexerCopy.GetQueueSize();//TODO * K
-            foreach(var analyzer in bucketAnalyzersCopy)
-            {
-                ret += (uint)analyzer.GetAverageNotPassedPacketsSize();//TODO * k
+            uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight +
+                (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
+            for(int i = 0; i < bucketAnalyzersCopy.Count; i++)
+            {                
+                ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
+                    * (uint)this.TokenBuketsWeights[i];
             }
            return ret;
         }
