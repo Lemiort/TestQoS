@@ -177,8 +177,8 @@ namespace TestQoS
                 new SimpleMultiplexer(multiplexer as SimpleMultiplexer);
 
             //анализаторы для сбора инфы
-            SimpleAnalyzer bucketsAnalyzerCopy = new SimpleAnalyzer();
             SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
+            List<SimpleAnalyzer> bucketAnalyzersCopy = new List<SimpleAnalyzer>();
 
             //устанавливаем в вёдра параметры
             for (int i = 0; i < tokensPerDts.Count; i++)
@@ -188,8 +188,14 @@ namespace TestQoS
 
                 //соединяем с мультиплексором
                 bucketsCopy.ElementAt(i).onPacketPass += multiplexerCopy.ProcessPacket;
+
                 //считаем потери на вёдрах
-                bucketsCopy.ElementAt(i).onPacketNotPass += bucketsAnalyzerCopy.OnNotPassPacket;
+
+                //индивидуальный анализатор
+                bucketAnalyzersCopy.Add( new SimpleAnalyzer());
+                //инициализируем его
+                bucketAnalyzersCopy.ElementAt(i).QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
+                bucketsCopy.ElementAt(i).onPacketNotPass +=bucketAnalyzersCopy.ElementAt(i).OnNotPassPacket;
             }
             //считаем потери на мультиплексоре
             multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
@@ -213,11 +219,14 @@ namespace TestQoS
 
             //анализ ведёр в целом и мультиплесора
             multiplexorAnalyzerCopy.Update();
-            bucketsAnalyzerCopy.Update();
 
-            return ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) +
-                ((uint)bucketsAnalyzerCopy.GetAverageNotPassedPacketsSize()) +
-                (uint)multiplexerCopy.GetQueueSize();
+           uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) /* TODO * k */+
+                (uint)multiplexerCopy.GetQueueSize();//TODO * K
+            foreach(var analyzer in bucketAnalyzersCopy)
+            {
+                ret += (uint)analyzer.GetAverageNotPassedPacketsSize();//TODO * k
+            }
+           return ret;
         }
 
         /// <summary>
