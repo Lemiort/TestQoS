@@ -49,7 +49,7 @@
             this.simulatedAnnealing = new System.Windows.Forms.RadioButton();
             this.peakStrategy = new System.Windows.Forms.RadioButton();
             this.averageStrategy = new System.Windows.Forms.RadioButton();
-            this.numOfPackets = new System.Windows.Forms.NumericUpDown();
+            this.historySize = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).BeginInit();
@@ -59,7 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.queueWeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.QueueLength)).BeginInit();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numOfPackets)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.historySize)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -310,28 +310,28 @@
             this.averageStrategy.UseVisualStyleBackColor = true;
             this.averageStrategy.CheckedChanged += new System.EventHandler(this.averageStrategy_CheckedChanged);
             // 
-            // numOfPackets
+            // historySize
             // 
-            this.numOfPackets.Increment = new decimal(new int[] {
+            this.historySize.Increment = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.numOfPackets.Location = new System.Drawing.Point(142, 37);
-            this.numOfPackets.Maximum = new decimal(new int[] {
+            this.historySize.Location = new System.Drawing.Point(142, 37);
+            this.historySize.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
-            this.numOfPackets.Minimum = new decimal(new int[] {
+            this.historySize.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.numOfPackets.Name = "numOfPackets";
-            this.numOfPackets.Size = new System.Drawing.Size(58, 20);
-            this.numOfPackets.TabIndex = 22;
-            this.numOfPackets.Value = new decimal(new int[] {
+            this.historySize.Name = "historySize";
+            this.historySize.Size = new System.Drawing.Size(58, 20);
+            this.historySize.TabIndex = 22;
+            this.historySize.Value = new decimal(new int[] {
             1000,
             0,
             0,
@@ -353,7 +353,7 @@
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(484, 436);
             this.ControlBox = false;
-            this.Controls.Add(this.numOfPackets);
+            this.Controls.Add(this.historySize);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.QueueLength);
@@ -386,7 +386,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.QueueLength)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numOfPackets)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.historySize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,7 +415,7 @@
         private System.Windows.Forms.RadioButton simulatedAnnealing;
         private System.Windows.Forms.RadioButton peakStrategy;
         private System.Windows.Forms.RadioButton averageStrategy;
-        private System.Windows.Forms.NumericUpDown numOfPackets;
+        private System.Windows.Forms.NumericUpDown historySize;
         private System.Windows.Forms.Label label9;
     }
 }

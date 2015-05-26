@@ -332,9 +332,13 @@ namespace QosGui
             return result;
         }
 
-        public int NumOfPackets()
+        /// <summary>
+        /// возвращает величину истории
+        /// </summary>
+        /// <returns>длина в квантах</returns>
+        public int HistorySize()
         {
-            return (int)numOfPackets.Value;
+            return (int)historySize.Value;
         }
 
         private void averageStrategy_CheckedChanged(object sender, EventArgs e)

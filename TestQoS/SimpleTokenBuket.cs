@@ -124,9 +124,13 @@ namespace TestQoS
                     tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));*/
                     if(tokensCount+ (long)TokensPerDt <= MaxTokensCount)
                         tokensCount += (long)TokensPerDt;
+                    else
+                    {
+                        tokensCount = (long)MaxTokensCount;
+                    }
 
                     //проверяем пакет
-                    if (packet.Size < tokensCount)
+                    if (packet.Size <= tokensCount)
                     {
                         tokensCount -= packet.Size;
 

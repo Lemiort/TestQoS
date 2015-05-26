@@ -124,7 +124,8 @@ namespace QosGui
                                    setForm.MaxPacketSizes(),
                                    setForm.MaxTimePeriods(),
                                    setForm.MaxTimePeriods(),
-                                   500);
+                                   setForm.HistorySize());
+                    //MessageBox.Show(setForm.GetMultiplexorBytesPerDt().ToString());
                     (qos as SimpleTBQoS).SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
                 }
 
