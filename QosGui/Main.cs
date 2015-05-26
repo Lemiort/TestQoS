@@ -196,37 +196,40 @@ namespace QosGui
 
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
-
-            bucketMiss.Clear();
-            bucketGoal.Clear();
-            inputTraffic.Clear();
-            multiplexerGoal.Clear();
-            multiplexerMiss.Clear();
-            averageThroughput.Clear();
-
-            for (int j = 0; j < ((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
+            if (backgroundWorker1.IsBusy == false)
             {
-                //потери на вёдрах
-                uint bucketMissValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
-                //прошедший траффик
-                uint bucketGoalValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
-                bucketMiss.AddPoint(bucketMissValue,(double)j);
-                bucketGoal.AddPoint(bucketGoalValue, (double)j);
-                inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
 
-                //потери на мультиплексоре
-                uint multiplexorMissValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
-                multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
+                bucketMiss.Clear();
+                bucketGoal.Clear();
+                inputTraffic.Clear();
+                multiplexerGoal.Clear();
+                multiplexerMiss.Clear();
+                averageThroughput.Clear();
 
-                //прошедший через мультиплексор траффик
-                uint multiplexorGoalValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
-                multiplexerGoal.AddPoint(multiplexorGoalValue, (double)j);
+                for (int j = 0; j < ((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
+                {
+                    //потери на вёдрах
+                    uint bucketMissValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
+                    //прошедший траффик
+                    uint bucketGoalValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                    bucketMiss.AddPoint(bucketMissValue, (double)j);
+                    bucketGoal.AddPoint(bucketGoalValue, (double)j);
+                    inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
 
-                //средняя пропускная способность
-                float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAverageBytes.ElementAt(j));
-                averageThroughput.AddPoint(averageThroghputValue, (float)j);
+                    //потери на мультиплексоре
+                    uint multiplexorMissValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
+                    multiplexerMiss.AddPoint(multiplexorMissValue, (double)j);
+
+                    //прошедший через мультиплексор траффик
+                    uint multiplexorGoalValue = (uint)((qos as SimpleTBQoS).multiplexorAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+                    multiplexerGoal.AddPoint(multiplexorGoalValue, (double)j);
+
+                    //средняя пропускная способность
+                    float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAverageBytes.ElementAt(j));
+                    averageThroughput.AddPoint(averageThroghputValue, (float)j);
+                }
             }
-            if (!backgroundWorker1.IsBusy)
+            if (backgroundWorker1.IsBusy == false)
                 backgroundWorker1.RunWorkerAsync();
         }
 
