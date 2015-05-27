@@ -211,8 +211,8 @@ namespace TestQoS
                 Packet t1, t2;
                 t1 = generatorsCopy[i].MakePacket();
                 t2 = generators[i].MakePacket();
-                if(t1 != null && t2 != null)
-                    throw new Exception(t1.Size.ToString() + " " + t2.Size.ToString());
+                /*if(t1 != null && t2 != null)
+                    throw new Exception(t1.Size.ToString() + " " + t2.Size.ToString());*/
             }
 
                 //обработка вёдрами
@@ -241,8 +241,8 @@ namespace TestQoS
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
             }
-            if(ret != 0)
-                throw new Exception();
+            /*if(ret != 0)*
+                throw new Exception();*/
 
            return ret;
         }

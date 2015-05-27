@@ -143,8 +143,8 @@ namespace TestQoS
         /// <returns></returns>
         private uint GeneratePeriod()
         {
-            seed = rand.Next();
             rand = new Random(seed);
+            seed = rand.Next();
             return (uint)rand.Next((int)minTimePeriod, (int)maxTimePeriod);
         }
 
@@ -154,8 +154,8 @@ namespace TestQoS
         /// <returns></returns>
         private uint GeneratePacketSize()
         {
-            seed = rand.Next();
             rand = new Random(seed);
+            seed = rand.Next();
             return (uint)rand.Next((int)minPacketSize, (int)maxPacketSize);
         }
 
