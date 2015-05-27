@@ -181,7 +181,7 @@ namespace TestQoS
             //устанавливаем в вёдра параметры
             for (int i = 0; i < tokensPerDts.Count; i++)
             {
-                //соединяем с анализатором
+                //соединяем генераторы с вёдрами
                 generatorsCopy[i].onPacketGenerated += bucketsCopy[i].ProcessPacket;
 
                 //заполняем вёдра параметарми из аргумента
@@ -237,6 +237,8 @@ namespace TestQoS
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
             }
+            if(ret != 0)
+                throw new Exception();
 
            return ret;
         }
