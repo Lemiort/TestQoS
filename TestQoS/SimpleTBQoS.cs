@@ -329,13 +329,17 @@ namespace TestQoS
             prevTime = DateTime.Now.Ticks;
         }
 
-
-        public void SetMultiplexerSpeed(ulong bytesPerDt)
+        /// <summary>
+        /// Инициализация пропускноу способности мультиплексора
+        /// </summary>
+        /// <param name="bytesPerDt"></param>
+        public void SetMultiplexer(ulong bytesPerDt, ulong maxQueueSize)
         {
             multiplexer.BytesPerDt = bytesPerDt;
+            multiplexer.MaxQueueSize = maxQueueSize;
             if (multiplexer.BytesPerDt > multiplexer.MaxQueueSize)
                 multiplexer.MaxQueueSize = multiplexer.BytesPerDt;            
-        }
+        }       
 
         /// <summary>
         /// TODO

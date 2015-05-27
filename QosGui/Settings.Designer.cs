@@ -44,7 +44,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.queueWeight = new System.Windows.Forms.TrackBar();
             this.label7 = new System.Windows.Forms.Label();
-            this.QueueLength = new System.Windows.Forms.NumericUpDown();
+            this.queueLength = new System.Windows.Forms.NumericUpDown();
             this.panel1 = new System.Windows.Forms.Panel();
             this.simulatedAnnealing = new System.Windows.Forms.RadioButton();
             this.peakStrategy = new System.Windows.Forms.RadioButton();
@@ -59,7 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.seed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplexerWeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.queueWeight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.QueueLength)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.queueLength)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.historySize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplaxorSpeedDt)).BeginInit();
@@ -253,18 +253,18 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "Длинна очереди (байт)";
             // 
-            // QueueLength
+            // queueLength
             // 
-            this.QueueLength.Location = new System.Drawing.Point(458, 89);
-            this.QueueLength.Maximum = new decimal(new int[] {
+            this.queueLength.Location = new System.Drawing.Point(458, 89);
+            this.queueLength.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.QueueLength.Name = "QueueLength";
-            this.QueueLength.Size = new System.Drawing.Size(44, 20);
-            this.QueueLength.TabIndex = 17;
-            this.QueueLength.Value = new decimal(new int[] {
+            this.queueLength.Name = "queueLength";
+            this.queueLength.Size = new System.Drawing.Size(44, 20);
+            this.queueLength.TabIndex = 17;
+            this.queueLength.Value = new decimal(new int[] {
             40,
             0,
             0,
@@ -398,7 +398,7 @@
             this.Controls.Add(this.historySize);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.QueueLength);
+            this.Controls.Add(this.queueLength);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.generatorsSettings);
             this.Controls.Add(this.label6);
@@ -425,7 +425,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.seed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplexerWeight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.queueWeight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.QueueLength)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.queueLength)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.historySize)).EndInit();
@@ -453,7 +453,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TrackBar queueWeight;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown QueueLength;
+        private System.Windows.Forms.NumericUpDown queueLength;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton simulatedAnnealing;
         private System.Windows.Forms.RadioButton peakStrategy;

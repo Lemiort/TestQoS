@@ -126,7 +126,8 @@ namespace QosGui
                                    setForm.HistorySize(),
                                    setForm.MaxTokensCounts());
                     //MessageBox.Show(setForm.GetMultiplexorBytesPerDt().ToString());
-                    (qos as SimpleTBQoS).SetMultiplexerSpeed(setForm.GetMultiplexorBytesPerDt());
+                    (qos as SimpleTBQoS).SetMultiplexer(setForm.GetMultiplexorBytesPerDt(),
+                                                        setForm.GetMultiplexorMaxQueueSize());
                 }
 
                 if (qos is SimulatedAnnealingQoS)

@@ -62,11 +62,7 @@ namespace QosGui
 
 
         private List<TrackBar> tokenBuketWeights;
-
-        public ulong GetMultiplexorBytesPerDt()
-        { 
-                return Decimal.ToUInt64(multiplexerSpeed.Value * observationPeriod.Value);
-        }
+       
 
         public Settings()
         {
@@ -184,7 +180,7 @@ namespace QosGui
                 NumericUpDown maxTimePeriod = new NumericUpDown();
                 maxTimePeriod.Location = new System.Drawing.Point(232, 123);
                 maxTimePeriod.Maximum = new decimal(periodMax);
-                maxTimePeriod.Increment = new decimal(periodStep);
+                maxTimePeriod.Increment = new decimal(sizeStep);
                 maxTimePeriod.Size = new System.Drawing.Size(70, 20);
                 maxTimePeriod.Value = 100;
                 maxTimePeriods.Add(maxTimePeriod);
@@ -192,7 +188,7 @@ namespace QosGui
                 // Размер корзины
                 NumericUpDown maxTokensCount = new NumericUpDown();
                 maxTokensCount.Location = new System.Drawing.Point(232, 160);
-                maxTokensCount.Maximum = new decimal(periodMax);
+                maxTokensCount.Maximum = new decimal(sizeMax);
                 maxTokensCount.Increment = new decimal(periodStep);
                 maxTokensCount.Size = new System.Drawing.Size(70, 20);
                 maxTokensCount.Value = 128;
@@ -404,6 +400,21 @@ namespace QosGui
             }
         }
 
+        /// <summary>
+        /// Настройка ширины пропускания канала
+        /// </summary>
+        /// <returns></returns>
+        public ulong GetMultiplexorBytesPerDt()
+        {
+            return Decimal.ToUInt64(multiplexerSpeed.Value * observationPeriod.Value);
+        }
+
+        public ulong GetMultiplexorMaxQueueSize()
+        {
+            return Decimal.ToUInt64(queueLength.Value);
+        }
+
+
         private void multiplexerSpeed_ValueChanged(object sender, EventArgs e)
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
@@ -417,8 +428,5 @@ namespace QosGui
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
         }
-
-        // TODO: выбор оптимизации
-
     }
 }
