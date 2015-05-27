@@ -6,22 +6,29 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// История квантов
+    /// </summary>
     public class HistoryQuant
     {
         public Queue<Packet> packets;
 
-        //общий размер пакетов в квант
+        /// <summary>
+        /// общий размер пакетов в квант
+        /// </summary>
         public ulong SummarySize
         {
             get;
             private set;
         }
 
-        //средний размер пакетов за последнее время
+        /// <summary>
+        /// средний размер пакетов за последнее время
+        /// </summary>
         public float AveragePacketsSize
         {
             get;
-             set;
+            set;
         }
 
         public HistoryQuant()
@@ -53,6 +60,9 @@ namespace TestQoS
         }
     }
 
+    /// <summary>
+    /// Реализация анализатора
+    /// </summary>
     public class SimpleAnalyzer: Analyzer
     {
         /// <summary>
@@ -181,7 +191,6 @@ namespace TestQoS
         {
             return (float)summaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
         }
-
 
         /// <summary>
         /// конструктор копии

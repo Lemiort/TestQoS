@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// реализация фабрики QoS, создаёт вёдра и генераторы траффика
+    /// реализация QoS, отвечает за инициализацию 
+    /// системы и порождение частей её частей
     /// </summary>
     public class SimpleTBQoS : QoS
     {
-
         /// <summary>
         /// общее время кватования
         /// </summary>
@@ -86,7 +86,6 @@ namespace TestQoS
         /// </summary>
         protected Multiplexer multiplexer;
 
-
         /// <summary>
         /// предыдущее время наблюдения
         /// </summary>
@@ -96,7 +95,6 @@ namespace TestQoS
         /// история прошедших байтов
         /// </summary>
         public Queue<UInt64> multiplexorBytes;
-
 
         /// <summary>
         /// история средних значений байтв
@@ -121,7 +119,6 @@ namespace TestQoS
         /// <returns></returns>
         public override TokenBuket MakeTokenBuket()
         {
-
             return new SimpleTokenBucket(qtime  as QuantizedTime);
         }
 
@@ -184,7 +181,6 @@ namespace TestQoS
             // удаляем этот элемент из списка
             this.minTimePeriods.Remove(minTimePeriod);
 
-
             // maxTimePeriod
             if (maxTimePeriods == null)
             {
@@ -198,17 +194,11 @@ namespace TestQoS
             double maxTimePeriod = this.maxTimePeriods[0];
             // удаляем этот элемент из списка
             this.maxTimePeriods.Remove(maxTimePeriod);
-            /// ^^^повторения кода, похорошему бы рефакторить^^^
-
+            
             rand = new Random(seed);
             seed = rand.Next();
             return new SimpleTrafficGenerator(qtime as QuantizedTime, 
                 minPacketSize, maxPacketSize, minTimePeriod, maxTimePeriod, seed);
-
-
-
-            //return new SimpleTrafficGenerator( qtime as QuantizedTime, 64, 256, 200, 1500);
-            //throw new NotImplementedException();
         }
 
         /// <summary>

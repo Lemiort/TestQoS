@@ -11,7 +11,6 @@ namespace TestQoS
         static void Main(string[] args)
         {
             QoS qos = new SimpleTBQoS();
-
             qos.Run();
         }
     }

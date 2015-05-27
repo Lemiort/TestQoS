@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Реализация временной модели.
+    /// </summary>
     public class QuantizedTime : ModelTime
     {
-        // TODO: возможно эту переменную стоит переименовать (или/и сдалать только для чтения)
         /// <summary>
         /// промежуток наблюдения (в миллисекундах)
         /// </summary>
@@ -28,18 +30,12 @@ namespace TestQoS
         }
 
         /// <summary>
-        /// перевод времени
-        /// TODO: дописать норм коммент
+        /// конвертация миллисекунд в кванты
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
         public uint FromAnalogToDigital(double time)
         {
-            // если вдруг поделится без остатка то будет косяк (10/2 = 6)
-            // мб это так и надо, а может и нет
-            // return (uint)(time / timeSlice) + 1;
-
-            // добавлю ка на всякий это
             double eps = 1e-8;
             double realDiv = time / timeSlice;
             uint intDiv = (uint)(time / timeSlice);
@@ -49,8 +45,7 @@ namespace TestQoS
         }
 
         /// <summary>
-        /// перевод времени
-        /// TODO: дописать норм коммент
+        /// конвертация квантов в миллисекунды
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>

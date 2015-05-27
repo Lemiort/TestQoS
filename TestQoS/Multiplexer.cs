@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// мультиплексор, по сути - финальное ведро
+    /// Мультиплексор
     /// </summary>
     public abstract class Multiplexer
     {
@@ -20,6 +20,5 @@ namespace TestQoS
         /// длина очереди в байтах
         /// </summary>
         public ulong MaxQueueSize { get; set; }
-
     }
 }

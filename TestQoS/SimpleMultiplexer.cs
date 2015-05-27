@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Реализация мультиплексора 
+    /// </summary>
     public class SimpleMultiplexer: Multiplexer
     {
 
         /// <summary>
-        /// предыдущее время обработки всех пакетов, в тактах
+        /// Предыдущее время обработки всех пакетов, в тактах
         /// </summary>
         private long prevUpdateTime;
 
         /// <summary>
-        /// dt
+        /// Временная модель
         /// </summary>
         QuantizedTime qtime;
 
@@ -81,7 +84,6 @@ namespace TestQoS
             BytesPerDt = 50;
             MaxQueueSize = 60;
             queueSize = 0;
-
             prevUpdateTime = DateTime.Now.Ticks;
         }
 

@@ -179,11 +179,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(231, 37);
+            this.label2.Location = new System.Drawing.Point(226, 37);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(214, 13);
+            this.label2.Size = new System.Drawing.Size(220, 13);
             this.label2.TabIndex = 8;
-            this.label2.Text = "Ширна канала мультиплексора, байт/мс";
+            this.label2.Text = "Ширина канала мультиплексора, байт/мс";
             // 
             // seed
             // 

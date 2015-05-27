@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// анализатор, собирающий инфу обо всех утечках пакетов
+    /// анализатор, собирает информацию
+    /// обо всех пакетах
     /// </summary>
     public abstract class Analyzer
     {
