@@ -134,7 +134,6 @@ namespace TestQoS
 
         /// <summary>
         /// Реализация фабричного метода MakeTrafficGenerator
-        /// TODO
         /// </summary>
         /// <returns></returns>
         public override TrafficGenerator MakeTrafficGenerator()
@@ -144,7 +143,6 @@ namespace TestQoS
             {
                 if(minPacketSizes.Count == 0)
                 {
-                    // TODO: Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
@@ -158,7 +156,7 @@ namespace TestQoS
             {
                 if (maxPacketSizes.Count == 0)
                 {
-                    // TODO: Вызвать красивую ошибку
+                    // Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
@@ -172,7 +170,6 @@ namespace TestQoS
             {
                 if (minTimePeriods.Count == 0)
                 {
-                    // TODO: Вызвать красивую ошибку
                     throw new NotImplementedException();
                 }
             }
@@ -185,8 +182,7 @@ namespace TestQoS
             if (maxTimePeriods == null)
             {
                 if (maxTimePeriods.Count == 0)
-                {
-                    // TODO: Вызвать красивую ошибку
+                {                  
                     throw new NotImplementedException();
                 }
             }
@@ -202,7 +198,7 @@ namespace TestQoS
         }
 
         /// <summary>
-        /// TODO
+        /// Реализация фабричного метода MakeModelTime
         /// </summary>
         /// <returns>время квантования в 10 мс</returns>
         public override ModelTime MakeModelTime()
@@ -212,7 +208,7 @@ namespace TestQoS
         }
 
         /// <summary>
-        /// TODO
+        /// Реализация фабричного метода MakePacket
         /// </summary>
         /// <returns></returns>
         public override Packet MakePacket()
@@ -237,8 +233,6 @@ namespace TestQoS
            return ret;
             //throw new NotImplementedException();
         }
-
-
 
         /// <summary>
         /// инициализация 
@@ -295,7 +289,6 @@ namespace TestQoS
 
             multiplexer = this.MakeMultiplexer();
 
-
             for (int i = 0; i < numOfBuckets; i++)
             {
                 generators.Add(this.MakeTrafficGenerator());
@@ -322,7 +315,6 @@ namespace TestQoS
                     (multiplexer as SimpleMultiplexer).ProcessPacket;
             }
            
-
             //соединяем мультиплексор с анализатором, иначе событие не обработается и будет экспешн
             (multiplexer as SimpleMultiplexer).onPacketPass +=
                 (multiplexorAnalyzer as SimpleAnalyzer).OnPassPacket;
@@ -346,29 +338,18 @@ namespace TestQoS
         }       
 
         /// <summary>
-        /// TODO
         /// Основной цикл
         /// </summary>
         public override void Run()
         {
-            /*******************************************************/
-            /************Создание всех объектов*********************/
-            /*******************************************************/
-            //время квантования
+            // Создание времени квантования
             if(generators == null)
             {
                 throw new NullReferenceException();
             }
-            /*******************************************************/
-            /*******************************************************/
-           
 
-
-            /*******************************************************/
-            /*********************Основной цикл*********************/
-            /*******************************************************/
             //считаем изменение времени
-            /*long*/ prevTime = DateTime.Now.Ticks;
+            prevTime = DateTime.Now.Ticks;
 
             //пока не пришла команда завершаться
             while (true)
@@ -394,111 +375,81 @@ namespace TestQoS
                     (multiplexer as SimpleMultiplexer).Update();
 
                     (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    //(multiplexorAnalyzer as SimpleAnalyzer).PrintFirstQuantInfo();
 
                     prevTime = DateTime.Now.Ticks;
 
                 }
             }
-            /*******************************************************/
-            /*******************************************************/
         }
-
 
         /// <summary>
         /// Основной цикл
         /// </summary>
         public override void MakeTick()
         {
-            /*******************************************************/
-            /************Создание всех объектов*********************/
-            /*******************************************************/
-            //время квантования
+            // Создание времени квантования
             if (generators == null)
             {
                 throw new NullReferenceException();
             }
-            /*******************************************************/
-            /*******************************************************/
 
-
-
-            /*******************************************************/
-            /*********************Основной цикл*********************/
-            /*******************************************************/
             //считаем изменение времени
-            /*long prevTime = DateTime.Now.Ticks;*/
+            long dt = DateTime.Now.Ticks - prevTime;
 
-            //бывший основной цикл
+            //время в милисекундах
+            TimeSpan time = new TimeSpan(dt);
+            //собсно сам цикл
+            if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
             {
-                //считаем изменение времени
-                long dt = DateTime.Now.Ticks - prevTime;
-
-                //время в милисекундах
-                TimeSpan time = new TimeSpan(dt);
-                //собсно сам цикл
-                if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
+                //генерация пакетов
+                foreach (TrafficGenerator generator in generators)
                 {
-                    //generator.MakePacket();
-
-                    //генерация пакетов
-                    foreach (TrafficGenerator generator in generators)
-                    {
-                        (generator as SimpleTrafficGenerator).MakePacket();
-                    }
-
-                    //запись в историю генераторов
-                    foreach (Analyzer analyzer in generatorAnalyzers)
-                    {
-                        (analyzer as SimpleAnalyzer).Update();
-                    }
-
-                    //обработка пакетов
-                    foreach (TokenBuket bucket in buckets)
-                    {
-                        (bucket as SimpleTokenBucket).Update();
-                    }
-
-                    //запись в историю ведёр
-                    foreach (Analyzer analyzer in bucketAnalyzers)
-                    {
-                        (analyzer as SimpleAnalyzer).Update();
-                    }
-
-                    //обработка пакетов из ведёр
-                    (multiplexer as SimpleMultiplexer).Update();
-
-                    //запись в историю мультиплексора
-                    (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    
-                    //запись в общеведёрную историю
-                    (bucketsAnalyzer as SimpleAnalyzer).Update();
-
-
-
-                    //история байтов мультиплексора
-                    multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
-                    //сумма байтов за историю
-                    MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-                    multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-                    if(multiplexorBytes.Count > historySize)
-                    {
-                        //убираем из истории байт, а так же из суммарного размера
-                        MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-                        multiplexorAverageBytes.Dequeue();
-                    }
-
-                    //начальное время наблюдения
-                    prevTime = DateTime.Now.Ticks;
-
+                    (generator as SimpleTrafficGenerator).MakePacket();
                 }
-            }
-            /*******************************************************/
-            /*******************************************************/
+
+                //запись в историю генераторов
+                foreach (Analyzer analyzer in generatorAnalyzers)
+                {
+                    (analyzer as SimpleAnalyzer).Update();
+                }
+
+                //обработка пакетов
+                foreach (TokenBuket bucket in buckets)
+                {
+                    (bucket as SimpleTokenBucket).Update();
+                }
+
+                //запись в историю ведёр
+                foreach (Analyzer analyzer in bucketAnalyzers)
+                {
+                    (analyzer as SimpleAnalyzer).Update();
+                }
+
+                //обработка пакетов из ведёр
+                (multiplexer as SimpleMultiplexer).Update();
+
+                //запись в историю мультиплексора
+                (multiplexorAnalyzer as SimpleAnalyzer).Update();
+                    
+                //запись в общеведёрную историю
+                (bucketsAnalyzer as SimpleAnalyzer).Update();
+
+                //история байтов мультиплексора
+                multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
+                //сумма байтов за историю
+                MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
+                multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+                if(multiplexorBytes.Count > historySize)
+                {
+                    //убираем из истории байт, а так же из суммарного размера
+                    MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
+                    multiplexorAverageBytes.Dequeue();
+                }
+
+                //начальное время наблюдения
+                prevTime = DateTime.Now.Ticks;
+            }            
         }
-
-        
-
 
         /// <summary>
         /// обработчик пакета, что прошёл через ведро
@@ -517,6 +468,5 @@ namespace TestQoS
         {
             Console.WriteLine("Lost packet {0}", packet.Size);
         }
-
     }
 }

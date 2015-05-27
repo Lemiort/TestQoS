@@ -17,9 +17,6 @@ namespace QosGui
     /// </summary>
     public partial class TrafficPlotter : UserControl
     {
-        /// <summary>
-        /// TODO: инициализацию всего и вся
-        /// </summary>
         public TrafficPlotter()
         {
             InitializeComponent();

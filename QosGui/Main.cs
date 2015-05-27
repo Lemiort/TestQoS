@@ -11,6 +11,9 @@ using TestQoS;
 
 namespace QosGui
 {
+    /// <summary>
+    /// Основное окно программы
+    /// </summary>
     public partial class Main : Form
     {
         /// <summary>
@@ -74,14 +77,14 @@ namespace QosGui
 
         private void Main_Load(object sender, EventArgs e)
         {
-            //TODO: назвать это всё вменяемо
+            // Инициализация графиков
             inputTraffic = new TrafficPlotter("Входящий трафик");
             bucketMiss = new TrafficPlotter("Потери на маркерных корзинах");
             bucketGoal = new TrafficPlotter("Прошедший через маркерные корзины трафик");
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
             multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
             averageThroughput = new TrafficPlotter("Средняя пропускная способность");
-            // добавляем в панели
+            // добавление в панель
             graphsTabel.Controls.Add(inputTraffic);   
             graphsTabel.Controls.Add(bucketMiss);
             graphsTabel.Controls.Add(bucketGoal);
@@ -107,13 +110,12 @@ namespace QosGui
             {
                 if(backgroundWorker1.IsBusy)
                     backgroundWorker1.CancelAsync();
-                // где-то тут применяются настройки
+                // применение настроек
                 progressBar1.Visible = true;
                 stopButton.Visible = true;
                 timer1.Stop();
 
                 //инициализируем
-   //             qos = new TestQoS.SimpleTBQoS();
                 qos = setForm.QoS;
                 if (qos is SimpleTBQoS)
                 {
@@ -148,9 +150,7 @@ namespace QosGui
                     MessageBox.Show("Background worker is busy!");
                 }
             }
-
         }
-
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -176,7 +176,6 @@ namespace QosGui
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
         }
-
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -225,7 +224,5 @@ namespace QosGui
             MessageBox.Show("Тык!","",MessageBoxButtons.RetryCancel,MessageBoxIcon.Hand,
                 MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
         }
-
-
     }
 }
