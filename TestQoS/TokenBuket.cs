@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Маркерная корзина
+    /// </summary>
     public abstract class TokenBuket
     {
     }

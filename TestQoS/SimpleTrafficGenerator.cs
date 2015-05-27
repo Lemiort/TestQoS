@@ -8,7 +8,8 @@ namespace TestQoS
 {
     /// <summary>
     /// Генератор трафика. Генерирует пакеты с размером, принадлежащим
-    /// заданному промежутку [minPacketSize; maxPacketSize]. Период генерации принадлежит промежутку [minPacketSize; maxPacketSize]
+    /// заданному промежутку [minPacketSize; maxPacketSize]. 
+    /// Период генерации принадлежит промежутку [minPacketSize; maxPacketSize]
     /// </summary>
     public class SimpleTrafficGenerator : TrafficGenerator
     {
@@ -61,7 +62,6 @@ namespace TestQoS
             double minTimePeriod, double maxTimePeriod, int _seed)
         {
             seed = _seed;
-            // TODO: сделать "проверки на дурака" и тд
             this.time = time;
             this.minPacketSize = minPacketSize;
             this.maxPacketSize = maxPacketSize;
@@ -70,7 +70,6 @@ namespace TestQoS
 
             period = GeneratePeriod();
         }
-
 
         /// <summary>
         /// конструктор копии
@@ -98,7 +97,6 @@ namespace TestQoS
         /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами в милисекундах</param>
         public void UpdateSettings(QuantizedTime time, uint minPacketSize, uint maxPacketSize, double minTimePeriod, double maxTimePeriod)
         {
-            // TODO: сделать "проверки на дурака" и тд
             this.time = time;
             this.minPacketSize = minPacketSize;
             this.maxPacketSize = maxPacketSize;
@@ -169,6 +167,5 @@ namespace TestQoS
         /// событие генерации пакета
         /// </summary>
         public event Observer onPacketGenerated;
-
     }
 }

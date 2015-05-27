@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// это пиздец, товарищи
+    /// Реализация QoS, 
+    /// использующей алгоритм имитации отжига
     /// </summary>
     public class SimulatedAnnealingQoS : SimpleTBQoS
     {
@@ -113,8 +114,6 @@ namespace TestQoS
 
         /// <summary>
         /// Метод понижения температуры
-        /// TODO хз какой закое юзать правильней и оптимальней, 
-        /// пока юзается линейный. сделать более вменябельный закон
         /// </summary>
         /// <param name="i">номер итерации</param>
         private void DecreaseTemperature(int i)
@@ -189,7 +188,7 @@ namespace TestQoS
                 //соединяем с мультиплексором
                 bucketsCopy[i].onPacketPass += multiplexerCopy.ProcessPacket;
 
-                //считаем потери на вёдрах
+                //считаем потери на корзинах
 
                 //индивидуальный анализатор
                 bucketAnalyzersCopy.Add( new SimpleAnalyzer());
@@ -201,30 +200,23 @@ namespace TestQoS
             //считаем потери на мультиплексоре
             multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
 
-            //////////////////////////////////////////
-            ///**************Собственно проход*******/
-            ///
             //генерация
             for (int i = 0; i < generatorsCopy.Count; i++ )
             {
                 Packet t1, t2;
                 t1 = generatorsCopy[i].MakePacket();
-                //t2 = generatorsCopy[i].MakePacket();
-                /*if(t1 != null && t2 != null)
-                    throw new Exception(t1.Size.ToString() + " " + t2.Size.ToString());*/
             }
 
-                //обработка вёдрами
-                foreach (var bucket in bucketsCopy)
-                {
-                    bucket.Update();
-                }
+            //обработка вёдрами
+            foreach (var bucket in bucketsCopy)
+            {
+                bucket.Update();
+            }
             //анализ ведёр
             foreach(var analyzer in bucketAnalyzersCopy)
             {
                 analyzer.Update();
             }
-
 
             //обработка мультиплексором
             multiplexerCopy.Update();
@@ -241,8 +233,6 @@ namespace TestQoS
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
             }
-            /*if(ret != 0)
-                throw new Exception();*/
 
            return ret;
         }
@@ -251,7 +241,6 @@ namespace TestQoS
         /// Инициализация ограничения сверху для скорости поступления
         /// маркеров в маркерные корзины, зависит от параметром мультиплексора
         /// и приоритетов.
-        /// TODO
         /// </summary>
         private void InitMaxTokensPerDts()
         {
@@ -263,18 +252,7 @@ namespace TestQoS
                     (buckets[i] as SimpleTokenBucket).MaxTokensCount -
                     (buckets[i] as SimpleTokenBucket).GetTokensCount()
                     );
-            }
-
-            //TODO: пофиксить этот код
-      /*      for (int i = 0; i < buckets.Count; i++ )
-            {
-                maxTokensPerDts.Add(Math.Min(
-                    (buckets[i] as SimpleTokenBucket).MaxTokensCount -
-                    (buckets[i] as SimpleTokenBucket).GetTokensCount(),
-                    lastPacketsSize[i] - 
-                    (buckets[i] as SimpleTokenBucket).GetTokensCount() ) );
-            }*/
-                
+            }               
         }
 
         /// <summary>
@@ -321,100 +299,78 @@ namespace TestQoS
                 this.DecreaseTemperature(i);
             }
 
-
             return oldTokensPerDts;
         }
 
         public override void MakeTick()
         {
-            /*******************************************************/
-            /************Создание всех объектов*********************/
-            /*******************************************************/
-            //время квантования
+            // Создание времени квантования
             if (generators == null)
             {
                 throw new NullReferenceException();
             }
-            /*******************************************************/
-            /*******************************************************/
 
-
-
-            /*******************************************************/
-            /*********************Основной цикл*********************/
-            /*******************************************************/
             //считаем изменение времени
-            /*long prevTime = DateTime.Now.Ticks;*/
+            long dt = DateTime.Now.Ticks - prevTime;
 
-            //бывший основной цикл
+            //время в милисекундах
+            TimeSpan time = new TimeSpan(dt);
+            if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
             {
-                //считаем изменение времени
-                long dt = DateTime.Now.Ticks - prevTime;
-
-                //время в милисекундах
-                TimeSpan time = new TimeSpan(dt);
-                //собсно сам цикл
-                if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
+                //записываем текущие данные о токенах в квант
+                List<float> currentTokensPerDts = new List<float>();
+                for (int i = 0; i < buckets.Count; i++)
                 {
-                    //записываем текущие данные о токенах в квант
-                    List<float> currentTokensPerDts = new List<float>();
-                    for (int i = 0; i < buckets.Count; i++)
-                    {
-                        currentTokensPerDts.Add((buckets[i] as SimpleTokenBucket).TokensPerDt);
-                    }
-                    //ищем оптимальные значения
-                    List<float> optimalTokensPerDts = this.OptimalTokensPerDts(currentTokensPerDts);
-
-                    //применяем оптимальные значения
-                    for (int i = 0; i < buckets.Count; i++)
-                    {                      
-                        (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];                        
-                    }
-
-                    //генерим пакеты
-                    foreach (TrafficGenerator generator in generators)
-                    {
-                        (generator as SimpleTrafficGenerator).MakePacket();
-                    }
-                    //заносим инфу в анализатор
-                    foreach (Analyzer analyzer in generatorAnalyzers)
-                    {
-                        (analyzer as SimpleAnalyzer).Update();
-                    }
-
-                    //обрабатываем пакеты и заносим инфу в анализатор
-                    for (int i = 0; i < buckets.Count; i++)
-                    {
-                        (buckets.ElementAt(i) as SimpleTokenBucket).Update();
-                        (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
-                    }
-
-                    //запускаем мультиплексор
-                    (multiplexer as SimpleMultiplexer).Update();
-                    //анализируем результаты работы
-                    (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    (bucketsAnalyzer as SimpleAnalyzer).Update();
-
-                    //история байтов мультиплексора
-                    multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
-                    //сумма байтов за историю
-                    MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-                    multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-
-                    if (multiplexorBytes.Count > historySize)
-                    {
-                        //убираем из истории байт, а так же из суммарного размера
-                        MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-                        multiplexorAverageBytes.Dequeue();
-                    }
-
-                    prevTime = DateTime.Now.Ticks;
-
+                    currentTokensPerDts.Add((buckets[i] as SimpleTokenBucket).TokensPerDt);
                 }
-            }
-            /*******************************************************/
-            /*******************************************************/
+                //ищем оптимальные значения
+                List<float> optimalTokensPerDts = this.OptimalTokensPerDts(currentTokensPerDts);
 
+                //применяем оптимальные значения
+                for (int i = 0; i < buckets.Count; i++)
+                {                      
+                    (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];                        
+                }
+
+                //генерим пакеты
+                foreach (TrafficGenerator generator in generators)
+                {
+                    (generator as SimpleTrafficGenerator).MakePacket();
+                }
+                //заносим инфу в анализатор
+                foreach (Analyzer analyzer in generatorAnalyzers)
+                {
+                    (analyzer as SimpleAnalyzer).Update();
+                }
+
+                //обрабатываем пакеты и заносим инфу в анализатор
+                for (int i = 0; i < buckets.Count; i++)
+                {
+                    (buckets.ElementAt(i) as SimpleTokenBucket).Update();
+                    (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
+                }
+
+                //запускаем мультиплексор
+                (multiplexer as SimpleMultiplexer).Update();
+                //анализируем результаты работы
+                (multiplexorAnalyzer as SimpleAnalyzer).Update();
+                (bucketsAnalyzer as SimpleAnalyzer).Update();
+
+                //история байтов мультиплексора
+                multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
+                //сумма байтов за историю
+                MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
+                multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+
+                if (multiplexorBytes.Count > historySize)
+                {
+                    //убираем из истории байт, а так же из суммарного размера
+                    MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
+                    multiplexorAverageBytes.Dequeue();
+                }
+
+                prevTime = DateTime.Now.Ticks;   
+            }
         }
     }
 }

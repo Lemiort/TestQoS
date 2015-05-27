@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Герератор трафика
+    /// </summary>
     public abstract class TrafficGenerator
     {
         public abstract Packet MakePacket();

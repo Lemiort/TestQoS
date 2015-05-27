@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
+    /// <summary>
+    /// Реализация маркерной корзины
+    /// </summary>
     public class SimpleTokenBucket : TokenBuket
     {
         /// <summary>
@@ -29,14 +32,13 @@ namespace TestQoS
 
         /// <summary>
         /// максимальное число токенов
-        /// "ёмкость" ведра
+        /// "ёмкость" маркер
         /// </summary>
         public float MaxTokensCount
         {
             get;
             set;
         }
-
 
         /// <summary>
         /// число токенов
@@ -61,41 +63,15 @@ namespace TestQoS
         /// <returns>если пакет проходит, возвращает пакета, иначе null</returns>
         public void ProcessPacket(Packet packet)
         {
-
             //проверка на ненулевой пакет
             if (packet != null)
             {
-                packets.Enqueue(packet);
-                /*//считаем изменение времени
-                long dt = DateTime.Now.Ticks - prevPacketTime;
-
-                //время в милисекундах
-                TimeSpan time = new TimeSpan(dt);
-
-                //добавляем токены
-                tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));
-
-                //проверяем пакет
-                if (packet.Size < tokensCount)
-                {
-                    tokensCount -= packet.Size;
-
-                    //пропускаем пакет
-                    onPacketPass(packet);
-                    return packet;
-                }
-                else
-                {
-                    //не пропускаем пакет
-                    onPacketNotPass(packet);
-                    return null;
-                }*/
+                packets.Enqueue(packet);                
             }
         }
 
         /// <summary>
-        /// конструктор
-        /// TODO: написать конструктор получше
+        /// Конструктор
         /// </summary>
         public SimpleTokenBucket(QuantizedTime _time)
         {
@@ -106,6 +82,9 @@ namespace TestQoS
             packets = new Queue<Packet>();
         }
 
+        /// <summary>
+        /// Функция обновления параметров маркерной корзины
+        /// </summary>
         public void Update()
         {
             while (packets.Count != 0)
@@ -114,14 +93,6 @@ namespace TestQoS
                 //проверка на ненулевой пакет
                 if (packet != null)
                 {
-                    /*//считаем изменение времени
-                    long dt = DateTime.Now.Ticks - prevPacketTime;
-
-                    //время в милисекундах
-                    TimeSpan time = new TimeSpan(dt);
-
-                    //добавляем токены
-                    tokensCount += (long)(TokensPerDt * qtime.FromAnalogToDigital(time.Milliseconds));*/
                     if(tokensCount+ (long)TokensPerDt <= MaxTokensCount)
                         tokensCount += (long)TokensPerDt;
                     else
@@ -133,7 +104,6 @@ namespace TestQoS
                     if (packet.Size <= tokensCount)
                     {
                         tokensCount -= packet.Size;
-
                         if(onPacketPass != null)
                             //пропускаем пакет
                             onPacketPass(packet);
