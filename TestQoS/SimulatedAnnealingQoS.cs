@@ -28,12 +28,6 @@ namespace TestQoS
         /// </summary>
         public uint MultiplexerWeight { get; set; }
 
-        /// <summary>
-        /// размеры пакетов, поступивших на вход 
-        /// вёдер
-        /// не инициализированы до вызоыва ObjectiveFunction
-        /// </summary>
-        public List<uint> lastPacketsSize;
 
         /// <summary>
         /// Начальная температура чем она выше,
@@ -181,24 +175,29 @@ namespace TestQoS
 
             //анализаторы для сбора инфы
             SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
+            //анализаторы ведёр
             List<SimpleAnalyzer> bucketAnalyzersCopy = new List<SimpleAnalyzer>();
 
             //устанавливаем в вёдра параметры
             for (int i = 0; i < tokensPerDts.Count; i++)
             {
-                //аргументы функции
-                bucketsCopy.ElementAt(i).TokensPerDt = tokensPerDts.ElementAt(i);
+                //соединяем с анализатором
+                generatorsCopy[i].onPacketGenerated += bucketsCopy[i].ProcessPacket;
+
+                //заполняем вёдра параметарми из аргумента
+                bucketsCopy[i].TokensPerDt = tokensPerDts[i];
 
                 //соединяем с мультиплексором
-                bucketsCopy.ElementAt(i).onPacketPass += multiplexerCopy.ProcessPacket;
+                bucketsCopy[i].onPacketPass += multiplexerCopy.ProcessPacket;
 
                 //считаем потери на вёдрах
 
                 //индивидуальный анализатор
                 bucketAnalyzersCopy.Add( new SimpleAnalyzer());
                 //инициализируем его
-                bucketAnalyzersCopy.ElementAt(i).QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
-                bucketsCopy.ElementAt(i).onPacketNotPass +=bucketAnalyzersCopy.ElementAt(i).OnNotPassPacket;
+                bucketAnalyzersCopy[i].QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
+                //соединяем анализатор с ведром
+                bucketsCopy[i].onPacketNotPass +=bucketAnalyzersCopy[i].OnNotPassPacket;
             }
             //считаем потери на мультиплексоре
             multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
@@ -217,23 +216,28 @@ namespace TestQoS
             {
                 bucket.Update();
             }
+            //анализ ведёр
+            foreach(var analyzer in bucketAnalyzersCopy)
+            {
+                analyzer.Update();
+            }
+
+
             //обработка мультиплексором
             multiplexerCopy.Update();
-
-            //анализ ведёр в целом и мультиплесора
+            //анализ мультипоексора
             multiplexorAnalyzerCopy.Update();
 
-            //записываем последний размеры пакетов
-            lastPacketsSize = new List<uint>();
-
+            //потери мультипелксора*вес + очередь мультиплексора*вес
             uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight +
                 (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
+            //потери на вёдрах * вес
             for(int i = 0; i < bucketAnalyzersCopy.Count; i++)
             {                
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
-                lastPacketsSize.Add((uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize());
             }
+
            return ret;
         }
 
@@ -254,7 +258,6 @@ namespace TestQoS
                     (buckets[i] as SimpleTokenBucket).GetTokensCount()
                     );
             }
-
 
             //TODO: пофиксить этот код
       /*      for (int i = 0; i < buckets.Count; i++ )
