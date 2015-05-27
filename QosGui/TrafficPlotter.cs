@@ -29,10 +29,10 @@ namespace QosGui
             this.Dock = DockStyle.Fill;
 
             // Подпись графика
-            plotter.Titles.FindByName("GraphTitle").Text = "Какой-то бред";
+            plotter.Titles.FindByName("GraphTitle").Text = "";
 
             // подпись осей
-            plotter.ChartAreas.FindByName("ChartArea1").AxisX.Title = "Время (сек)";
+            plotter.ChartAreas.FindByName("ChartArea1").AxisX.Title = "Кванты наблюдения";
             plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = "Размер трафика (байт)";
         }
 
@@ -47,22 +47,20 @@ namespace QosGui
         }
 
         /// <summary>
-        /// Заполнение графика инфой (простой временный (канеееечна) вариант)
-        /// следует заполнять инфой попорядку
+        /// Добавление точки
         /// </summary>
-        /// <param name="traffic">трафик (сконее всего сришедшай за сек/мсек)</param>
-        /// <param name="time">время в секундах (или миллисекундах хз как удобнее)</param>
+        /// <param name="traffic">размер трафика</param>
+        /// <param name="time">номер кванта наблюдения</param>
         public void AddPoint(uint traffic, double time)
         {
             plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);            
         }
 
         /// <summary>
-        /// Заполнение графика инфой (простой временный (канеееечна) вариант)
-        /// следует заполнять инфой попорядку
+        /// Добавление точки
         /// </summary>
-        /// <param name="traffic">трафик (сконее всего сришедшай за сек/мсек)</param>
-        /// <param name="time">время в секундах (или миллисекундах хз как удобнее)</param>
+        /// <param name="traffic">размер трафика</param>
+        /// <param name="time">номер кванта наблюдения</param>
         public void AddPoint(float traffic, double time)
         {
             plotter.Series.FindByName("Traffic").Points.AddXY(time, traffic);
@@ -70,7 +68,7 @@ namespace QosGui
 
    
         /// <summary>
-        /// стереть график
+        /// Очистка графика
         /// </summary>
         public void Clear()
         {
@@ -78,7 +76,7 @@ namespace QosGui
         }
 
         /// <summary>
-        /// удаление первой точки графика
+        /// Удаление первой точки графика
         /// </summary>
         public void RemoveFirst()
         {
