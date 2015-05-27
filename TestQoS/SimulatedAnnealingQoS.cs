@@ -206,16 +206,20 @@ namespace TestQoS
             ///**************Собственно проход*******/
             ///
             //генерация
-            foreach (var generator in generatorsCopy)
+            for (int i = 0; i < generatorsCopy.Count; i++ )
             {
-                generator.MakePacket();
+                Packet t1, t2;
+                t1 = generatorsCopy[i].MakePacket();
+                t2 = generators[i].MakePacket();
+                if(t1 != null && t2 != null)
+                    throw new Exception(t1.Size.ToString() + " " + t2.Size.ToString());
             }
 
-            //обработка вёдрами
-            foreach (var bucket in bucketsCopy)
-            {
-                bucket.Update();
-            }
+                //обработка вёдрами
+                foreach (var bucket in bucketsCopy)
+                {
+                    bucket.Update();
+                }
             //анализ ведёр
             foreach(var analyzer in bucketAnalyzersCopy)
             {

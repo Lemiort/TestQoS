@@ -44,6 +44,11 @@ namespace TestQoS
         private QuantizedTime time;
 
         /// <summary>
+        /// внутреннее зерно,  используется для детерминированности генераторов
+        /// </summary>
+        private int seed;
+
+        /// <summary>
         /// возвращает пакет не раньше чем через minTimeperiod и не позже чем через maxTimePeriod
         /// </summary>
         /// <param name="time">реализует переход от времени в миллисекундах, к времени в квантах, и на оборот</param>
@@ -51,9 +56,11 @@ namespace TestQoS
         /// <param name="maxPacketSize">Максимальный размер пакета</param>
         /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами в милисекундах</param>
         /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами в милисекундах</param>
-        public SimpleTrafficGenerator(QuantizedTime time, uint minPacketSize, uint maxPacketSize, double minTimePeriod, double maxTimePeriod)
+        public SimpleTrafficGenerator(QuantizedTime time, uint minPacketSize, uint maxPacketSize, 
+            double minTimePeriod, double maxTimePeriod)
         {
-            rand = new Random((int)DateTime.Now.Ticks);
+            seed = (int)DateTime.Now.Ticks;
+            rand = new Random(seed);
             // TODO: сделать "проверки на дурака" и тд
             this.time = time;
             this.minPacketSize = minPacketSize;
@@ -78,6 +85,7 @@ namespace TestQoS
             this.minTimePeriod = previous.minTimePeriod;
             this.maxTimePeriod = previous.maxTimePeriod;
             this.period = previous.period;
+            this.seed = previous.seed;
         }
 
         /// <summary>
@@ -135,6 +143,8 @@ namespace TestQoS
         /// <returns></returns>
         private uint GeneratePeriod()
         {
+            seed = rand.Next();
+            rand = new Random(seed);
             return (uint)rand.Next((int)minTimePeriod, (int)maxTimePeriod);
         }
 
@@ -144,6 +154,8 @@ namespace TestQoS
         /// <returns></returns>
         private uint GeneratePacketSize()
         {
+            seed = rand.Next();
+            rand = new Random(seed);
             return (uint)rand.Next((int)minPacketSize, (int)maxPacketSize);
         }
 
