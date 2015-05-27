@@ -60,7 +60,6 @@ namespace TestQoS
             double minTimePeriod, double maxTimePeriod)
         {
             seed = (int)DateTime.Now.Ticks;
-            rand = new Random(seed);
             // TODO: сделать "проверки на дурака" и тд
             this.time = time;
             this.minPacketSize = minPacketSize;
@@ -78,7 +77,7 @@ namespace TestQoS
         /// <param name="previous"></param>
         public SimpleTrafficGenerator(SimpleTrafficGenerator previous)
         {
-            this.rand = previous.rand;
+            this.rand = null;
             this.time = previous.time;
             this.minPacketSize = previous.minPacketSize;
             this.maxPacketSize = previous.maxPacketSize;

@@ -146,7 +146,6 @@ namespace TestQoS
 
         /// <summary>
         /// Целевая функция
-        /// TODO
         /// </summary>
         /// <param name="tokensPerDts"></param>
         /// <returns></returns>
@@ -210,7 +209,7 @@ namespace TestQoS
             {
                 Packet t1, t2;
                 t1 = generatorsCopy[i].MakePacket();
-                t2 = generators[i].MakePacket();
+                //t2 = generatorsCopy[i].MakePacket();
                 /*if(t1 != null && t2 != null)
                     throw new Exception(t1.Size.ToString() + " " + t2.Size.ToString());*/
             }
@@ -232,16 +231,17 @@ namespace TestQoS
             //анализ мультипоексора
             multiplexorAnalyzerCopy.Update();
 
-            //потери мультипелксора*вес + очередь мультиплексора*вес
-            uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight +
-                (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
+            //потери мультипелксора*вес 
+            uint ret = ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight;
+            //+ очередь мультиплексора*вес
+            ret +=  (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
             //потери на вёдрах * вес
             for(int i = 0; i < bucketAnalyzersCopy.Count; i++)
             {                
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
             }
-            /*if(ret != 0)*
+            /*if(ret != 0)
                 throw new Exception();*/
 
            return ret;
@@ -292,7 +292,7 @@ namespace TestQoS
             List<float> newTokensPerDts;
             rand = new Random((int)DateTime.Now.Ticks);
             int i = 0;
-            int iMax = 10000000; // защита от зацикливания
+            int iMax = 1000; // защита от зацикливания
             this.temperature = this.initalTemperature;
             this.InitMaxTokensPerDts();
 
@@ -360,7 +360,7 @@ namespace TestQoS
                     List<float> currentTokensPerDts = new List<float>();
                     for (int i = 0; i < buckets.Count; i++)
                     {
-                        currentTokensPerDts.Add((buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt);
+                        currentTokensPerDts.Add((buckets[i] as SimpleTokenBucket).TokensPerDt);
                     }
                     //ищем оптимальные значения
                     List<float> optimalTokensPerDts = this.OptimalTokensPerDts(currentTokensPerDts);
@@ -368,7 +368,7 @@ namespace TestQoS
                     //применяем оптимальные значения
                     for (int i = 0; i < buckets.Count; i++)
                     {                      
-                        (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts.ElementAt(i);                        
+                        (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];                        
                     }
 
                     //генерим пакеты
