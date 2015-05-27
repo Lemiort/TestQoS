@@ -122,14 +122,14 @@
             // 
             // observationPeriod
             // 
-            this.observationPeriod.Location = new System.Drawing.Point(458, 60);
+            this.observationPeriod.Location = new System.Drawing.Point(449, 60);
             this.observationPeriod.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.observationPeriod.Name = "observationPeriod";
-            this.observationPeriod.Size = new System.Drawing.Size(44, 20);
+            this.observationPeriod.Size = new System.Drawing.Size(56, 20);
             this.observationPeriod.TabIndex = 6;
             this.observationPeriod.Value = new decimal(new int[] {
             40,
@@ -161,14 +161,14 @@
             // 
             // multiplexerSpeed
             // 
-            this.multiplexerSpeed.Location = new System.Drawing.Point(458, 35);
+            this.multiplexerSpeed.Location = new System.Drawing.Point(449, 35);
             this.multiplexerSpeed.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.multiplexerSpeed.Name = "multiplexerSpeed";
-            this.multiplexerSpeed.Size = new System.Drawing.Size(44, 20);
+            this.multiplexerSpeed.Size = new System.Drawing.Size(56, 20);
             this.multiplexerSpeed.TabIndex = 7;
             this.multiplexerSpeed.Value = new decimal(new int[] {
             40,
@@ -255,17 +255,17 @@
             // 
             // queueLength
             // 
-            this.queueLength.Location = new System.Drawing.Point(458, 89);
+            this.queueLength.Location = new System.Drawing.Point(449, 89);
             this.queueLength.Maximum = new decimal(new int[] {
-            1000,
+            100000,
             0,
             0,
             0});
             this.queueLength.Name = "queueLength";
-            this.queueLength.Size = new System.Drawing.Size(44, 20);
+            this.queueLength.Size = new System.Drawing.Size(56, 20);
             this.queueLength.TabIndex = 17;
             this.queueLength.Value = new decimal(new int[] {
-            40,
+            1600,
             0,
             0,
             0});
@@ -355,7 +355,7 @@
             // 
             this.multiplaxorSpeedDt.Enabled = false;
             this.multiplaxorSpeedDt.InterceptArrowKeys = false;
-            this.multiplaxorSpeedDt.Location = new System.Drawing.Point(458, 11);
+            this.multiplaxorSpeedDt.Location = new System.Drawing.Point(449, 11);
             this.multiplaxorSpeedDt.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -368,7 +368,7 @@
             0});
             this.multiplaxorSpeedDt.Name = "multiplaxorSpeedDt";
             this.multiplaxorSpeedDt.ReadOnly = true;
-            this.multiplaxorSpeedDt.Size = new System.Drawing.Size(44, 20);
+            this.multiplaxorSpeedDt.Size = new System.Drawing.Size(56, 20);
             this.multiplaxorSpeedDt.TabIndex = 23;
             this.multiplaxorSpeedDt.Value = new decimal(new int[] {
             1600,
