@@ -29,6 +29,13 @@ namespace TestQoS
         public uint MultiplexerWeight { get; set; }
 
         /// <summary>
+        /// размеры пакетов, поступивших на вход 
+        /// вёдер
+        /// не инициализированы до вызоыва ObjectiveFunction
+        /// </summary>
+        public List<uint> lastPacketsSize;
+
+        /// <summary>
         /// Начальная температура чем она выше,
         /// тем дольше работает алгоритм и больше вероятность
         /// правельного решения
@@ -235,12 +242,16 @@ namespace TestQoS
             //анализ ведёр в целом и мультиплесора
             multiplexorAnalyzerCopy.Update();
 
+            //записываем последний размеры пакетов
+            lastPacketsSize = new List<uint>();
+
             uint ret =  ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight +
                 (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
             for(int i = 0; i < bucketAnalyzersCopy.Count; i++)
             {                
                 ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
                     * (uint)this.TokenBuketsWeights[i];
+                lastPacketsSize.Add((uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize());
             }
            return ret;
         }
@@ -256,9 +267,11 @@ namespace TestQoS
             maxTokensPerDts = new List<float>();
             for (int i = 0; i < buckets.Count; i++ )
             {
-                maxTokensPerDts.Add(
-                    (buckets.ElementAt(i) as SimpleTokenBucket).MaxTokensCount -
-                    (buckets.ElementAt(i) as SimpleTokenBucket).GetTokensCount());
+                maxTokensPerDts.Add(Math.Min(
+                    (buckets[i] as SimpleTokenBucket).MaxTokensCount -
+                    (buckets[i] as SimpleTokenBucket).GetTokensCount(),
+                    lastPacketsSize[i] - 
+                    (buckets[i] as SimpleTokenBucket).GetTokensCount() ) );
             }
                 
         }
