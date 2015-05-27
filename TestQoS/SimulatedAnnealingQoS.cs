@@ -64,76 +64,57 @@ namespace TestQoS
         /// чем она ниже, тем ближе новый вектор к предыдущему
         /// </summary>
         /// <param name="tokensPerDts">Вектор текущих скоростей поступления токенов в корзины</param>
+        /// <param name="elementNum">Элемент значение которого следует поменять</param>
         /// <returns>Вектор новых скоростей поступления токенов в корзины</returns>
-        private List<float> SetNextTBSpeedValue(List<float> tokensPerDts)
+        private List<float> SetNextTBSpeedValue(List<float> tokensPerDts, int elementNum)
         {
-            List<float> result; 
-            // в теории, при низких температурах поиск может зациклица 
-            // по этому добавлено ограничение по количеству итераций, 
-            // чем оно ниже, тем меньше значение зависит от температуры, 
-            // и тем быстрее работает алгоритм
-            int i = 0;
-            int maxNumOfIteration = 100;
-
-            do
+            List<float> result;                       
+            result = new List<float>();
+            for(int i = 0; i < tokensPerDts.Count; i++)
             {
-                result = new List<float>();
-                for(int j = 0; j < tokensPerDts.Count; j++)
+                // генерация нового значения скорости поступления токенов i-й корзины               
+                if (i == elementNum)
                 {
-                    // генерация нового значения скорости поступления токенов i-й
-                    // корзины, отличной от предыдущей, и непревышающей максимального значения
+                    // генерация новой скорости для выбраной корзины
                     float newTokensPerDt;
                     do
                     {
-                        newTokensPerDt = (float)(maxTokensPerDts[j] * rand.NextDouble());
+                        // сохраняем старое значение
+                        newTokensPerDt = tokensPerDts[i];
+                        // ганерируем приращение
+                        float delta = maxTokensPerDts[i]*(float)rand.NextDouble()*(float)temperature;
+                        
+                        // к старому значению прибавляем или вычитаем это приращение
+                        if(rand.Next(2)==0)
+                        {
+                            newTokensPerDt += delta;
+                        }
+                        else
+                        {
+                            newTokensPerDt -= delta;
+                        }
+
+                        // проверка на принадлежность поласти значений
+                        if(newTokensPerDt < 0)
+                        {
+                            newTokensPerDt = 0;
+                        }
+                        if(newTokensPerDt > maxTokensPerDts[i])
+                        {
+                            newTokensPerDt = maxTokensPerDts[i];
+                        }
                     }
-                    while (tokensPerDts[j] == newTokensPerDt);
+                    while (tokensPerDts[i] == newTokensPerDt);
                     result.Add(newTokensPerDt);
                 }
-            }
-            while ((!IsPermissible(tokensPerDts, result)) && (++i < maxNumOfIteration));
+                else
+                {
+                    // для остальных корзин значение оставляем преждним
+                    result.Add(tokensPerDts[i]);
+                }
+            }                   
 
             return result;
-        }
-
-        /// <summary>
-        /// Проверяет достаточно ли близко новое значение к старому.
-        /// </summary>
-        /// <param name="oldTokensPerDts"></param>
-        /// <param name="newTokensPerDts"></param>
-        /// <returns></returns>
-        private bool IsPermissible(List<float> oldTokensPerDts, List<float> newTokensPerDts)
-        {
-            float oldLen = this.VectorLength(oldTokensPerDts);
-            float newLen = this.VectorLength(newTokensPerDts);
-            float maxLen = this.VectorLength(maxTokensPerDts);
-
-            if(Math.Abs(newLen - oldLen) <= maxLen*(temperature/initalTemperature))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// поиск длинны вектора
-        /// </summary>
-        /// <param name="vector"></param>
-        /// <returns></returns>
-        private float VectorLength(List<float> vector)
-        {
-            float sqSum = 0;
-
-            // сумма квадратов 
-            foreach(var vectorItem in vector)
-            {
-                sqSum += vectorItem * vectorItem;
-            }
-
-            return (float)Math.Sqrt(sqSum);
         }
 
         /// <summary>
@@ -296,34 +277,39 @@ namespace TestQoS
         private List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
             // инициализация параметров алгоритма
-            this.initalTemperature = 1000;
-            this.minTemperature = 1;
+            this.initalTemperature = 10;
+            this.minTemperature = 1e-4;
             List<float> oldTokensPerDts = firstTokensPerDts;
             List<float> newTokensPerDts;
             rand = new Random((int)DateTime.Now.Ticks);
-            int i = 1;
+            int i = 0;
+            int iMax = 10000000; // защита от зацикливания
             this.temperature = this.initalTemperature;
             this.InitMaxTokensPerDts();
 
-            while(temperature > minTemperature)
+            while((temperature > minTemperature) && (i++ < iMax))
             {
-    //            this.InitMaxTokensPerDts();
-                newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts);
-                double probability = this.NewStateProbability(
-                this.ObjectiveFunction(newTokensPerDts),
-                this.ObjectiveFunction(oldTokensPerDts));
-
-                // кидаем кубик
-                double value = rand.NextDouble();
-                // если попали в зону
-                if(value <= probability)
+                // поэлементный обход
+                for (int j = 0; j < oldTokensPerDts.Count; j++)
                 {
-                    // совершаем переход
-                    oldTokensPerDts = newTokensPerDts;
+                    // переход в новое состояние по j-му элементу
+                    newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts, j);
+                    uint newState = this.ObjectiveFunction(newTokensPerDts);
+                    uint oldState = this.ObjectiveFunction(oldTokensPerDts);
+                    double probability = this.NewStateProbability(newState, oldState);
+
+                    // кидаем кубик
+                    double value = rand.NextDouble();
+                    // если попали в зону
+                    if (value <= probability)
+                    {
+                        // совершаем переход
+                        oldTokensPerDts = newTokensPerDts;
+                    }
                 }
 
                 // понижаем температуру 
-                this.DecreaseTemperature(i++);
+                this.DecreaseTemperature(i);
             }
 
 
