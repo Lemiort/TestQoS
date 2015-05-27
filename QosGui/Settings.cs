@@ -419,5 +419,10 @@ namespace QosGui
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
         }
+
+        public int GetSeed()
+        {
+            return Decimal.ToInt32(seed.Value);
+        }
     }
 }

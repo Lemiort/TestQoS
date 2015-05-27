@@ -56,10 +56,11 @@ namespace TestQoS
         /// <param name="maxPacketSize">Максимальный размер пакета</param>
         /// <param name="minTimePeriod">Минимальный промежуток времени между двумя пакетами в милисекундах</param>
         /// <param name="maxTimePeriod">Максимальный промежуток времени между двумя пакетами в милисекундах</param>
+        /// <param name="_seed">сид</param>
         public SimpleTrafficGenerator(QuantizedTime time, uint minPacketSize, uint maxPacketSize, 
-            double minTimePeriod, double maxTimePeriod)
+            double minTimePeriod, double maxTimePeriod, int _seed)
         {
-            seed = (int)DateTime.Now.Ticks;
+            seed = _seed;
             // TODO: сделать "проверки на дурака" и тд
             this.time = time;
             this.minPacketSize = minPacketSize;

@@ -126,6 +126,16 @@ namespace TestQoS
         }
 
         /// <summary>
+        /// сид
+        /// </summary>
+        private int seed;
+
+        /// <summary>
+        /// генератор случайных чисел
+        /// </summary>
+        private Random rand;
+
+        /// <summary>
         /// Реализация фабричного метода MakeTrafficGenerator
         /// TODO
         /// </summary>
@@ -190,8 +200,10 @@ namespace TestQoS
             this.maxTimePeriods.Remove(maxTimePeriod);
             /// ^^^повторения кода, похорошему бы рефакторить^^^
 
+            rand = new Random(seed);
+            seed = rand.Next();
             return new SimpleTrafficGenerator(qtime as QuantizedTime, 
-                minPacketSize, maxPacketSize, minTimePeriod, maxTimePeriod);
+                minPacketSize, maxPacketSize, minTimePeriod, maxTimePeriod, seed);
 
 
 
@@ -249,10 +261,11 @@ namespace TestQoS
         /// <param name="maxTimePeriods">максимальное время между пакетами в мс</param>
         /// <param name="_histrorySize">информацию о скольки последних байтах храним</param>
         /// <param name="maxTokensCounts">Размеры вёдер</param>
+        /// <param name="_seed">seed</param>
         public void Initializate(double observationPeriod, uint numOfBuckets,
             List<uint> minPacketSizes, List<uint> maxPacketSizes,
             List<double> minTimePeriods, List<double> maxTimePeriods,
-            int _histrorySize, List<float> maxTokensCounts)
+            int _histrorySize, List<float> maxTokensCounts, int _seed)
         {
             this.observationPeriod = observationPeriod;
             this.numOfBuckets = numOfBuckets;
@@ -260,6 +273,7 @@ namespace TestQoS
             this.maxPacketSizes = maxPacketSizes;
             this.minTimePeriods = minTimePeriods;
             this.maxTimePeriods = maxTimePeriods;
+            this.seed = _seed;
 
             //
             // Создание всех объектов
