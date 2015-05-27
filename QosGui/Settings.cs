@@ -382,15 +382,6 @@ namespace QosGui
             }
         }
 
-        private void peakStrategy_CheckedChanged(object sender, EventArgs e)
-        {
-            if ((sender as RadioButton).Checked)
-            {
-                // инициализация QoS
-                this.QoS = new SimpleTBQoS();
-            }
-        }
-
         private void simulatedAnnealing_CheckedChanged(object sender, EventArgs e)
         {
             if ((sender as RadioButton).Checked)

@@ -47,7 +47,6 @@
             this.queueLength = new System.Windows.Forms.NumericUpDown();
             this.panel1 = new System.Windows.Forms.Panel();
             this.simulatedAnnealing = new System.Windows.Forms.RadioButton();
-            this.peakStrategy = new System.Windows.Forms.RadioButton();
             this.averageStrategy = new System.Windows.Forms.RadioButton();
             this.historySize = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
@@ -273,11 +272,10 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.simulatedAnnealing);
-            this.panel1.Controls.Add(this.peakStrategy);
             this.panel1.Controls.Add(this.averageStrategy);
             this.panel1.Location = new System.Drawing.Point(5, 90);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(195, 79);
+            this.panel1.Size = new System.Drawing.Size(187, 79);
             this.panel1.TabIndex = 18;
             // 
             // simulatedAnnealing
@@ -291,22 +289,11 @@
             this.simulatedAnnealing.UseVisualStyleBackColor = true;
             this.simulatedAnnealing.CheckedChanged += new System.EventHandler(this.simulatedAnnealing_CheckedChanged);
             // 
-            // peakStrategy
-            // 
-            this.peakStrategy.AutoSize = true;
-            this.peakStrategy.Location = new System.Drawing.Point(7, 24);
-            this.peakStrategy.Name = "peakStrategy";
-            this.peakStrategy.Size = new System.Drawing.Size(177, 17);
-            this.peakStrategy.TabIndex = 1;
-            this.peakStrategy.Text = "Стратегия пикового значения";
-            this.peakStrategy.UseVisualStyleBackColor = true;
-            this.peakStrategy.CheckedChanged += new System.EventHandler(this.peakStrategy_CheckedChanged);
-            // 
             // averageStrategy
             // 
             this.averageStrategy.AutoSize = true;
             this.averageStrategy.Checked = true;
-            this.averageStrategy.Location = new System.Drawing.Point(7, 1);
+            this.averageStrategy.Location = new System.Drawing.Point(7, 17);
             this.averageStrategy.Name = "averageStrategy";
             this.averageStrategy.Size = new System.Drawing.Size(177, 17);
             this.averageStrategy.TabIndex = 0;
@@ -456,7 +443,6 @@
         private System.Windows.Forms.NumericUpDown queueLength;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton simulatedAnnealing;
-        private System.Windows.Forms.RadioButton peakStrategy;
         private System.Windows.Forms.RadioButton averageStrategy;
         private System.Windows.Forms.NumericUpDown historySize;
         private System.Windows.Forms.Label label9;
