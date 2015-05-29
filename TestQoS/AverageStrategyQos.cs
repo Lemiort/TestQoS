@@ -13,15 +13,18 @@ namespace TestQoS
     {
         protected override List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
+            List<float> result = new List<float>(); ;
             for (int i = 0; i < buckets.Count; i++)
             {
-                // поиск скорости пополнения токенов
-                firstTokensPerDts[i] =
+               
+                result.Add(
                 (generatorAnalyzers[i] as SimpleAnalyzer).
-                GetAveragePassedPacketsSize() * (float)1.2;
+                GetAveragePassedPacketsSize() * (float)1.2);
+                float t1 = (generatorAnalyzers[i] as SimpleAnalyzer).
+                GetAveragePassedPacketsSize();
             }
 
-            return firstTokensPerDts;
+            return result;
         }
     }
 }
