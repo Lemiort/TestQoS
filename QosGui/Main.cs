@@ -119,25 +119,24 @@ namespace QosGui
                 qos = setForm.QoS;
                 if (qos is SimpleTBQoS)
                 {
-                    (qos as SimpleTBQoS).Initializate(setForm.ObservationPeriod(),
-                                   setForm.NumOfBuckets(),
-                                   setForm.MinPacketSizes(),
-                                   setForm.MaxPacketSizes(),
-                                   setForm.MaxTimePeriods(),
-                                   setForm.MaxTimePeriods(),
-                                   setForm.HistorySize(),
-                                   setForm.MaxTokensCounts(),
-                                   setForm.GetSeed());
-                    //MessageBox.Show(setForm.GetMultiplexorBytesPerDt().ToString());
-                    (qos as SimpleTBQoS).SetMultiplexer(setForm.GetMultiplexorBytesPerDt(),
-                                                        setForm.GetMultiplexorMaxQueueSize());
+                    (qos as SimpleTBQoS).Initializate(setForm.ObservationPeriod,
+                                   setForm.NumOfBuckets,
+                                   setForm.MinPacketSizes,
+                                   setForm.MaxPacketSizes,
+                                   setForm.MaxTimePeriods,
+                                   setForm.MaxTimePeriods,
+                                   setForm.HistorySize,
+                                   setForm.MaxTokensCounts,
+                                   setForm.Seed);
+                    (qos as SimpleTBQoS).SetMultiplexer(setForm.MultiplexorBytesPerDt,
+                                                        setForm.MultiplexorMaxQueueSize);
                 }
 
                 if (qos is SimulatedAnnealingQoS)
                 {
-                    (qos as SimulatedAnnealingQoS).MultiplexerWeight = setForm.MultiplexerWeight();
-                    (qos as SimulatedAnnealingQoS).QueueWeight = setForm.QueueWeight();
-                    (qos as SimulatedAnnealingQoS).TokenBuketsWeights = setForm.TokenBuketsWeights();
+                    (qos as SimulatedAnnealingQoS).MultiplexerWeight = setForm.MultiplexerWeight;
+                    (qos as SimulatedAnnealingQoS).QueueWeight = setForm.QueueWeight;
+                    (qos as SimulatedAnnealingQoS).TokenBuketsWeights = setForm.TokenBuketsWeights;
                 }
 
                 if (!backgroundWorker1.IsBusy)
@@ -217,12 +216,6 @@ namespace QosGui
             }
             if (backgroundWorker1.IsBusy == false)
                 backgroundWorker1.RunWorkerAsync();
-        }
-
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            MessageBox.Show("Тык!","",MessageBoxButtons.RetryCancel,MessageBoxIcon.Hand,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
         }
     }
 }

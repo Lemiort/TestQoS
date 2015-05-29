@@ -53,9 +53,207 @@ namespace QosGui
         /// </summary>
         private List<NumericUpDown> maxTokensCounts;
 
-
+        /// <summary>
+        /// Веса маркерных корзин
+        /// </summary>
         private List<TrackBar> tokenBuketWeights;
-       
+
+
+        /// <summary>
+        /// период наблюдения системы
+        /// </summary>
+        /// <returns></returns>
+        public double ObservationPeriod
+        {
+            get
+            {
+                return (double)observationPeriod.Value;
+            }
+        }
+
+        /// <summary>
+        /// кол-во потоков/вёдер
+        /// </summary>
+        /// <returns></returns>
+        public uint NumOfBuckets
+        {
+            get
+            {
+                return (uint)bucketNum.Value;
+            }
+        }
+
+        /// <summary>
+        /// Минимальный размер пакета
+        /// </summary>
+        /// <returns></returns>
+        public List<uint> MinPacketSizes
+        {
+            get
+            {
+                List<uint> result = new List<uint>();
+                foreach (var minPacketSize in minPacketSizes)
+                {
+                    result.Add((uint)minPacketSize.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Максимальный размер пакета
+        /// </summary>
+        /// <returns></returns>
+        public List<uint> MaxPacketSizes
+        {
+            get
+            {
+                List<uint> result = new List<uint>();
+                foreach (var maxPacketSize in maxPacketSizes)
+                {
+                    result.Add((uint)maxPacketSize.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Размер маркерных корзин
+        /// </summary>
+        /// <returns></returns>
+        public List<float> MaxTokensCounts
+        {
+            get
+            {
+                List<float> result = new List<float>();
+                foreach (var maxTokensCount in maxTokensCounts)
+                {
+                    result.Add((float)maxTokensCount.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Минимальный промежуток времени между двумя пакетами в милисекундах
+        /// </summary>
+        /// <returns></returns>
+        public List<double> MinTimePeriods
+        {
+            get
+            {
+                List<double> result = new List<double>();
+                foreach (var minTimePeriod in minTimePeriods)
+                {
+                    result.Add((double)minTimePeriod.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Максимальный промежуток времени между двумя пакетами в милисекундах
+        /// </summary>
+        /// <returns></returns>
+        public List<double> MaxTimePeriods
+        {
+            get
+            {
+                List<double> result = new List<double>();
+                foreach (var maxTimePeriod in maxTimePeriods)
+                {
+                    result.Add((double)maxTimePeriod.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Вес потерь на мультиплексоре
+        /// </summary>
+        /// <returns></returns>
+        public uint MultiplexerWeight
+        {
+            get
+            {
+                return (uint)multiplexerWeight.Value;
+            }
+        }
+
+        /// <summary>
+        /// Вес очереди мультиплексора
+        /// </summary>
+        /// <returns></returns>
+        public uint QueueWeight
+        {
+            get
+            {
+                return (uint)queueWeight.Value;
+            }
+        }
+
+        /// <summary>
+        /// Вес потерь на корзинах
+        /// </summary>
+        /// <returns></returns>
+        public List<uint> TokenBuketsWeights
+        {
+            get
+            {
+                List<uint> result = new List<uint>();
+                foreach (var tokenBuketWeight in tokenBuketWeights)
+                {
+                    result.Add((uint)tokenBuketWeight.Value);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// возвращает величину истории
+        /// </summary>
+        /// <returns>длина в квантах</returns>
+        public int HistorySize
+        {
+            get
+            {
+                return (int)historySize.Value;
+            }
+        }
+
+        /// <summary>
+        /// Ширина пропускания канала
+        /// </summary>
+        /// <returns></returns>
+        public ulong MultiplexorBytesPerDt
+        {
+            get
+            {
+                return Decimal.ToUInt64(multiplexerSpeed.Value * observationPeriod.Value);
+            }
+        }
+
+        /// <summary>
+        /// Длинна очереди мультиплексора
+        /// </summary>
+        public ulong MultiplexorMaxQueueSize
+        {
+            get
+            {
+                return Decimal.ToUInt64(queueLength.Value);
+            }
+        }
+
+        /// <summary>
+        /// Сид генератора трафика
+        /// </summary>
+        public int Seed
+        {
+            get
+            {
+                return Decimal.ToInt32(seed.Value);
+            }
+        }
 
         public Settings()
         {
@@ -235,137 +433,7 @@ namespace QosGui
             this.IsSettingsApplyed = true;
             this.Close();
         }        
-
-        /// <summary>
-        /// период наблюдения системы
-        /// </summary>
-        /// <returns></returns>
-        public double ObservationPeriod()
-        {
-            // в теории должно работать
-            return (double)observationPeriod.Value;
-        }
-
-        /// <summary>
-        /// кол-во потоков/вёдер
-        /// </summary>
-        /// <returns></returns>
-        public uint NumOfBuckets()
-        {
-            return (uint)bucketNum.Value;
-        }
-
-        /// <summary>
-        /// Минимальный размер пакета
-        /// </summary>
-        /// <returns></returns>
-        public List<uint> MinPacketSizes()
-        {
-            List<uint> result = new List<uint>();
-            foreach(var minPacketSize in minPacketSizes)
-            {
-                result.Add((uint)minPacketSize.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Максимальный размер пакета
-        /// </summary>
-        /// <returns></returns>
-        public List<uint> MaxPacketSizes()
-        {
-            List<uint> result = new List<uint>();
-            foreach (var maxPacketSize in maxPacketSizes)
-            {
-                result.Add((uint)maxPacketSize.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Размер маркерных корзин
-        /// </summary>
-        /// <returns></returns>
-        public List<float> MaxTokensCounts()
-        {
-            List<float> result = new List<float>();
-            foreach (var maxTokensCount in maxTokensCounts)
-            {
-                result.Add((float)maxTokensCount.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Минимальный промежуток времени между двумя пакетами в милисекундах
-        /// </summary>
-        /// <returns></returns>
-        public List<double> MinTimePeriods()
-        {
-            List<double> result = new List<double>();
-            foreach (var minTimePeriod in minTimePeriods)
-            {
-                result.Add((double)minTimePeriod.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Максимальный промежуток времени между двумя пакетами в милисекундах
-        /// </summary>
-        /// <returns></returns>
-        public List<double> MaxTimePeriods()
-        {
-            List<double> result = new List<double>();
-            foreach (var maxTimePeriod in maxTimePeriods)
-            {
-                result.Add((double)maxTimePeriod.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Вес потерь на мультиплексоре
-        /// </summary>
-        /// <returns></returns>
-        public uint MultiplexerWeight()
-        {
-            return (uint)multiplexerWeight.Value;
-        }
-
-        /// <summary>
-        /// Вес очереди мультиплексора
-        /// </summary>
-        /// <returns></returns>
-        public uint QueueWeight()
-        {
-            return (uint)queueWeight.Value;
-        }
-
-        /// <summary>
-        /// Вес потерь на корзинах
-        /// </summary>
-        /// <returns></returns>
-        public List<uint> TokenBuketsWeights()
-        {
-            List<uint> result = new List<uint>();
-            foreach (var tokenBuketWeight in tokenBuketWeights)
-            {
-                result.Add((uint)tokenBuketWeight.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// возвращает величину истории
-        /// </summary>
-        /// <returns>длина в квантах</returns>
-        public int HistorySize()
-        {
-            return (int)historySize.Value;
-        }
-
+        
         private void averageStrategy_CheckedChanged(object sender, EventArgs e)
         {
             if((sender as RadioButton).Checked)
@@ -384,21 +452,6 @@ namespace QosGui
             }
         }
 
-        /// <summary>
-        /// Настройка ширины пропускания канала
-        /// </summary>
-        /// <returns></returns>
-        public ulong GetMultiplexorBytesPerDt()
-        {
-            return Decimal.ToUInt64(multiplexerSpeed.Value * observationPeriod.Value);
-        }
-
-        public ulong GetMultiplexorMaxQueueSize()
-        {
-            return Decimal.ToUInt64(queueLength.Value);
-        }
-
-
         private void multiplexerSpeed_ValueChanged(object sender, EventArgs e)
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
@@ -411,11 +464,6 @@ namespace QosGui
         private void observationPeriod_ValueChanged(object sender, EventArgs e)
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
-        }
-
-        public int GetSeed()
-        {
-            return Decimal.ToInt32(seed.Value);
-        }
+        }       
     }
 }
