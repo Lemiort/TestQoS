@@ -15,22 +15,6 @@ namespace TestQoS
         private Random rand;
 
         /// <summary>
-        /// Вес потерь на корзинах
-        /// </summary>
-        public List<uint> TokenBuketsWeights { get; set; }
-
-        /// <summary>
-        /// Вес очереди мультиплексора
-        /// </summary>
-        public uint QueueWeight { get; set; }
-
-        /// <summary>
-        /// Вес потерь на мультиплексоре
-        /// </summary>
-        public uint MultiplexerWeight { get; set; }
-
-
-        /// <summary>
         /// Начальная температура чем она выше,
         /// тем дольше работает алгоритм и больше вероятность
         /// правельного решения
@@ -143,100 +127,7 @@ namespace TestQoS
             return probability;
         }
 
-        /// <summary>
-        /// Целевая функция
-        /// </summary>
-        /// <param name="tokensPerDts"></param>
-        /// <returns></returns>
-        private uint ObjectiveFunction(List<float> tokensPerDts)
-        {
-            List<SimpleTrafficGenerator> generatorsCopy = new List<SimpleTrafficGenerator>();
-            
-            //копируем генераторы
-            foreach(var generator in generators)
-            {
-                generatorsCopy.Add(
-                    new SimpleTrafficGenerator(generator as SimpleTrafficGenerator));
-            }
-
-            //копируем вёдра
-            List<SimpleTokenBucket> bucketsCopy = new List<SimpleTokenBucket>();
-            foreach(var bucket in buckets)
-            {
-                bucketsCopy.Add(
-                    new SimpleTokenBucket(bucket as SimpleTokenBucket));
-            }
-
-            //копируем мультиплексор
-            SimpleMultiplexer multiplexerCopy =
-                new SimpleMultiplexer(multiplexer as SimpleMultiplexer);
-
-            //анализаторы для сбора инфы
-            SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
-            //анализаторы ведёр
-            List<SimpleAnalyzer> bucketAnalyzersCopy = new List<SimpleAnalyzer>();
-
-            //устанавливаем в вёдра параметры
-            for (int i = 0; i < tokensPerDts.Count; i++)
-            {
-                //соединяем генераторы с вёдрами
-                generatorsCopy[i].onPacketGenerated += bucketsCopy[i].ProcessPacket;
-
-                //заполняем вёдра параметарми из аргумента
-                bucketsCopy[i].TokensPerDt = tokensPerDts[i];
-
-                //соединяем с мультиплексором
-                bucketsCopy[i].onPacketPass += multiplexerCopy.ProcessPacket;
-
-                //считаем потери на корзинах
-
-                //индивидуальный анализатор
-                bucketAnalyzersCopy.Add( new SimpleAnalyzer());
-                //инициализируем его
-                bucketAnalyzersCopy[i].QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
-                //соединяем анализатор с ведром
-                bucketsCopy[i].onPacketNotPass +=bucketAnalyzersCopy[i].OnNotPassPacket;
-            }
-            //считаем потери на мультиплексоре
-            multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
-
-            //генерация
-            for (int i = 0; i < generatorsCopy.Count; i++ )
-            {
-                Packet t1, t2;
-                t1 = generatorsCopy[i].MakePacket();
-            }
-
-            //обработка вёдрами
-            foreach (var bucket in bucketsCopy)
-            {
-                bucket.Update();
-            }
-            //анализ ведёр
-            foreach(var analyzer in bucketAnalyzersCopy)
-            {
-                analyzer.Update();
-            }
-
-            //обработка мультиплексором
-            multiplexerCopy.Update();
-            //анализ мультипоексора
-            multiplexorAnalyzerCopy.Update();
-
-            //потери мультипелксора*вес 
-            uint ret = ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight;
-            //+ очередь мультиплексора*вес
-            ret +=  (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
-            //потери на вёдрах * вес
-            for(int i = 0; i < bucketAnalyzersCopy.Count; i++)
-            {                
-                ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
-                    * (uint)this.TokenBuketsWeights[i];
-            }
-
-           return ret;
-        }
-
+        
         /// <summary>
         /// Инициализация ограничения сверху для скорости поступления
         /// маркеров в маркерные корзины, зависит от параметром мультиплексора
@@ -261,7 +152,7 @@ namespace TestQoS
         /// </summary>
         /// <param name="firstTokensPerDts">начальный набор состояний</param>
         /// <returns>оптимальное состояние</returns>
-        private List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
+        protected  override List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
             // инициализация параметров алгоритма
             this.initalTemperature = 10;
@@ -302,75 +193,6 @@ namespace TestQoS
             return oldTokensPerDts;
         }
 
-        public override void MakeTick()
-        {
-            // Создание времени квантования
-            if (generators == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            //считаем изменение времени
-            long dt = DateTime.Now.Ticks - prevTime;
-
-            //время в милисекундах
-            TimeSpan time = new TimeSpan(dt);
-            if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
-            {
-                //записываем текущие данные о токенах в квант
-                List<float> currentTokensPerDts = new List<float>();
-                for (int i = 0; i < buckets.Count; i++)
-                {
-                    currentTokensPerDts.Add((buckets[i] as SimpleTokenBucket).TokensPerDt);
-                }
-                //ищем оптимальные значения
-                List<float> optimalTokensPerDts = this.OptimalTokensPerDts(currentTokensPerDts);
-
-                //применяем оптимальные значения
-                for (int i = 0; i < buckets.Count; i++)
-                {                      
-                    (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];                        
-                }
-
-                //генерим пакеты
-                foreach (TrafficGenerator generator in generators)
-                {
-                    (generator as SimpleTrafficGenerator).MakePacket();
-                }
-                //заносим инфу в анализатор
-                foreach (Analyzer analyzer in generatorAnalyzers)
-                {
-                    (analyzer as SimpleAnalyzer).Update();
-                }
-
-                //обрабатываем пакеты и заносим инфу в анализатор
-                for (int i = 0; i < buckets.Count; i++)
-                {
-                    (buckets.ElementAt(i) as SimpleTokenBucket).Update();
-                    (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
-                }
-
-                //запускаем мультиплексор
-                (multiplexer as SimpleMultiplexer).Update();
-                //анализируем результаты работы
-                (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                (bucketsAnalyzer as SimpleAnalyzer).Update();
-
-                //история байтов мультиплексора
-                multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
-                //сумма байтов за историю
-                MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-                multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-
-                if (multiplexorBytes.Count > historySize)
-                {
-                    //убираем из истории байт, а так же из суммарного размера
-                    MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-                    multiplexorAverageBytes.Dequeue();
-                }
-
-                prevTime = DateTime.Now.Ticks;   
-            }
-        }
+        
     }
 }

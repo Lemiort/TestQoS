@@ -11,59 +11,17 @@ namespace TestQoS
     /// </summary>
     public class AverageStrategyQos: SimpleTBQoS
     {
-        public override void MakeTick()
+        protected override List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
-            // создание времени квантования
-            if (generators == null)
+            for (int i = 0; i < buckets.Count; i++)
             {
-                throw new NullReferenceException();
+                // поиск скорости пополнения токенов
+                firstTokensPerDts[i] =
+                (generatorAnalyzers[i] as SimpleAnalyzer).
+                GetAveragePassedPacketsSize() * (float)1.2;
             }
-            
-            //считаем изменение времени
-            long dt = DateTime.Now.Ticks - prevTime;
 
-            //время в милисекундах
-            TimeSpan time = new TimeSpan(dt);
-
-            // основной алгоритм
-            if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
-            {
-                foreach (TrafficGenerator generator in generators)
-                {
-                    (generator as SimpleTrafficGenerator).MakePacket();
-                }
-                foreach (Analyzer analyzer in generatorAnalyzers)
-                {
-                    (analyzer as SimpleAnalyzer).Update();
-                }
-                for (int i = 0; i < buckets.Count; i++ )
-                {
-                    (buckets.ElementAt(i) as SimpleTokenBucket).Update();
-                    (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
-
-                    // поиск скорости пополнения токенов
-                    (buckets.ElementAt(i) as SimpleTokenBucket).TokensPerDt = 
-                    (generatorAnalyzers.ElementAt(i) as SimpleAnalyzer).
-                    GetAveragePassedPacketsSize() * (float)1.2;                         
-                }
-                (multiplexer as SimpleMultiplexer).Update();
-                (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                (bucketsAnalyzer as SimpleAnalyzer).Update();
-
-                //история байтов мультиплексора
-                multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
-
-                //сумма байтов за историю
-                MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
-                multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-                if (multiplexorBytes.Count > historySize)
-                {
-                    //убираем из истории байт, а так же из суммарного размера
-                    MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
-                    multiplexorAverageBytes.Dequeue();
-                }
-                prevTime = DateTime.Now.Ticks;
-            }
+            return firstTokensPerDts;
         }
     }
 }

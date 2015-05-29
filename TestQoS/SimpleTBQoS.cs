@@ -51,6 +51,22 @@ namespace TestQoS
         /// </summary>
         List<double> maxTimePeriods;
 
+
+        /// <summary>
+        /// Вес потерь на корзинах
+        /// </summary>
+        public List<uint> TokenBuketsWeights { get; set; }
+
+        /// <summary>
+        /// Вес очереди мультиплексора
+        /// </summary>
+        public uint QueueWeight { get; set; }
+
+        /// <summary>
+        /// Вес потерь на мультиплексоре
+        /// </summary>
+        public uint MultiplexerWeight { get; set; }
+
         /// <summary>
         /// анализатор мультиплексора
         /// </summary>
@@ -398,40 +414,45 @@ namespace TestQoS
 
             //время в милисекундах
             TimeSpan time = new TimeSpan(dt);
-            //собсно сам цикл
             if (time.Milliseconds >= (qtime as QuantizedTime).timeSlice)
             {
-                //генерация пакетов
+                //записываем текущие данные о токенах в квант
+                List<float> currentTokensPerDts = new List<float>();
+                for (int i = 0; i < buckets.Count; i++)
+                {
+                    currentTokensPerDts.Add((buckets[i] as SimpleTokenBucket).TokensPerDt);
+                }
+                //ищем оптимальные значения
+                List<float> optimalTokensPerDts = this.OptimalTokensPerDts(currentTokensPerDts);
+
+                //применяем оптимальные значения
+                for (int i = 0; i < buckets.Count; i++)
+                {
+                    (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];
+                }
+
+                //генерим пакеты
                 foreach (TrafficGenerator generator in generators)
                 {
                     (generator as SimpleTrafficGenerator).MakePacket();
                 }
-
-                //запись в историю генераторов
+                //заносим инфу в анализатор
                 foreach (Analyzer analyzer in generatorAnalyzers)
                 {
                     (analyzer as SimpleAnalyzer).Update();
                 }
 
-                //обработка пакетов
-                foreach (TokenBuket bucket in buckets)
+                //обрабатываем пакеты и заносим инфу в анализатор
+                for (int i = 0; i < buckets.Count; i++)
                 {
-                    (bucket as SimpleTokenBucket).Update();
+                    (buckets.ElementAt(i) as SimpleTokenBucket).Update();
+                    (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
                 }
 
-                //запись в историю ведёр
-                foreach (Analyzer analyzer in bucketAnalyzers)
-                {
-                    (analyzer as SimpleAnalyzer).Update();
-                }
-
-                //обработка пакетов из ведёр
+                //запускаем мультиплексор
                 (multiplexer as SimpleMultiplexer).Update();
-
-                //запись в историю мультиплексора
+                //анализируем результаты работы
                 (multiplexorAnalyzer as SimpleAnalyzer).Update();
-                    
-                //запись в общеведёрную историю
                 (bucketsAnalyzer as SimpleAnalyzer).Update();
 
                 //история байтов мультиплексора
@@ -439,34 +460,114 @@ namespace TestQoS
                 //сумма байтов за историю
                 MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
                 multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
-                if(multiplexorBytes.Count > historySize)
+
+                if (multiplexorBytes.Count > historySize)
                 {
                     //убираем из истории байт, а так же из суммарного размера
                     MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
                     multiplexorAverageBytes.Dequeue();
                 }
 
-                //начальное время наблюдения
                 prevTime = DateTime.Now.Ticks;
-            }            
+            }
         }
 
         /// <summary>
-        /// обработчик пакета, что прошёл через ведро
+        /// Целевая функция
         /// </summary>
-        /// <param name="packet">пакет</param>
-        public void OnPacketPass(Packet packet)
+        /// <param name="tokensPerDts"></param>
+        /// <returns></returns>
+        public uint ObjectiveFunction(List<float> tokensPerDts)
         {
-            Console.WriteLine("Packet passed! {0}", packet.Size);
+            List<SimpleTrafficGenerator> generatorsCopy = new List<SimpleTrafficGenerator>();
+
+            //копируем генераторы
+            foreach (var generator in generators)
+            {
+                generatorsCopy.Add(
+                    new SimpleTrafficGenerator(generator as SimpleTrafficGenerator));
+            }
+
+            //копируем вёдра
+            List<SimpleTokenBucket> bucketsCopy = new List<SimpleTokenBucket>();
+            foreach (var bucket in buckets)
+            {
+                bucketsCopy.Add(
+                    new SimpleTokenBucket(bucket as SimpleTokenBucket));
+            }
+
+            //копируем мультиплексор
+            SimpleMultiplexer multiplexerCopy =
+                new SimpleMultiplexer(multiplexer as SimpleMultiplexer);
+
+            //анализаторы для сбора инфы
+            SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
+            //анализаторы ведёр
+            List<SimpleAnalyzer> bucketAnalyzersCopy = new List<SimpleAnalyzer>();
+
+            //устанавливаем в вёдра параметры
+            for (int i = 0; i < tokensPerDts.Count; i++)
+            {
+                //соединяем генераторы с вёдрами
+                generatorsCopy[i].onPacketGenerated += bucketsCopy[i].ProcessPacket;
+
+                //заполняем вёдра параметарми из аргумента
+                bucketsCopy[i].TokensPerDt = tokensPerDts[i];
+
+                //соединяем с мультиплексором
+                bucketsCopy[i].onPacketPass += multiplexerCopy.ProcessPacket;
+
+                //считаем потери на корзинах
+
+                //индивидуальный анализатор
+                bucketAnalyzersCopy.Add(new SimpleAnalyzer());
+                //инициализируем его
+                bucketAnalyzersCopy[i].QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
+                //соединяем анализатор с ведром
+                bucketsCopy[i].onPacketNotPass += bucketAnalyzersCopy[i].OnNotPassPacket;
+            }
+            //считаем потери на мультиплексоре
+            multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
+
+            //генерация
+            for (int i = 0; i < generatorsCopy.Count; i++)
+            {
+                generatorsCopy[i].MakePacket();
+            }
+
+            //обработка вёдрами
+            foreach (var bucket in bucketsCopy)
+            {
+                bucket.Update();
+            }
+            //анализ ведёр
+            foreach (var analyzer in bucketAnalyzersCopy)
+            {
+                analyzer.Update();
+            }
+
+            //обработка мультиплексором
+            multiplexerCopy.Update();
+            //анализ мультипоексора
+            multiplexorAnalyzerCopy.Update();
+
+            //потери мультипелксора*вес 
+            uint ret = ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight;
+            //+ очередь мультиплексора*вес
+            ret += (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
+            //потери на вёдрах * вес
+            for (int i = 0; i < bucketAnalyzersCopy.Count; i++)
+            {
+                ret += (uint)bucketAnalyzersCopy[i].GetAverageNotPassedPacketsSize()
+                    * (uint)this.TokenBuketsWeights[i];
+            }
+
+            return ret;
         }
 
-        /// <summary>
-        /// обработчик отброшенного пакета
-        /// </summary>
-        /// <param name="packet">пакет</param>
-        public void OnPacketNotPass(Packet packet)
+        protected virtual List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
-            Console.WriteLine("Lost packet {0}", packet.Size);
+            return firstTokensPerDts;
         }
     }
 }
