@@ -445,8 +445,8 @@ namespace TestQoS
                 //обрабатываем пакеты и заносим инфу в анализатор
                 for (int i = 0; i < buckets.Count; i++)
                 {
-                    (buckets.ElementAt(i) as SimpleTokenBucket).Update();
-                    (bucketAnalyzers.ElementAt(i) as SimpleAnalyzer).Update();
+                    (buckets[i] as SimpleTokenBucket).Update();
+                    (bucketAnalyzers[i] as SimpleAnalyzer).Update();
                 }
 
                 //запускаем мультиплексор

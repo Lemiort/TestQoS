@@ -43,9 +43,9 @@ namespace TestQoS
         /// <summary>
         /// число токенов
         /// </summary>
-        private long tokensCount;
+        private ulong tokensCount;
 
-        public long GetTokensCount()
+        public ulong GetTokensCount()
         {
             return tokensCount;
         }
@@ -87,17 +87,19 @@ namespace TestQoS
         /// </summary>
         public void Update()
         {
+            if (tokensCount < 0 && tokensCount > MaxTokensCount)
+                throw new InvalidOperationException();
             while (packets.Count != 0)
             {
                 Packet packet = packets.Dequeue();
                 //проверка на ненулевой пакет
                 if (packet != null)
                 {
-                    if(tokensCount+ (long)TokensPerDt <= MaxTokensCount)
-                        tokensCount += (long)TokensPerDt;
+                    if(tokensCount+ (ulong)TokensPerDt <= MaxTokensCount)
+                        tokensCount += (ulong)TokensPerDt;
                     else
                     {
-                        tokensCount = (long)MaxTokensCount;
+                        tokensCount = (ulong)MaxTokensCount;
                     }
 
                     //проверяем пакет
