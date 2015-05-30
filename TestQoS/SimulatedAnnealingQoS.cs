@@ -32,12 +32,7 @@ namespace TestQoS
         private double minTemperature;
 
         /// <summary>
-        /// Максимальные скорости поступления токенов в корзины
-        /// </summary>
-        private List<float> maxTokensPerDts;
-
-        /// <summary>
-        /// Функция находит очередные параметры для оптимазируемой функции.
+        /// Функция находит очередные параметры для оптимизируемой функции.
         /// Тут творится какая то магия, после которой появляются новые скорости 
         /// поступления жетонов в корзины. Работа функции зависит от температуры,
         /// чем она ниже, тем ближе новый вектор к предыдущему
@@ -125,26 +120,7 @@ namespace TestQoS
             // вероятность выбора худшего результата
             double probability = Math.Exp((-1.0 * (double)stateDifference) / temperature);
             return probability;
-        }
-
-        
-        /// <summary>
-        /// Инициализация ограничения сверху для скорости поступления
-        /// маркеров в маркерные корзины, зависит от параметром мультиплексора
-        /// и приоритетов.
-        /// </summary>
-        private void InitMaxTokensPerDts()
-        {
-            maxTokensPerDts = new List<float>();
-
-            for (int i = 0; i < buckets.Count; i++)
-            {
-                maxTokensPerDts.Add(
-                    (buckets[i] as SimpleTokenBucket).MaxTokensCount -
-                    (buckets[i] as SimpleTokenBucket).GetTokensCount()
-                    );
-            }               
-        }
+        }       
 
         /// <summary>
         /// Поиск оптимальных скоростей поступления

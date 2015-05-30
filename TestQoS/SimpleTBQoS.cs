@@ -126,8 +126,16 @@ namespace TestQoS
             set;
         }
 
-        //размер истории
+        /// <summary>
+        /// размер истории
+        /// </summary>
         protected int historySize;
+
+
+        /// <summary>
+        /// Максимальные скорости поступления токенов в корзины
+        /// </summary>
+        protected List<float> maxTokensPerDts;
 
         /// <summary>
         /// Реализация фабричного метода MakeTokenBuket 
@@ -568,6 +576,24 @@ namespace TestQoS
         protected virtual List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
             return firstTokensPerDts;
+        }
+
+
+        /// <summary>
+        /// Инициализация ограничения сверху для скорости поступления
+        /// маркеров в маркерные корзины.
+        /// </summary>
+        protected void InitMaxTokensPerDts()
+        {
+            maxTokensPerDts = new List<float>();
+
+            for (int i = 0; i < buckets.Count; i++)
+            {
+                maxTokensPerDts.Add(
+                    (buckets[i] as SimpleTokenBucket).MaxTokensCount -
+                    (buckets[i] as SimpleTokenBucket).GetTokensCount()
+                    );
+            }
         }
     }
 }

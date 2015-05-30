@@ -52,6 +52,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.multiplaxorSpeedDt = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.hillClimbing = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplexerSpeed)).BeginInit();
@@ -100,7 +101,7 @@
             // 
             this.apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.apply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.apply.Location = new System.Drawing.Point(349, 454);
+            this.apply.Location = new System.Drawing.Point(349, 482);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 3;
@@ -111,7 +112,7 @@
             // cancel
             // 
             this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancel.Location = new System.Drawing.Point(430, 454);
+            this.cancel.Location = new System.Drawing.Point(430, 482);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 4;
@@ -152,10 +153,10 @@
             this.generatorsSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.generatorsSettings.Location = new System.Drawing.Point(12, 175);
+            this.generatorsSettings.Location = new System.Drawing.Point(12, 192);
             this.generatorsSettings.Name = "generatorsSettings";
             this.generatorsSettings.SelectedIndex = 0;
-            this.generatorsSettings.Size = new System.Drawing.Size(493, 272);
+            this.generatorsSettings.Size = new System.Drawing.Size(493, 283);
             this.generatorsSettings.TabIndex = 2;
             // 
             // multiplexerSpeed
@@ -271,17 +272,18 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.hillClimbing);
             this.panel1.Controls.Add(this.simulatedAnnealing);
             this.panel1.Controls.Add(this.averageStrategy);
             this.panel1.Location = new System.Drawing.Point(5, 90);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(187, 79);
+            this.panel1.Size = new System.Drawing.Size(187, 96);
             this.panel1.TabIndex = 18;
             // 
             // simulatedAnnealing
             // 
             this.simulatedAnnealing.AutoSize = true;
-            this.simulatedAnnealing.Location = new System.Drawing.Point(7, 47);
+            this.simulatedAnnealing.Location = new System.Drawing.Point(7, 25);
             this.simulatedAnnealing.Name = "simulatedAnnealing";
             this.simulatedAnnealing.Size = new System.Drawing.Size(115, 17);
             this.simulatedAnnealing.TabIndex = 2;
@@ -293,7 +295,7 @@
             // 
             this.averageStrategy.AutoSize = true;
             this.averageStrategy.Checked = true;
-            this.averageStrategy.Location = new System.Drawing.Point(7, 17);
+            this.averageStrategy.Location = new System.Drawing.Point(7, 3);
             this.averageStrategy.Name = "averageStrategy";
             this.averageStrategy.Size = new System.Drawing.Size(177, 17);
             this.averageStrategy.TabIndex = 0;
@@ -373,12 +375,23 @@
             this.label8.TabIndex = 24;
             this.label8.Text = "Ширна канала мультиплексора, байт/интервал";
             // 
+            // hillClimbing
+            // 
+            this.hillClimbing.AutoSize = true;
+            this.hillClimbing.Location = new System.Drawing.Point(7, 47);
+            this.hillClimbing.Name = "hillClimbing";
+            this.hillClimbing.Size = new System.Drawing.Size(122, 17);
+            this.hillClimbing.TabIndex = 3;
+            this.hillClimbing.Text = "Алгоритм подъёма";
+            this.hillClimbing.UseVisualStyleBackColor = true;
+            this.hillClimbing.CheckedChanged += new System.EventHandler(this.hillClimbing_CheckedChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(517, 489);
+            this.ClientSize = new System.Drawing.Size(517, 517);
             this.ControlBox = false;
             this.Controls.Add(this.label8);
             this.Controls.Add(this.multiplaxorSpeedDt);
@@ -448,5 +461,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown multiplaxorSpeedDt;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.RadioButton hillClimbing;
     }
 }

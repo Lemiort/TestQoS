@@ -464,6 +464,15 @@ namespace QosGui
         private void observationPeriod_ValueChanged(object sender, EventArgs e)
         {
             multiplaxorSpeedDt.Value = multiplexerSpeed.Value * observationPeriod.Value;
+        }
+
+        private void hillClimbing_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as RadioButton).Checked)
+            {
+                // инициализация QoS
+                this.QoS = new HillClimbingQos();
+            }
         }       
     }
 }
