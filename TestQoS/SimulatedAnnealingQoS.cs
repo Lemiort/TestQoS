@@ -40,55 +40,44 @@ namespace TestQoS
         /// <param name="tokensPerDts">Вектор текущих скоростей поступления токенов в корзины</param>
         /// <param name="elementNum">Элемент значение которого следует поменять</param>
         /// <returns>Вектор новых скоростей поступления токенов в корзины</returns>
-        private List<float> SetNextTBSpeedValue(List<float> tokensPerDts, int elementNum)
+        private List<float> SetNextTBSpeedValue(List<float> tokensPerDts)
         {
-            List<float> result;                       
-            result = new List<float>();
-            for(int i = 0; i < tokensPerDts.Count; i++)
+            List<float> result = new List<float>();
+
+            for (int i = 0; i < tokensPerDts.Count; i++)
             {
-                // генерация нового значения скорости поступления токенов i-й корзины               
-                if (i == elementNum)
+                int newTokensPerDt;
+                do
                 {
-                    // генерация новой скорости для выбраной корзины
-                    float newTokensPerDt;
-                    do
+                    // генерируем приращение
+                    float delta = maxTokensPerDts[i] * (float)rand.NextDouble() * (float)temperature;
+                    if (Math.Abs(delta) < 1) delta = 1;
+                    // к старому значению прибавляем или вычитаем это приращение
+                    if (rand.Next(2) == 0)
                     {
-                        // сохраняем старое значение
-                        newTokensPerDt = tokensPerDts[i];
-                        // ганерируем приращение
-                        float delta = maxTokensPerDts[i]*(float)rand.NextDouble()*(float)temperature;
-                        
-                        // к старому значению прибавляем или вычитаем это приращение
-                        if(rand.Next(2)==0)
-                        {
-                            newTokensPerDt += delta;
-                        }
-                        else
-                        {
-                            newTokensPerDt -= delta;
-                        }
-
-                        // проверка на принадлежность поласти значений
-                        if(newTokensPerDt < 0)
-                        {
-                            newTokensPerDt = 0;
-                        }
-                        if(newTokensPerDt > maxTokensPerDts[i])
-                        {
-                            newTokensPerDt = maxTokensPerDts[i];
-                        }
+                        newTokensPerDt = (int)(tokensPerDts[i] + delta);
                     }
-                    while (tokensPerDts[i] == newTokensPerDt);
-                    result.Add(newTokensPerDt);
+                    else
+                    {
+                        newTokensPerDt = (int)(tokensPerDts[i] - delta);
+                    }
+                    
+                    // проверка на принедлежность границам значений
+                    if (newTokensPerDt < 0) 
+                    { 
+                        newTokensPerDt = 0; 
+                    }
+                    int maxTokensPerDt = (int)(maxTokensPerDts[i]);
+                    if (newTokensPerDt > maxTokensPerDt)
+                    {
+                        newTokensPerDt = maxTokensPerDt; 
+                    }
                 }
-                else
-                {
-                    // для остальных корзин значение оставляем преждним
-                    result.Add(tokensPerDts[i]);
-                }
-            }                   
+                while (newTokensPerDt == ((int)tokensPerDts[i]));
+                result.Add(newTokensPerDt);
+            }
 
-            return result;
+            return result;       
         }
 
         /// <summary>
@@ -131,44 +120,38 @@ namespace TestQoS
         protected  override List<float> OptimalTokensPerDts(List<float> firstTokensPerDts)
         {
             // инициализация параметров алгоритма
-            this.initalTemperature = 10;
-            this.minTemperature = 1e-4;
+            this.initalTemperature = 200;
+            this.minTemperature = 0.01;
             List<float> oldTokensPerDts = firstTokensPerDts;
             List<float> newTokensPerDts;
             rand = new Random((int)DateTime.Now.Ticks);
             int i = 0;
-            int iMax = 1000; // защита от зацикливания
+            int iMax = 10000; // защита от зацикливания
             this.temperature = this.initalTemperature;
             this.InitMaxTokensPerDts();
 
             while((temperature > minTemperature) && (i++ < iMax))
             {
-                // поэлементный обход
-                for (int j = 0; j < oldTokensPerDts.Count; j++)
+                // переход в новое состояние 
+                newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts);
+                uint newState = this.ObjectiveFunction(newTokensPerDts);
+                uint oldState = this.ObjectiveFunction(oldTokensPerDts);
+                double probability = this.NewStateProbability(newState, oldState);
+
+                // кидаем кубик
+                double value = rand.NextDouble();
+                // если попали в зону
+                if (value <= probability)
                 {
-                    // переход в новое состояние по j-му элементу
-                    newTokensPerDts = this.SetNextTBSpeedValue(oldTokensPerDts, j);
-                    uint newState = this.ObjectiveFunction(newTokensPerDts);
-                    uint oldState = this.ObjectiveFunction(oldTokensPerDts);
-                    double probability = this.NewStateProbability(newState, oldState);
-
-                    // кидаем кубик
-                    double value = rand.NextDouble();
-                    // если попали в зону
-                    if (value <= probability)
-                    {
-                        // совершаем переход
-                        oldTokensPerDts = newTokensPerDts;
-                    }
+                    // совершаем переход
+                    oldTokensPerDts = newTokensPerDts;
                 }
-
+                
                 // понижаем температуру 
                 this.DecreaseTemperature(i);
             }
 
             return oldTokensPerDts;
-        }
-
-        
+        }      
     }
 }
