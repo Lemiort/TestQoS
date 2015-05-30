@@ -17,6 +17,18 @@ namespace QosGui
     /// </summary>
     public partial class TrafficPlotter : UserControl
     {
+        /// <summary>
+        /// подпись оси Y
+        /// </summary>
+        public string AxisYTitle
+        {
+            set
+            {
+                plotter.ChartAreas.FindByName("ChartArea1").AxisY.Title = value;
+            }
+        }
+
+
         public TrafficPlotter()
         {
             InitializeComponent();

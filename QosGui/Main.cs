@@ -60,6 +60,10 @@ namespace QosGui
         /// </summary>
         TrafficPlotter averageThroughput;
 
+        /// <summary>
+        /// Среднее значение целевой функции
+        /// </summary>
+        TrafficPlotter averageObjectiveFunction;
 
         Random rand;
 
@@ -84,13 +88,16 @@ namespace QosGui
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
             multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
             averageThroughput = new TrafficPlotter("Средняя пропускная способность");
+            averageObjectiveFunction = new TrafficPlotter("Среднее значение целевой функции");
+            averageObjectiveFunction.AxisYTitle = "";
             // добавление в панель
-            graphsTabel.Controls.Add(inputTraffic);   
-            graphsTabel.Controls.Add(bucketMiss);
-            graphsTabel.Controls.Add(bucketGoal);
-            graphsTabel.Controls.Add(multiplexerMiss);
-            graphsTabel.Controls.Add(multiplexerGoal);    
-            graphsTabel.Controls.Add(averageThroughput);
+            graphsTable1.Controls.Add(inputTraffic);
+            graphsTable1.Controls.Add(bucketMiss);
+            graphsTable1.Controls.Add(bucketGoal);
+            graphsTable1.Controls.Add(multiplexerMiss);
+            graphsTable2.Controls.Add(multiplexerGoal);
+            graphsTable2.Controls.Add(averageThroughput);
+            graphsTable2.Controls.Add(averageObjectiveFunction);
         }
 
         /// <summary>
