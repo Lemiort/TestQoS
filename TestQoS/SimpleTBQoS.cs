@@ -127,6 +127,13 @@ namespace TestQoS
         }
 
         /// <summary>
+        /// история целевой функции
+        /// </summary>
+        public Queue<UInt64> objectiveFunctionHistory;
+
+
+
+        /// <summary>
         /// размер истории
         /// </summary>
         protected int historySize;
@@ -295,6 +302,9 @@ namespace TestQoS
             multiplexorAverageBytes = new Queue<float>();
             MultiplexorSummaryBytes = 0;
 
+            //история целевой йункции
+            objectiveFunctionHistory = new Queue<ulong>();
+
             // время квантования
             qtime = this.MakeModelTime();
 
@@ -462,18 +472,26 @@ namespace TestQoS
                 //анализируем результаты работы
                 (multiplexorAnalyzer as SimpleAnalyzer).Update();
                 (bucketsAnalyzer as SimpleAnalyzer).Update();
+                
 
                 //история байтов мультиплексора
                 multiplexorBytes.Enqueue((multiplexer as SimpleMultiplexer).GetLastThroughputSize());
                 //сумма байтов за историю
                 MultiplexorSummaryBytes += (multiplexer as SimpleMultiplexer).GetLastThroughputSize();
+                //среднее значение байтов
                 multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
+
+                //истоия значений целевой функции
+                objectiveFunctionHistory.Enqueue(ObjectiveFunction(optimalTokensPerDts));
 
                 if (multiplexorBytes.Count > historySize)
                 {
                     //убираем из истории байт, а так же из суммарного размера
                     MultiplexorSummaryBytes -= multiplexorBytes.Dequeue();
                     multiplexorAverageBytes.Dequeue();
+
+                    //убирыем из истории последнее значение целевой функции
+                    objectiveFunctionHistory.Dequeue();
                 }
 
                 prevTime = DateTime.Now.Ticks;

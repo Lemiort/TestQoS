@@ -63,7 +63,7 @@ namespace QosGui
         /// <summary>
         /// Среднее значение целевой функции
         /// </summary>
-        TrafficPlotter averageObjectiveFunction;
+        TrafficPlotter objectiveFunction;
 
         Random rand;
 
@@ -88,8 +88,8 @@ namespace QosGui
             multiplexerMiss = new TrafficPlotter("Потери в мультиплексоре");
             multiplexerGoal = new TrafficPlotter("Прошедший через мультиплексор трафик");
             averageThroughput = new TrafficPlotter("Средняя пропускная способность");
-            averageObjectiveFunction = new TrafficPlotter("Среднее значение целевой функции");
-            averageObjectiveFunction.AxisYTitle = "";
+            objectiveFunction = new TrafficPlotter("Значение целевой функции");
+            objectiveFunction.AxisYTitle = "";
             // добавление в панель
             graphsTable1.Controls.Add(inputTraffic);
             graphsTable1.Controls.Add(bucketMiss);
@@ -97,7 +97,7 @@ namespace QosGui
             graphsTable1.Controls.Add(multiplexerMiss);
             graphsTable2.Controls.Add(multiplexerGoal);
             graphsTable2.Controls.Add(averageThroughput);
-            graphsTable2.Controls.Add(averageObjectiveFunction);
+            graphsTable2.Controls.Add(objectiveFunction);
         }
 
         /// <summary>
@@ -194,6 +194,7 @@ namespace QosGui
                 multiplexerGoal.Clear();
                 multiplexerMiss.Clear();
                 averageThroughput.Clear();
+                objectiveFunction.Clear();
 
                 for (int j = 0; j < ((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.Count; j++)
                 {
@@ -216,6 +217,9 @@ namespace QosGui
                     //средняя пропускная способность
                     float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAverageBytes.ElementAt(j));
                     averageThroughput.AddPoint(averageThroghputValue, (float)j);
+
+                    float averageObjectiveFunctionValue = ((qos as SimpleTBQoS).objectiveFunctionHistory.ElementAt(j));
+                    objectiveFunction.AddPoint(averageObjectiveFunctionValue, (float)j);
                 }
             }
             if (backgroundWorker1.IsBusy == false)
