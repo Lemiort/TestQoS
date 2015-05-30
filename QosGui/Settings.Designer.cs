@@ -53,6 +53,7 @@
             this.multiplaxorSpeedDt = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.hillClimbing = new System.Windows.Forms.RadioButton();
+            this.harmonySearch = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.bucketNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.observationPeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.multiplexerSpeed)).BeginInit();
@@ -272,6 +273,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.harmonySearch);
             this.panel1.Controls.Add(this.hillClimbing);
             this.panel1.Controls.Add(this.simulatedAnnealing);
             this.panel1.Controls.Add(this.averageStrategy);
@@ -386,6 +388,17 @@
             this.hillClimbing.UseVisualStyleBackColor = true;
             this.hillClimbing.CheckedChanged += new System.EventHandler(this.hillClimbing_CheckedChanged);
             // 
+            // harmonySearch
+            // 
+            this.harmonySearch.AutoSize = true;
+            this.harmonySearch.Location = new System.Drawing.Point(7, 70);
+            this.harmonySearch.Name = "harmonySearch";
+            this.harmonySearch.Size = new System.Drawing.Size(137, 17);
+            this.harmonySearch.TabIndex = 4;
+            this.harmonySearch.Text = "Гармонический поиск";
+            this.harmonySearch.UseVisualStyleBackColor = true;
+            this.harmonySearch.CheckedChanged += new System.EventHandler(this.harmonySearch_CheckedChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -462,5 +475,6 @@
         private System.Windows.Forms.NumericUpDown multiplaxorSpeedDt;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RadioButton hillClimbing;
+        private System.Windows.Forms.RadioButton harmonySearch;
     }
 }

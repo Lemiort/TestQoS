@@ -473,6 +473,15 @@ namespace QosGui
                 // инициализация QoS
                 this.QoS = new HillClimbingQos();
             }
+        }
+
+        private void harmonySearch_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as RadioButton).Checked)
+            {
+                // инициализация QoS
+                this.QoS = new HarmonySearchQos();
+            }
         }       
     }
 }
