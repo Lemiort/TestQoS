@@ -47,6 +47,7 @@ namespace TestQoS
             for (int i = 0; i < tokensPerDts.Count; i++)
             {
                 int newTokensPerDt;
+                int j = 0;
                 do
                 {
                     // генерируем приращение
@@ -73,7 +74,7 @@ namespace TestQoS
                         newTokensPerDt = maxTokensPerDt; 
                     }
                 }
-                while (newTokensPerDt == ((int)tokensPerDts[i]));
+                while ((newTokensPerDt == ((int)tokensPerDts[i])) && (++j < 10));
                 result.Add(newTokensPerDt);
             }
 
