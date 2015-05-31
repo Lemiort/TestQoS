@@ -36,8 +36,11 @@ namespace TestQoS
 
         public UInt64 GetQueueSize()
         {
-            return queueSize;
+            return lastQueueSize;
         }
+
+        //размер очереди после обработки пакета
+        private ulong lastQueueSize;
 
         /// <summary>
         /// обработчик события обработки пакета
@@ -142,6 +145,7 @@ namespace TestQoS
                     lastThroughputSize  = queueSize;
                     queueSize = 0;
                 }
+                lastQueueSize = queueSize;
                 prevUpdateTime = DateTime.Now.Ticks;
                 /*if(passedBytes > 0)
                     Console.WriteLine("{0} bytes passed", passedBytes);*/

@@ -95,7 +95,7 @@ namespace TestQoS
         /// <summary>
         /// анализаторы по 1 шт. на ведро
         /// </summary>
-        protected List<Analyzer> bucketAnalyzers;
+        public List<Analyzer> bucketAnalyzers;
 
         /// <summary>
         /// мультиплексор
@@ -325,10 +325,15 @@ namespace TestQoS
 
             for (int i = 0; i < numOfBuckets; i++)
             {
+                //создаём генератор
                 generators.Add(this.MakeTrafficGenerator());
+                //создаёи анализатор
                 generatorAnalyzers.Add(this.MakeAnalyzer());
+                //создаём ведро
                 buckets.Add(this.MakeTokenBuket());
+                //инициализируем ведро
                 (buckets.Last() as SimpleTokenBucket).MaxTokensCount = maxTokensCounts[i];
+                //создаём анализатор ведра
                 bucketAnalyzers.Add(this.MakeAnalyzer());
 
                 //соединяем ведро с генератором
@@ -338,11 +343,17 @@ namespace TestQoS
                 (generators.Last() as SimpleTrafficGenerator).onPacketGenerated +=
                     (generatorAnalyzers.Last() as SimpleAnalyzer).OnPassPacket;
 
-                //соединяем ведро с анализатором, иначе бешехельме, всё пропало, лови эксепшн
+                //соединяем ведро с анализатором
                 (buckets.Last() as SimpleTokenBucket).onPacketPass +=
                     (bucketsAnalyzer as SimpleAnalyzer).OnPassPacket;
                 (buckets.Last() as SimpleTokenBucket).onPacketNotPass +=
                     (bucketsAnalyzer as SimpleAnalyzer).OnNotPassPacket;
+
+                //cоединяем ведро с индивидуальным анализатором
+                (buckets.Last() as SimpleTokenBucket).onPacketPass +=
+                    (bucketAnalyzers.Last() as SimpleAnalyzer).OnPassPacket;
+                (buckets.Last() as SimpleTokenBucket).onPacketNotPass +=
+                    (bucketAnalyzers.Last() as SimpleAnalyzer).OnNotPassPacket;
 
                 //соединяем с мультиплексором
                 (buckets.Last() as SimpleTokenBucket).onPacketPass +=
@@ -449,6 +460,9 @@ namespace TestQoS
                     (buckets[i] as SimpleTokenBucket).TokensPerDt = optimalTokensPerDts[i];
                 }
 
+                //истоия значений целевой функции
+                objectiveFunctionHistory.Enqueue(ObjectiveFunction(optimalTokensPerDts));
+
                 //генерим пакеты
                 foreach (TrafficGenerator generator in generators)
                 {
@@ -481,8 +495,6 @@ namespace TestQoS
                 //среднее значение байтов
                 multiplexorAverageBytes.Enqueue((float)MultiplexorSummaryBytes / (float)multiplexorBytes.Count);
 
-                //истоия значений целевой функции
-                objectiveFunctionHistory.Enqueue(ObjectiveFunction(optimalTokensPerDts));
 
                 if (multiplexorBytes.Count > historySize)
                 {
@@ -526,9 +538,9 @@ namespace TestQoS
             SimpleMultiplexer multiplexerCopy =
                 new SimpleMultiplexer(multiplexer as SimpleMultiplexer);
 
-            //анализаторы для сбора инфы
-            SimpleAnalyzer multiplexorAnalyzerCopy = new SimpleAnalyzer();
-            //анализаторы ведёр
+            //создаём анализаторы для сбора инфы на мультплексора
+            SimpleAnalyzer multiplexerAnalyzerCopy = new SimpleAnalyzer();
+            //создаём анализаторы ведёр
             List<SimpleAnalyzer> bucketAnalyzersCopy = new List<SimpleAnalyzer>();
 
             //устанавливаем в вёдра параметры
@@ -548,12 +560,14 @@ namespace TestQoS
                 //индивидуальный анализатор
                 bucketAnalyzersCopy.Add(new SimpleAnalyzer());
                 //инициализируем его
-                bucketAnalyzersCopy[i].QuantHistorySize = multiplexorAnalyzerCopy.QuantHistorySize;
-                //соединяем анализатор с ведром
+                bucketAnalyzersCopy[i].QuantHistorySize = multiplexerAnalyzerCopy.QuantHistorySize;
+                //соединяем анализатор с ведром для потерь
                 bucketsCopy[i].onPacketNotPass += bucketAnalyzersCopy[i].OnNotPassPacket;
+                //соединяем анализатор с ведром для прошедших
+                bucketsCopy[i].onPacketPass += bucketAnalyzersCopy[i].OnPassPacket;
             }
             //считаем потери на мультиплексоре
-            multiplexerCopy.onPacketNotPass += multiplexorAnalyzerCopy.OnNotPassPacket;
+            multiplexerCopy.onPacketNotPass += multiplexerAnalyzerCopy.OnNotPassPacket;
 
             //генерация
             for (int i = 0; i < generatorsCopy.Count; i++)
@@ -575,10 +589,10 @@ namespace TestQoS
             //обработка мультиплексором
             multiplexerCopy.Update();
             //анализ мультипоексора
-            multiplexorAnalyzerCopy.Update();
+            multiplexerAnalyzerCopy.Update();
 
             //потери мультипелксора*вес 
-            uint ret = ((uint)multiplexorAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight;
+            uint ret = ((uint)multiplexerAnalyzerCopy.GetAverageNotPassedPacketsSize()) * this.QueueWeight;
             //+ очередь мультиплексора*вес
             ret += (uint)multiplexerCopy.GetQueueSize() * this.MultiplexerWeight;
             //потери на вёдрах * вес

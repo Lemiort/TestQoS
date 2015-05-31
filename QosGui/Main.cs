@@ -200,8 +200,14 @@ namespace QosGui
                 {
                     //потери на вёдрах
                     uint bucketMissValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsNotPassed.ElementAt(j).SummarySize;
+                   /* for (int i = 0; i < (qos as SimpleTBQoS).bucketAnalyzers.Count; i++)
+                    {
+                        bucketMissValue += (uint)((qos as SimpleTBQoS).bucketAnalyzers[i] as SimpleAnalyzer).GetAverageNotPassedPacketsSize();
+                    }*/
+
                     //прошедший траффик
                     uint bucketGoalValue = (uint)((qos as SimpleTBQoS).bucketsAnalyzer as SimpleAnalyzer).quantsPassed.ElementAt(j).SummarySize;
+
                     bucketMiss.AddPoint(bucketMissValue, (double)j);
                     bucketGoal.AddPoint(bucketGoalValue, (double)j);
                     inputTraffic.AddPoint(bucketMissValue + bucketGoalValue, (double)j);
@@ -218,6 +224,7 @@ namespace QosGui
                     float averageThroghputValue = ((qos as SimpleTBQoS).multiplexorAverageBytes.ElementAt(j));
                     averageThroughput.AddPoint(averageThroghputValue, (float)j);
 
+                    //среднее значение целевой функции
                     float averageObjectiveFunctionValue = ((qos as SimpleTBQoS).objectiveFunctionHistory.ElementAt(j));
                     objectiveFunction.AddPoint(averageObjectiveFunctionValue, (float)j);
                 }

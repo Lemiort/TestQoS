@@ -80,10 +80,19 @@ namespace TestQoS
         private ulong summaryPassedPacketsSize;
 
         /// <summary>
+        /// последний окончательный размер
+        /// </summary>
+        private ulong lastSummaryPassedPacketsSize;
+
+        /// <summary>
         /// общий размер отброшенных пакетов
         /// </summary>
         private ulong summaryNotPassedPacketsSize;
 
+        /// <summary>
+        /// последний окнчательный размер
+        /// </summary>
+        private ulong lastSummaryNotPassedPacketsSize;
 
         /// <summary>
         /// инфа о последних N квантах
@@ -144,11 +153,11 @@ namespace TestQoS
         /// </summary>
         public void Update()
         {
-            //записываем среднюю статистику
+            //записываем среднюю статистику за историю в квант
             packetsPassed.AveragePacketsSize =
                 (float)(summaryPassedPacketsSize + packetsPassed.SummarySize) / (float)quantsPassed.Count;
             packetsNotPassed.AveragePacketsSize =
-                (float)(summaryNotPassedPacketsSize + packetsNotPassed.SummarySize) / (float)quantsNotPassed.Count;
+                (float)(summaryNotPassedPacketsSize + packetsNotPassed.SummarySize) / (float)(quantsNotPassed.Count+1);
 
             //записываем инфу о текущих квантах
             quantsPassed.Enqueue(packetsPassed);
@@ -170,6 +179,9 @@ namespace TestQoS
                 quantsNotPassed.Dequeue();
             }
 
+            lastSummaryNotPassedPacketsSize = summaryNotPassedPacketsSize;
+            lastSummaryPassedPacketsSize = summaryPassedPacketsSize;
+
             packetsPassed = new HistoryQuant();
             packetsNotPassed = new HistoryQuant();
         }
@@ -180,7 +192,7 @@ namespace TestQoS
         /// <returns></returns>
         public float GetAveragePassedPacketsSize()
         {
-            return (float)summaryPassedPacketsSize / (float)quantsPassed.Count();
+            return (float)lastSummaryPassedPacketsSize / (float)quantsPassed.Count();
         }
 
         /// <summary>
@@ -189,7 +201,7 @@ namespace TestQoS
         /// <returns></returns>
         public float GetAverageNotPassedPacketsSize()
         {
-            return (float)summaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
+            return (float)lastSummaryNotPassedPacketsSize / (float)quantsNotPassed.Count();
         }
 
         /// <summary>
