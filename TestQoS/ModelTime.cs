@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// 
+    /// Оболочка временной модели
     /// </summary>
-    abstract class ModelTime
+    public abstract class ModelTime
     {
-
     }
 }

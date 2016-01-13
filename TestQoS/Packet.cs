@@ -9,11 +9,11 @@ namespace TestQoS
     /// <summary>
     /// облочка для пакета
     /// </summary>
-    abstract class Packet
+    public abstract class Packet
     {
         /// <summary>
         /// Размер пакета в битах
         /// </summary>
-        public int Size { get; protected set; }
+        public uint Size { get; protected set; }
     }
 }

@@ -6,37 +6,50 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    class QuantizedTime : ModelTime
+    /// <summary>
+    /// Реализация временной модели.
+    /// </summary>
+    public class QuantizedTime : ModelTime
     {
-        // TODO: возмодно эту переменную стоит переименовать (или/и сдалать только для чтения)
         /// <summary>
         /// промежуток наблюдения (в миллисекундах)
         /// </summary>
-        private double timeSlice;
+        public double timeSlice
+        {
+            get;
+            private set;
+        }
 
+        /// <summary>
+        /// создаёт время квантования
+        /// </summary>
+        /// <param name="timeSlice">время в милисекундах</param>
         public QuantizedTime(double timeSlice)
         {
             this.timeSlice = timeSlice;
         }
 
         /// <summary>
-        /// перевод времени
-        /// TODO: дописать норм коммент
+        /// конвертация миллисекунд в кванты
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public int FromAnalogToDigital(double time)
+        public uint FromAnalogToDigital(double time)
         {
-            return (int)(time / timeSlice) + 1;
+            double eps = 1e-8;
+            double realDiv = time / timeSlice;
+            uint intDiv = (uint)(time / timeSlice);
+            if (Math.Abs(realDiv - intDiv) > eps) ++intDiv;
+
+            return intDiv;
         }
 
         /// <summary>
-        /// перевод времени
-        /// TODO: дописать норм коммент
+        /// конвертация квантов в миллисекунды
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public double FromDigitalToAnalog(int time)
+        public double FromDigitalToAnalog(uint time)
         {
             return time * timeSlice;
         }

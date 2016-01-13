@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace TestQoS
 {
-    abstract class TrafficGenerator
+    /// <summary>
+    /// Герератор трафика
+    /// </summary>
+    public abstract class TrafficGenerator
     {
         public abstract Packet MakePacket();
     }

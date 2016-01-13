@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace TestQoS
 {
     /// <summary>
-    /// TODO: Надо как то это по-нормальному назвать
+    /// Реализация оболочки пакета
     /// </summary>
-    class SimplePacket : Packet
+    public class SimplePacket : Packet
     {
-        public SimplePacket(int size)
+        public SimplePacket(uint size)
         {
             this.Size = size;
         }
